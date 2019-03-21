@@ -8,6 +8,7 @@
     </option>
     <option name="ignoredFiles">
       <set>
+        <option value="$PROJECT_DIR$/fivethreads-auth/pom.xml" />
         <option value="$PROJECT_DIR$/fivethreads-web/pom.xml" />
       </set>
     </option>
