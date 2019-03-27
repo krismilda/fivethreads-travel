@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ApartmentForm {
-    private Long number;
+    private String address;
     private Long officeId;
 }

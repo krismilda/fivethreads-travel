@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface ApartmentRepository extends JpaRepository<Apartment, Long> {
-    boolean existsByNumberAndAndOfficeId(Long number, Long officeId);
+    boolean existsByAddressAndOfficeId(String address, Long officeId);
 }

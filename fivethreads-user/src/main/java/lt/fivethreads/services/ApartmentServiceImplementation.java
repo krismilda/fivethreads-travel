@@ -44,7 +44,7 @@ public class ApartmentServiceImplementation implements ApartmentService {
 
         Apartment apartment = apartmentRepository.findById(apartmentDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Fail! -> Cause: Wrong apartmentId"));
-        apartment.setNumber(apartmentDTO.getNumber());
+        apartment.setAddress(apartmentDTO.getAddress());
         Office office = new Office();
         office.setId(apartmentDTO.getOfficeId());
         apartment.setOffice(office);
@@ -62,7 +62,7 @@ public class ApartmentServiceImplementation implements ApartmentService {
     }
 
     @Override
-    public boolean checkIfApartmentExists(Long number, Long officeId ) {
-        return apartmentRepository.existsByNumberAndAndOfficeId(number, officeId);
+    public boolean checkIfApartmentExists(String address, Long officeId ) {
+        return apartmentRepository.existsByAddressAndOfficeId(address, officeId);
     }
 }

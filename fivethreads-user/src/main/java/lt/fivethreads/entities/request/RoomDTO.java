@@ -5,8 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ApartmentDTO {
+public class RoomDTO {
     private Long id;
-    private String address;
-    private Long officeId;
+    private Long number;
+    private Long capacity;
+    private Long apartmentId;
 }

@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Getter
@@ -16,8 +19,8 @@ public class Apartment {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "number")
-    private Long number;
+    @Column(name = "address")
+    private String address;
 
     @JoinColumn(name = "officeId")
     @ManyToOne(targetEntity = Office.class, fetch = FetchType.LAZY)
@@ -25,11 +28,13 @@ public class Apartment {
     @JsonIgnore
     private Office office;
 
-    @Column(name = "officeId", insertable = false, updatable = false)
-    private Long officeId;
+    @OneToMany(mappedBy = "apartment", cascade = CascadeType.ALL)
+    private Set<Room> rooms;
 
     public Apartment(){}
-    public Apartment(Long number) {
-        this.number = number;
+    public Apartment(String address, Room... rooms) {
+        this.address = address;
+        this.rooms = Stream.of(rooms).collect(Collectors.toSet());
+        this.rooms.forEach(x -> x.setApartment(this));
     }
 }

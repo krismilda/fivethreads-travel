@@ -16,5 +16,5 @@ public interface ApartmentService {
 
     void createApartment(ApartmentForm apartment);
 
-    boolean checkIfApartmentExists(Long number, Long officeId);
+    boolean checkIfApartmentExists(String address, Long officeId);
 }
