@@ -47,7 +47,7 @@ public class UserController {
         return new ResponseEntity<>("User updated successfully!", HttpStatus.OK);
     }
 
-    @PostMapping("admin/user/create")
+    @PostMapping("/admin/user/create")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerUser(@Validated @RequestBody RegistrationForm registrationForm) {
         if (registrationForm == null) {
