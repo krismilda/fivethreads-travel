@@ -1,4 +1,4 @@
-package lt.fivethreads.web.storage;
+package lt.fivethreads.storage;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
