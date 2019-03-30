@@ -1,7 +1,7 @@
 package lt.fivethreads.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.istack.internal.NotNull;
+//import com.fasterxml.jackson.annotation.JsonIgnore;
+//import com.sun.istack.internal.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,8 +24,8 @@ public class Room {
 
     @JoinColumn(name = "apartmentId")
     @ManyToOne(targetEntity = Apartment.class, fetch = FetchType.LAZY)
-    @NotNull
-    @JsonIgnore
+   // @NotNull
+   // @JsonIgnore
     private Apartment apartment;
 
     public Room(){}

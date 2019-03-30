@@ -6,7 +6,7 @@
     <modules>
         <module>fivethreads-web</module>
         <module>fivethreads-user</module>
-        <module>fivethreads-auth</module>
+        <module>fivethreads-office</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
