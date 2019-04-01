@@ -1,6 +1,7 @@
 package lt.fivethreads.entities;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.*;

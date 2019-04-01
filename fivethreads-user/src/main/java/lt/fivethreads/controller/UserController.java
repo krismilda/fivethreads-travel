@@ -20,16 +20,16 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/admin/user")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     public List<UserDTO> getAllUsers() {
         return userService.getAllUser();
     }
 
     @GetMapping("/admin/user/{userId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public UserDTO getUserByID(@PathVariable("userId") int userId) {
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
+    public UserDTO getUserDTOByID(@PathVariable("userId") int userId) {
         long id = userId;
-        return userService.getUserByID(id);
+        return userService.getUserDTOByID(id);
     }
 
     @DeleteMapping("/admin/user/{userID}")
@@ -50,15 +50,6 @@ public class UserController {
     @PostMapping("/admin/user/create")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerUser(@Validated @RequestBody RegistrationForm registrationForm) {
-        if (registrationForm == null) {
-            return new ResponseEntity<>("Fail -> RegistrationForm is null!",
-                    HttpStatus.BAD_REQUEST);
-        }
-
-        if (userService.checkIfEmailExists(registrationForm.getEmail())) {
-            return new ResponseEntity<>("Fail -> Email is already taken!",
-                    HttpStatus.BAD_REQUEST);
-        }
         userService.createUser(registrationForm);
         return new ResponseEntity<>("User created successfully!", HttpStatus.OK);
     }
