@@ -1,6 +1,6 @@
 package lt.fivethreads.web;
 
-import lt.fivethreads.web.storage.StorageService;
+import lt.fivethreads.storage.StorageService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
