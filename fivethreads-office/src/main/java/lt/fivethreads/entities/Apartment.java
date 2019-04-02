@@ -1,7 +1,7 @@
 package lt.fivethreads.entities;
 
-//import com.fasterxml.jackson.annotation.JsonIgnore;
-//import com.sun.istack.internal.NotNull;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.istack.internal.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,11 +24,11 @@ public class Apartment {
 
     @JoinColumn(name = "officeId")
     @ManyToOne(targetEntity = Office.class, fetch = FetchType.LAZY)
-   // @NotNull
-   // @JsonIgnore
+    @NotNull
+    @JsonIgnore
     private Office office;
 
-    @OneToMany(mappedBy = "apartment", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "apartment")
     private Set<Room> rooms;
 
     public Apartment(){}

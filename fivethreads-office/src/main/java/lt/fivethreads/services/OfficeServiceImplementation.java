@@ -33,23 +33,23 @@ public class OfficeServiceImplementation implements OfficeService {
         return officeMapper.getOfficeDTO(office);
     }
 
-    public void updateOffice(OfficeDTO officeDTO) {
+    public OfficeDTO updateOffice(OfficeDTO officeDTO) {
 
         Office office = officeRepository.findById(officeDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Fail! -> Cause: Wrong officeId"));
         office.setAddress(officeDTO.getAddress());
         office.setName(officeDTO.getName());
         office.setId(officeDTO.getId());
-        officeRepository.save(office);
+        return officeMapper.getOfficeDTO(officeRepository.save(office));
     }
 
     public void deleteOffice(Long id) {
         officeRepository.deleteById(id);
     }
 
-    public void createOffice(OfficeForm officeForm) {
+    public OfficeDTO createOffice(OfficeForm officeForm) {
         Office office_to_save = officeMapper.convertRegisteredOfficeToOffice(officeForm);
-        officeRepository.save(office_to_save);
+        return officeMapper.getOfficeDTO(officeRepository.save(office_to_save));
     }
 
     @Override

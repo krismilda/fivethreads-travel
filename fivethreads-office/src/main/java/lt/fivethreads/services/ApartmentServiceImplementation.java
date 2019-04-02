@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -40,7 +39,7 @@ public class ApartmentServiceImplementation implements ApartmentService {
     }
 
     @Override
-    public void updateApartment(ApartmentDTO apartmentDTO) {
+    public ApartmentDTO updateApartment(ApartmentDTO apartmentDTO) {
 
         Apartment apartment = apartmentRepository.findById(apartmentDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Fail! -> Cause: Wrong apartmentId"));
@@ -48,21 +47,22 @@ public class ApartmentServiceImplementation implements ApartmentService {
         Office office = new Office();
         office.setId(apartmentDTO.getOfficeId());
         apartment.setOffice(office);
-        apartmentRepository.save(apartment);
+        return apartmentMapper.getApartmentDTO(apartmentRepository.save(apartment));
     }
 
 
     public void deleteApartment(Long id) {
-        apartmentRepository.deleteById(id); }
+        apartmentRepository.deleteById(id);
+    }
 
 
-    public void createApartment(ApartmentForm apartmentForm) {
+    public ApartmentDTO createApartment(ApartmentForm apartmentForm) {
         Apartment apartment_to_save = apartmentMapper.convertRegisteredOfficeToOffice(apartmentForm);
-        apartmentRepository.save(apartment_to_save);
+        return apartmentMapper.getApartmentDTO(apartmentRepository.save(apartment_to_save));
     }
 
     @Override
-    public boolean checkIfApartmentExists(String address, Long officeId ) {
+    public boolean checkIfApartmentExists(String address, Long officeId) {
         return apartmentRepository.existsByAddressAndOfficeId(address, officeId);
     }
 }
