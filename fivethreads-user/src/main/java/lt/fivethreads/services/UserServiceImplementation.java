@@ -1,5 +1,6 @@
 package lt.fivethreads.services;
 
+import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.User;
 import lt.fivethreads.entities.request.RegistrationForm;
 import lt.fivethreads.entities.request.UserDTO;
@@ -32,7 +33,7 @@ public class UserServiceImplementation implements UserService {
         return userMapper.getUserDTO(user);
     }
 
-    public void updateUser(UserDTO userDTO) {
+    public UserDTO updateUser(UserDTO userDTO) {
 
         User user = userRepository.findById(userDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Fail! -> Cause: Wrong userid"));
@@ -41,7 +42,14 @@ public class UserServiceImplementation implements UserService {
         user.setId(userDTO.getId());
         user.setPhone(userDTO.getPhone());
         user.setRoles(userMapper.getRoles(userDTO.getRole()));
-        userRepository.save(user);
+
+        if(!(userDTO.getOfficeId() == null)){
+            Office office = new Office();
+            office.setId(userDTO.getOfficeId());
+            user.setOffice(office);
+        }
+
+        return userMapper.getUserDTO(userRepository.save(user));
     }
 
     public void deleteUser(Long id) {
@@ -53,8 +61,8 @@ public class UserServiceImplementation implements UserService {
         return userRepository.existsByEmail(email);
     }
 
-    public void createUser(RegistrationForm user) {
+    public UserDTO createUser(RegistrationForm user) {
         User user_to_create = userMapper.convertRegistrationUserToUser(user);
-        userRepository.save(user_to_create);
+        return userMapper.getUserDTO(userRepository.save(user_to_create));
     }
 }

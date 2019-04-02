@@ -3,6 +3,7 @@ package lt.fivethreads.entities.request;
 import lombok.Getter;
 import lombok.Setter;
 
+
 import java.util.Set;
 
 @Getter
@@ -14,4 +15,5 @@ public class RegistrationForm {
     private String lastname;
     private String phone;
     private Set<String> role;
+    private Long officeId;
 }
