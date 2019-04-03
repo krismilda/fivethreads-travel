@@ -10,11 +10,11 @@ public interface UserService {
 
     UserDTO getUserByID(Long id);
 
-    void updateUser(UserDTO user);
+    UserDTO updateUser(UserDTO user);
 
     void deleteUser(Long id);
 
-    void createUser(RegistrationForm user);
+    UserDTO createUser(RegistrationForm user);
 
     boolean checkIfEmailExists(String email);
 }

@@ -9,11 +9,11 @@ public interface OfficeService {
 
     OfficeDTO getOfficeById(Long id);
 
-    void updateOffice(OfficeDTO office);
+    OfficeDTO updateOffice(OfficeDTO office);
 
     void deleteOffice(Long id);
 
-    void createOffice(OfficeForm user);
+    OfficeDTO createOffice(OfficeForm user);
 
     boolean checkIfOfficeExists(String name, String address);
 }

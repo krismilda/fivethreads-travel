@@ -10,11 +10,11 @@ public interface ApartmentService {
 
     ApartmentDTO getApartmentById(Long id);
 
-    void updateApartment(ApartmentDTO apartment);
+    ApartmentDTO updateApartment(ApartmentDTO apartment);
 
     void deleteApartment(Long id);
 
-    void createApartment(ApartmentForm apartment);
+    ApartmentDTO createApartment(ApartmentForm apartment);
 
     boolean checkIfApartmentExists(String address, Long officeId);
 }

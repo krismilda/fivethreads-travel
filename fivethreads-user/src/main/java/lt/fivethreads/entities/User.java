@@ -1,11 +1,13 @@
 package lt.fivethreads.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+
 
 @Entity
 @Getter
@@ -36,6 +38,12 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+
+    @JoinColumn(name = "officeId")
+    @ManyToOne(targetEntity = Office.class, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Office office;
+
 
     public User(){
     }
