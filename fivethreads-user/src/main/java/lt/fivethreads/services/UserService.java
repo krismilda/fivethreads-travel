@@ -1,11 +1,12 @@
 package lt.fivethreads.services;
 
 import lt.fivethreads.entities.User;
+import lt.fivethreads.entities.request.ChangePasswordForm;
 import lt.fivethreads.entities.request.RegistrationForm;
 import lt.fivethreads.entities.request.UserDTO;
 import lt.fivethreads.exception.file.EmailAlreadyExists;
+import lt.fivethreads.exception.file.EmailNotExists;
 import lt.fivethreads.exception.file.UserIDNotExists;
-import lt.fivethreads.exception.file.WrongUserData;
 
 import java.util.List;
 
@@ -20,7 +21,9 @@ public interface UserService {
 
     void deleteUser(Long id);
 
-    void createUser(RegistrationForm user) throws WrongUserData, EmailAlreadyExists;
+    void createUser(RegistrationForm user) throws  EmailAlreadyExists;
 
     boolean checkIfEmailExists(String email);
+
+    void changePassword(ChangePasswordForm changePasswordForm) throws EmailNotExists;
 }

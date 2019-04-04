@@ -1,5 +1,6 @@
 package lt.fivethreads.controller;
 
+import lt.fivethreads.entities.request.ChangePasswordForm;
 import lt.fivethreads.entities.request.RegistrationForm;
 import lt.fivethreads.entities.request.UserDTO;
 import lt.fivethreads.services.UserService;
@@ -10,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -42,15 +44,22 @@ public class UserController {
 
     @PutMapping("/admin/user")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateUser(@Validated @RequestBody UserDTO user) {
+    public ResponseEntity<?> updateUser(@RequestBody @Validated  UserDTO user) {
         userService.updateUser(user);
         return new ResponseEntity<>("User updated successfully!", HttpStatus.OK);
     }
 
     @PostMapping("/admin/user/create")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> registerUser(@Validated @RequestBody RegistrationForm registrationForm) {
+    public ResponseEntity<?> registerUser(@RequestBody @Valid RegistrationForm registrationForm) {
         userService.createUser(registrationForm);
         return new ResponseEntity<>("User created successfully!", HttpStatus.OK);
+    }
+
+    @PutMapping("/admin/user/changePassword")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> changePassword(@RequestBody @Validated ChangePasswordForm changePasswordForm) {
+        userService.changePassword(changePasswordForm);
+        return new ResponseEntity<>("Password changed successfully!", HttpStatus.OK);
     }
 }

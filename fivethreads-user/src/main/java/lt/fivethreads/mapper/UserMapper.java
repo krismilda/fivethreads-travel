@@ -54,13 +54,13 @@ public class UserMapper {
 
         strRoles.forEach(role -> {
             switch (role) {
-                case "admin":
+                case "ROLE_ADMIN":
                     Role adminRole = roleRepository.findByName(RoleName.ROLE_ADMIN)
                             .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
                     roles.add(adminRole);
 
                     break;
-                case "organizer":
+                case "ROLE_ORGANIZER":
                     Role pmRole = roleRepository.findByName(RoleName.ROLE_ORGANIZER)
                             .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
                     roles.add(pmRole);
