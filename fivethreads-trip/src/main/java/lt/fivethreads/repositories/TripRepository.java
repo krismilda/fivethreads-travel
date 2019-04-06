@@ -8,4 +8,5 @@ public interface TripRepository {
     Trip findByID(long id);
     List<Trip> getAll();
     void createTrip(Trip trip);
+    void updateTrip(Trip trip);
 }

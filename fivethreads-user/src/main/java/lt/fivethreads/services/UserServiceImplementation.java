@@ -10,8 +10,6 @@ import lt.fivethreads.exception.file.UserIDNotExists;
 import lt.fivethreads.mapper.UserMapper;
 import lt.fivethreads.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +26,14 @@ public class UserServiceImplementation implements UserService {
 
     @Autowired
     PasswordEncoder encoder;
+
+    @Override
+    public User getUserByEmail(String email) throws UserIDNotExists
+    {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserIDNotExists());
+        return user;
+    }
 
     @Override
     public List<UserDTO> getAllUser() {
@@ -52,11 +58,10 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public void updateUser(UserDTO userDTO) throws UserIDNotExists
-    {
+    public void updateUser(UserDTO userDTO) throws UserIDNotExists {
         User user = userRepository.findById(userDTO.getId())
                 .orElseThrow(() -> new UserIDNotExists());
-        if (this.checkIfEmailExists(userDTO.getEmail()) && !userDTO.getEmail().equals(user.getEmail()) ) {
+        if (this.checkIfEmailExists(userDTO.getEmail()) && !userDTO.getEmail().equals(user.getEmail())) {
             throw new EmailAlreadyExists();
         }
         user.setEmail(userDTO.getEmail());
@@ -78,18 +83,16 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public void createUser(RegistrationForm user) throws  EmailAlreadyExists
-    {
+    public void createUser(RegistrationForm user) throws EmailAlreadyExists {
         if (this.checkIfEmailExists(user.getEmail())) {
-                throw new EmailAlreadyExists();
-            }
+            throw new EmailAlreadyExists();
+        }
         User user_to_create = userMapper.convertRegistrationUserToUser(user);
         userRepository.save(user_to_create);
     }
 
     @Override
-    public void changePassword(ChangePasswordForm changePasswordForm) throws EmailNotExists
-    {
+    public void changePassword(ChangePasswordForm changePasswordForm) throws EmailNotExists {
         User user = userRepository.findByEmail(changePasswordForm.getEmail())
                 .orElseThrow(() -> new EmailNotExists());
         user.setPassword(encoder.encode(changePasswordForm.getPassword()));

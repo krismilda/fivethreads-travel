@@ -25,5 +25,7 @@ public interface UserService {
 
     boolean checkIfEmailExists(String email);
 
+    User getUserByEmail(String email) throws UserIDNotExists;
+
     void changePassword(ChangePasswordForm changePasswordForm) throws EmailNotExists;
 }
