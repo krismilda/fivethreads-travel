@@ -49,6 +49,25 @@ public class UserMapper {
         return user;
     }
 
+    public User getUser(UserDTO userDTO) {
+        User user = new User();
+
+        user.setLastName(userDTO.getLastname());
+        user.setFirstname(userDTO.getFirstname());
+        user.setEmail(userDTO.getEmail());
+        user.setPhone(userDTO.getPhone());
+
+        Set<String> strRoles = userDTO.getRole();
+        user.setRoles(getRoles(strRoles));
+
+        if(!(userDTO.getOfficeId() == null)){
+            Office office = officeRepository.getOne(userDTO.getOfficeId());
+            user.setOffice(office);
+        }
+
+        return user;
+    }
+
     public UserDTO getUserDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setEmail(user.getEmail());
