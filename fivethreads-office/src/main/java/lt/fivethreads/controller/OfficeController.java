@@ -10,8 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 public class OfficeController {
@@ -21,15 +19,15 @@ public class OfficeController {
 
     @GetMapping("/offices")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
-    public List<OfficeDTO> getAllOffices() {
-        return officeService.getAllOffices();
+    public ResponseEntity<?> getAllOffices() {
+        return new ResponseEntity<>(officeService.getAllOffices(), HttpStatus.OK);
     }
 
     @GetMapping("/offices/{officeId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
-    public OfficeDTO getOfficeById(@PathVariable("officeId") int officeId) {
+    public ResponseEntity<?> getOfficeById(@PathVariable("officeId") int officeId) {
         long id = officeId;
-        return officeService.getOfficeById(id);
+        return new ResponseEntity<>(officeService.getOfficeById(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/admin/offices/{officeId}")
@@ -43,8 +41,8 @@ public class OfficeController {
     @PutMapping("/offices/office")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
     public ResponseEntity<?> updateOffice(@Validated @RequestBody OfficeDTO officeDTO) {
-        officeService.updateOffice(officeDTO);
-        return new ResponseEntity<>("Office updated successfully!", HttpStatus.OK);
+        OfficeDTO updatedOffice = officeService.updateOffice(officeDTO);
+        return new ResponseEntity<>(updatedOffice, HttpStatus.OK);
     }
 
     @PostMapping("/admin/offices/create")
@@ -60,7 +58,7 @@ public class OfficeController {
             return new ResponseEntity<>("Fail -> Office is already created!",
                     HttpStatus.BAD_REQUEST);
         }
-        officeService.createOffice(registrationForm);
-        return new ResponseEntity<>("Office created successfully!", HttpStatus.OK);
+        OfficeDTO createdOffice = officeService.createOffice(registrationForm);
+        return new ResponseEntity<>(createdOffice, HttpStatus.CREATED);
     }
 }

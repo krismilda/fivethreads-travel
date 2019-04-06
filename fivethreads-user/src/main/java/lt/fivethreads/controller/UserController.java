@@ -21,15 +21,15 @@ public class UserController {
 
     @GetMapping("/admin/user")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserDTO> getAllUsers() {
-        return userService.getAllUser();
+    public ResponseEntity<?> getAllUsers() {
+        return new ResponseEntity<>(userService.getAllUser(), HttpStatus.OK);
     }
 
     @GetMapping("/admin/user/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public UserDTO getUserByID(@PathVariable("userId") int userId) {
+    public ResponseEntity<?> getUserByID(@PathVariable("userId") int userId) {
         long id = userId;
-        return userService.getUserByID(id);
+        return new ResponseEntity<>(userService.getUserByID(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/admin/user/{userID}")
@@ -43,8 +43,9 @@ public class UserController {
     @PutMapping("/admin/user")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateUser(@Validated @RequestBody UserDTO user) {
-        userService.updateUser(user);
-        return new ResponseEntity<>("User updated successfully!", HttpStatus.OK);
+
+        UserDTO updatedUser = userService.updateUser(user);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
     @PostMapping("/admin/user/create")
@@ -59,7 +60,7 @@ public class UserController {
             return new ResponseEntity<>("Fail -> Email is already taken!",
                     HttpStatus.BAD_REQUEST);
         }
-        userService.createUser(registrationForm);
-        return new ResponseEntity<>("User created successfully!", HttpStatus.OK);
+        UserDTO createdUser = userService.createUser(registrationForm);
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 }
