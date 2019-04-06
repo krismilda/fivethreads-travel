@@ -38,6 +38,7 @@ public class UserServiceImplementation implements UserService {
                 .orElseThrow(() -> new RuntimeException("Fail! -> Cause: Wrong userid"));
         user.setEmail(userDTO.getEmail());
         user.setFirstname(userDTO.getFirstname());
+        user.setLastName(userDTO.getLastname());
         user.setId(userDTO.getId());
         user.setPhone(userDTO.getPhone());
         user.setRoles(userMapper.getRoles(userDTO.getRole()));
