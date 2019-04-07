@@ -3,12 +3,12 @@ package lt.fivethreads.mapper;
 import lt.fivethreads.entities.Event;
 import lt.fivethreads.entities.User;
 import lt.fivethreads.entities.request.EventDTO;
+import lt.fivethreads.entities.request.UserEventDTO;
 import lt.fivethreads.exception.user.UserNotFoundException;
 import lt.fivethreads.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class EventMapper {
 
     private HashMap<String, User> usersByEmail = new HashMap<>();
 
-    public Event getEvent(EventDTO eventDTO) {
+    public Event getEvent(UserEventDTO eventDTO) {
 
         loadUsers(true);
         Event event = new Event();
@@ -36,6 +36,16 @@ public class EventMapper {
         event.setUser(usersByEmail.get(eventDTO.getUserEmail()));
 
         return event;
+    }
+
+    public EventDTO getEventDTO(Event event) {
+        EventDTO eventDTO = new EventDTO();
+
+        eventDTO.setEndDate(event.getEndDate());
+        eventDTO.setStartDate(event.getStartDate());
+        eventDTO.setId(event.getId());
+
+        return eventDTO;
     }
 
     private void loadUsers(boolean lazyLoad) {
