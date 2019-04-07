@@ -1,6 +1,6 @@
 package lt.fivethreads.importing.csv;
 
-import lt.fivethreads.entities.request.EventDTO;
+import lt.fivethreads.entities.request.UserEventDTO;
 import lt.fivethreads.exception.importing.EventImportFailedException;
 import lt.fivethreads.importing.file.FileConverter;
 import lt.fivethreads.importing.EventImportService;
@@ -33,7 +33,7 @@ public class CsvEventImport implements EventImportService {
             throw new EventImportFailedException();
         }
 
-        List<EventDTO> events = csvFileProcessor.loadObjectList(EventDTO.class, file);
+        List<UserEventDTO> events = csvFileProcessor.loadObjectList(UserEventDTO.class, file);
         eventService.createEvents(events);
 
         file.delete();

@@ -1,6 +1,5 @@
 package lt.fivethreads.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,15 +18,14 @@ public class Event {
     @Column(name = "id")
     private Long id;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
 
     @JoinColumn(name = "userId")
     @ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-//    @JsonIgnore
     private User user;
 
 
