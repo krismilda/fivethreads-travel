@@ -26,7 +26,7 @@ public class FileServiceImplementation implements FileService {
     FileMapper fileMapper;
 
     public FileDTO upload(MultipartFile uploadedFile) {
-        File file = fileMapper.convertUploadFileToFile(uploadedFile);
+        File file = fileMapper.convertUploadFileToFileEntity(uploadedFile);
         fileRepository.save(file);
 
         try {

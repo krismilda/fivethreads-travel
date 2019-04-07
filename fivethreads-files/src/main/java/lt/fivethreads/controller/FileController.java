@@ -23,8 +23,8 @@ public class FileController {
     @Autowired
     FileService fileService;
 
-    /* TODO: set creator and user for who the file belongs?
-        Example: Organizer uploads tickers for a user */
+    /* TODO: set creator and importing for who the file belongs?
+        Example: Organizer uploads tickers for a importing */
     /* TODO: posting file with the same name fails. See what can be done */
     /* TODO: set file travel trip relation */
     @PostMapping("")

@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Component
 public class FileMapper {
-    public File convertUploadFileToFile(MultipartFile uploadedFile) {
+    public File convertUploadFileToFileEntity(MultipartFile uploadedFile) {
         File file = new File();
         file.setName(uploadedFile.getOriginalFilename());
 

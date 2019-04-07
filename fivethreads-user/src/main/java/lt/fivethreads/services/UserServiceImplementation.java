@@ -9,6 +9,7 @@ import lt.fivethreads.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,6 +61,17 @@ public class UserServiceImplementation implements UserService {
     @Override
     public boolean checkIfEmailExists(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public void createUsers(List<UserDTO> users) {
+        List<User> userEntities = new ArrayList<>();
+        for (UserDTO user: users) {
+            User userEntity = userMapper.getUser(user);
+            userEntities.add(userEntity);
+        }
+
+        userRepository.saveAll(userEntities);
     }
 
     public UserDTO createUser(RegistrationForm user) {

@@ -17,4 +17,6 @@ public interface UserService {
     UserDTO createUser(RegistrationForm user);
 
     boolean checkIfEmailExists(String email);
+
+    void createUsers(List<UserDTO> users);
 }
