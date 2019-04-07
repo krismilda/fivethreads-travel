@@ -4,7 +4,7 @@ import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.User;
 import lt.fivethreads.entities.request.ChangePasswordForm;
 import lt.fivethreads.entities.request.RegistrationForm;
-import lt.fivethreads.entities.request.UserDTO;
+import lt.fivethreads.entities.request.ExtendedUserDTO;
 import lt.fivethreads.exception.file.EmailAlreadyExists;
 import lt.fivethreads.exception.file.EmailNotExists;
 import lt.fivethreads.exception.file.UserIDNotExists;
@@ -38,7 +38,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public List<UserDTO> getAllUser() {
+    public List<ExtendedUserDTO> getAllUser() {
         List<User> users = userRepository.findAll();
         return users.stream()
                 .map(e -> userMapper.getUserDTO(e))
@@ -52,14 +52,14 @@ public class UserServiceImplementation implements UserService {
         return user;
     }
 
-    public UserDTO getUserDTOByID(Long id) throws UserIDNotExists {
+    public ExtendedUserDTO getUserDTOByID(Long id) throws UserIDNotExists {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserIDNotExists());
         return userMapper.getUserDTO(user);
     }
 
     @Override
-    public UserDTO updateUser(UserDTO userDTO) {
+    public ExtendedUserDTO updateUser(ExtendedUserDTO userDTO) {
         User user = userRepository.findById(userDTO.getId())
                 .orElseThrow(() -> new UserIDNotExists());
         if (this.checkIfEmailExists(userDTO.getEmail()) && !userDTO.getEmail().equals(user.getEmail())) {
@@ -92,9 +92,9 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public void createUsers(List<UserDTO> users) {
+    public void createUsers(List<ExtendedUserDTO> users) {
         List<User> userEntities = new ArrayList<>();
-        for (UserDTO user: users) {
+        for (ExtendedUserDTO user: users) {
             User userEntity = userMapper.getUser(user);
             userEntities.add(userEntity);
         }
@@ -103,7 +103,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public UserDTO createUser(RegistrationForm user) {
+    public ExtendedUserDTO createUser(RegistrationForm user) {
         if (this.checkIfEmailExists(user.getEmail())) {
             throw new EmailAlreadyExists();
         }

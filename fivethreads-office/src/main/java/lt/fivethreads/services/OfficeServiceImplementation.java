@@ -8,6 +8,7 @@ import lt.fivethreads.repositories.OfficeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,5 +57,16 @@ public class OfficeServiceImplementation implements OfficeService {
     public boolean checkIfOfficeExists(String name, String address) {
 
         return officeRepository.existsByAddressAndName(address, name);
+    }
+
+    @Override
+    public void createOffices(List<OfficeDTO> officeDTOS) {
+        List<Office> officeEntities = new ArrayList<>();
+        for (OfficeDTO officeDTO: officeDTOS) {
+            Office officeEntity = officeMapper.getOffice(officeDTO);
+            officeEntities.add(officeEntity);
+        }
+
+        officeRepository.saveAll(officeEntities);
     }
 }
