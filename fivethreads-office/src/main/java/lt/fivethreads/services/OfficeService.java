@@ -16,4 +16,6 @@ public interface OfficeService {
     OfficeDTO createOffice(OfficeForm user);
 
     boolean checkIfOfficeExists(String name, String address);
+
+    void createOffices(List<OfficeDTO> officeDTOS);
 }

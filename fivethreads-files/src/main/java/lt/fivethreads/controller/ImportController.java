@@ -1,6 +1,7 @@
 package lt.fivethreads.controller;
 
 import lt.fivethreads.importing.EventImportService;
+import lt.fivethreads.importing.OfficeImportService;
 import lt.fivethreads.importing.UserImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,10 +21,13 @@ public class ImportController {
     @Autowired
     EventImportService eventImportService;
 
+    @Autowired
+    OfficeImportService officeImportService;
+
     @PostMapping("/admin/user/import")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> importUsers(@RequestParam("file") MultipartFile file) {
-        userImportService.importUsers(file);
+        userImportService.importEntities(file);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -31,7 +35,15 @@ public class ImportController {
     @PostMapping("/admin/event/import")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> importEvents(@RequestParam("file") MultipartFile file) {
-        eventImportService.importEvents(file);
+        eventImportService.importEntities(file);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/admin/offices/import")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> importOffices(@RequestParam("file") MultipartFile file) {
+        officeImportService.importEntities(file);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

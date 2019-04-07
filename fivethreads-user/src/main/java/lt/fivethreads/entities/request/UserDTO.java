@@ -15,5 +15,4 @@ public class UserDTO {
     private String lastname;
     private String phone;
     private Set<String> role;
-    private Long officeId;
 }

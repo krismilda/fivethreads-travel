@@ -3,7 +3,7 @@ package lt.fivethreads.services;
 import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.User;
 import lt.fivethreads.entities.request.RegistrationForm;
-import lt.fivethreads.entities.request.UserDTO;
+import lt.fivethreads.entities.request.ExtendedUserDTO;
 import lt.fivethreads.mapper.UserMapper;
 import lt.fivethreads.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,20 +21,20 @@ public class UserServiceImplementation implements UserService {
     @Autowired
     UserMapper userMapper;
 
-    public List<UserDTO> getAllUser() {
+    public List<ExtendedUserDTO> getAllUser() {
         List<User> users = userRepository.findAll();
         return users.stream()
                 .map(e -> userMapper.getUserDTO(e))
                 .collect(Collectors.toList());
     }
 
-    public UserDTO getUserByID(Long id) {
+    public ExtendedUserDTO getUserByID(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Fail! -> Cause: Wrong userid"));
         return userMapper.getUserDTO(user);
     }
 
-    public UserDTO updateUser(UserDTO userDTO) {
+    public ExtendedUserDTO updateUser(ExtendedUserDTO userDTO) {
 
         User user = userRepository.findById(userDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Fail! -> Cause: Wrong userid"));
@@ -64,9 +64,9 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public void createUsers(List<UserDTO> users) {
+    public void createUsers(List<ExtendedUserDTO> users) {
         List<User> userEntities = new ArrayList<>();
-        for (UserDTO user: users) {
+        for (ExtendedUserDTO user: users) {
             User userEntity = userMapper.getUser(user);
             userEntities.add(userEntity);
         }
@@ -74,7 +74,7 @@ public class UserServiceImplementation implements UserService {
         userRepository.saveAll(userEntities);
     }
 
-    public UserDTO createUser(RegistrationForm user) {
+    public ExtendedUserDTO createUser(RegistrationForm user) {
         User user_to_create = userMapper.convertRegistrationUserToUser(user);
         return userMapper.getUserDTO(userRepository.save(user_to_create));
     }

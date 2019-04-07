@@ -1,22 +1,22 @@
 package lt.fivethreads.services;
 
 import lt.fivethreads.entities.request.RegistrationForm;
-import lt.fivethreads.entities.request.UserDTO;
+import lt.fivethreads.entities.request.ExtendedUserDTO;
 
 import java.util.List;
 
 public interface UserService {
-    List<UserDTO> getAllUser();
+    List<ExtendedUserDTO> getAllUser();
 
-    UserDTO getUserByID(Long id);
+    ExtendedUserDTO getUserByID(Long id);
 
-    UserDTO updateUser(UserDTO user);
+    ExtendedUserDTO updateUser(ExtendedUserDTO user);
 
     void deleteUser(Long id);
 
-    UserDTO createUser(RegistrationForm user);
+    ExtendedUserDTO createUser(RegistrationForm user);
 
     boolean checkIfEmailExists(String email);
 
-    void createUsers(List<UserDTO> users);
+    void createUsers(List<ExtendedUserDTO> users);
 }

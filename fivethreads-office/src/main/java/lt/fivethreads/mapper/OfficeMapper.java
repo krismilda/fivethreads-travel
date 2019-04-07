@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OfficeMapper {
-    public Office convertRegisteredOfficeToOffice(OfficeForm officeForm){
+    public Office convertRegisteredOfficeToOffice(OfficeForm officeForm) {
         Office office = new Office();
 
         office.setAddress(officeForm.getAddress());
@@ -15,13 +15,23 @@ public class OfficeMapper {
         return office;
     }
 
-    public OfficeDTO getOfficeDTO (Office office){
-        OfficeDTO officeDTO = new OfficeDTO ();
+    public OfficeDTO getOfficeDTO(Office office) {
+        OfficeDTO officeDTO = new OfficeDTO();
 
         officeDTO.setAddress(office.getAddress());
         officeDTO.setName(office.getName());
         officeDTO.setId(office.getId());
 
         return officeDTO;
+    }
+
+    public Office getOffice(OfficeDTO officeDTO) {
+        Office office = new Office();
+
+        office.setAddress(officeDTO.getAddress());
+        office.setName(officeDTO.getName());
+        office.setId(officeDTO.getId());
+
+        return office;
     }
 }

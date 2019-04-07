@@ -1,7 +1,7 @@
 package lt.fivethreads.controller;
 
 import lt.fivethreads.entities.request.RegistrationForm;
-import lt.fivethreads.entities.request.UserDTO;
+import lt.fivethreads.entities.request.ExtendedUserDTO;
 import lt.fivethreads.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,9 +40,9 @@ public class UserController {
 
     @PutMapping("/admin/user")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateUser(@Validated @RequestBody UserDTO user) {
+    public ResponseEntity<?> updateUser(@Validated @RequestBody ExtendedUserDTO user) {
 
-        UserDTO updatedUser = userService.updateUser(user);
+        ExtendedUserDTO updatedUser = userService.updateUser(user);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
@@ -58,7 +58,7 @@ public class UserController {
             return new ResponseEntity<>("Fail -> Email is already taken!",
                     HttpStatus.BAD_REQUEST);
         }
-        UserDTO createdUser = userService.createUser(registrationForm);
+        ExtendedUserDTO createdUser = userService.createUser(registrationForm);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 }
