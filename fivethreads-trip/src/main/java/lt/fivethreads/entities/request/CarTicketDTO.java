@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class CarTicketDAO {
+public class CarTicketDTO {
 
     @DateTimeFormat
     @NotNull(message = "Car Rent Start cannot be null.")

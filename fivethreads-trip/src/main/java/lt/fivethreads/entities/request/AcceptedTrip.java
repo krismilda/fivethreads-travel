@@ -2,7 +2,6 @@ package lt.fivethreads.entities.request;
 
 import lombok.Getter;
 import lombok.Setter;
-import lt.fivethreads.entities.TripMember;
 
 import javax.validation.constraints.NotNull;
 
@@ -14,5 +13,5 @@ public class AcceptedTrip {
     private long tripID;
 
     @NotNull
-    private TripMemberDAO tripMemberDAO;
+    private TripMemberDTO tripMemberDTO;
 }

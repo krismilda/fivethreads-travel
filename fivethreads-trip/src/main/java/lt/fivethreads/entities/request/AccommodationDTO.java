@@ -17,7 +17,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class AccommodationDAO {
+public class AccommodationDTO {
 
     @DateTimeFormat
     @NotNull(message = "TripAccommodation Start cannot be null.")

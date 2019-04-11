@@ -10,7 +10,9 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CreateTripForm {
+public class TripDTO {
+    @NotNull(message = "ID cannot be null.")
+    private Long id;
     @NotNull(message="Start date cannot be null.")
     @DateTimeFormat
     private Date startDate;

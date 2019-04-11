@@ -12,7 +12,13 @@ import java.util.*;
 @Getter
 @Setter
 @NamedQueries({
-        @NamedQuery(name = "Trip.findAll", query = "select t from Trip as t")
+        @NamedQuery(name = "Trip.findAll", query = "select t from Trip as t"),
+        @NamedQuery(name = "Trip.findByOrganizer", query = "select tr from Trip as tr " +
+                "JOIN FETCH tr.organizer as m " +
+                "WHERE m.email=:organizer_email"),
+        @NamedQuery(name = "Trip.findUserEmail", query = "select tr from Trip as tr " +
+                "JOIN FETCH tr.tripMembers as m JOIN FETCH m.user as u " +
+                "WHERE u.email=:user_email")
 })
 public class Trip {
     @Id
@@ -35,6 +41,11 @@ public class Trip {
     @NotNull(message="Arrival cannot be null.")
     @Column(name="ARRIVAL")
     private String arrival;
+
+    @NotNull(message="Organizer cannot be null.")
+    @OneToOne
+    @JoinColumn(name="organizer_ID")
+    private User organizer;
 
     @NotNull(message="Departure cannot be null.")
     @Column(name="DEPARTURE")

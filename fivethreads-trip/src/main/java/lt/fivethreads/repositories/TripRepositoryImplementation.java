@@ -53,4 +53,15 @@ public class TripRepositoryImplementation implements TripRepository
     public void updateTrip(Trip trip){
 
     }
+
+    public List<Trip> getAllByOrganizerEmail(String email){
+        return em.createNamedQuery("Trip.findByOrganizer", Trip.class)
+                .setParameter("organizer_email", email)
+                .getResultList();
+    }
+     public List<Trip> getAllByUserEmail(String email){
+         return em.createNamedQuery("Trip.findUserEmail", Trip.class)
+                 .setParameter("user_email", email)
+                 .getResultList();
+     }
 }

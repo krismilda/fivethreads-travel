@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 
 @Setter
 @Getter
-public class TripMemberDAO {
+public class TripMemberDTO {
     @NotNull(message="Email cannot be null.")
     @Email(message="Wrong email format.")
     private String email;
@@ -22,6 +22,7 @@ public class TripMemberDAO {
     @NotNull
     private Boolean isCarNeeded;
 
-    private CarTicketDAO carTicketDAO;
-    private AccommodationDAO accommodationDAO;
+    private CarTicketDTO carTicketDTO;
+
+    private AccommodationDTO accommodationDTO;
 }
