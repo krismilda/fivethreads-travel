@@ -23,7 +23,7 @@ public class Office {
     @Column(name = "address")
     private String address;
 
-    @OneToMany(mappedBy = "office", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "office")
     private Set<Apartment> apartments;
 
     public Office (){}

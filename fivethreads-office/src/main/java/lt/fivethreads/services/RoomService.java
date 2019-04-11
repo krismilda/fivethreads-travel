@@ -10,11 +10,11 @@ public interface RoomService {
 
     RoomDTO getRoomById(Long id);
 
-    void updateRoom (RoomDTO room);
+    RoomDTO updateRoom (RoomDTO room);
 
     void deleteRoom(Long id);
 
-    void createRoom (RoomForm room);
+    RoomDTO createRoom (RoomForm room);
 
     boolean checkIfRoomExists(Long number, Long apartmentId);
 }

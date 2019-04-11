@@ -27,4 +27,6 @@ public class RegistrationForm {
     private String phone;
     @NotNull(message="Role cannot be null")
     private Set<String> role;
+    @NotNull(message = "Office ID cannot be null.")
+    private Long officeId;
 }

@@ -1,11 +1,9 @@
 package lt.fivethreads.controller;
 
-import lt.fivethreads.entities.request.ApartmentDTO;
-import lt.fivethreads.entities.request.ApartmentForm;
+
 import lt.fivethreads.entities.request.RoomDTO;
 import lt.fivethreads.entities.request.RoomForm;
-import lt.fivethreads.services.ApartmentService;
-import lt.fivethreads.services.OfficeService;
+
 import lt.fivethreads.services.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,15 +23,15 @@ public class RoomController {
 
     @GetMapping("/rooms")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
-    public List<RoomDTO> getAllRooms() {
-        return roomService.getAllRooms();
+    public ResponseEntity<?> getAllRooms() {
+        return new ResponseEntity<>(roomService.getAllRooms(), HttpStatus.OK);
     }
 
     @GetMapping("/rooms/{roomId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
-    public RoomDTO getRoomById(@PathVariable("roomId") int roomId) {
+    public ResponseEntity<?> getRoomById(@PathVariable("roomId") int roomId) {
         long id = roomId;
-        return roomService.getRoomById(id);
+        return new ResponseEntity<>(roomService.getRoomById(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/admin/rooms/{roomId}")
@@ -47,14 +45,14 @@ public class RoomController {
     @PutMapping("/rooms/room")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
     public ResponseEntity<?> updateRoom(@Validated @RequestBody RoomDTO roomDTO) {
-        roomService.updateRoom(roomDTO);
-        return new ResponseEntity<>("Room updated successfully!", HttpStatus.OK);
+        RoomDTO updatedRoom = roomService.updateRoom(roomDTO);
+        return new ResponseEntity<>(updatedRoom, HttpStatus.OK);
     }
 
     @PostMapping("/admin/rooms/create")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerRoom(@Validated @RequestBody RoomForm roomForm) {
-        if (roomForm== null) {
+        if (roomForm == null) {
             return new ResponseEntity<>("Fail -> RoomForm is null!",
                     HttpStatus.BAD_REQUEST);
         }
@@ -65,7 +63,7 @@ public class RoomController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        roomService.createRoom(roomForm);
-        return new ResponseEntity<>("Room created successfully!", HttpStatus.OK);
+        RoomDTO createdRoom = roomService.createRoom(roomForm);
+        return new ResponseEntity<>(createdRoom, HttpStatus.OK);
     }
 }

@@ -1,5 +1,6 @@
 package lt.fivethreads.services;
 
+import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.User;
 import lt.fivethreads.entities.request.ChangePasswordForm;
 import lt.fivethreads.entities.request.RegistrationForm;
@@ -50,7 +51,6 @@ public class UserServiceImplementation implements UserService {
         return user;
     }
 
-    @Override
     public UserDTO getUserDTOByID(Long id) throws UserIDNotExists {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserIDNotExists());
@@ -58,7 +58,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public void updateUser(UserDTO userDTO) throws UserIDNotExists {
+    public UserDTO updateUser(UserDTO userDTO) {
         User user = userRepository.findById(userDTO.getId())
                 .orElseThrow(() -> new UserIDNotExists());
         if (this.checkIfEmailExists(userDTO.getEmail()) && !userDTO.getEmail().equals(user.getEmail())) {
@@ -66,10 +66,18 @@ public class UserServiceImplementation implements UserService {
         }
         user.setEmail(userDTO.getEmail());
         user.setFirstname(userDTO.getFirstname());
+        user.setLastName(userDTO.getLastname());
         user.setId(userDTO.getId());
         user.setPhone(userDTO.getPhone());
         user.setRoles(userMapper.getRoles(userDTO.getRole()));
-        userRepository.save(user);
+
+        if(!(userDTO.getOfficeId() == null)){
+            Office office = new Office();
+            office.setId(userDTO.getOfficeId());
+            user.setOffice(office);
+        }
+
+        return userMapper.getUserDTO(userRepository.save(user));
     }
 
     @Override
@@ -83,12 +91,12 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public void createUser(RegistrationForm user) throws EmailAlreadyExists {
+    public UserDTO createUser(RegistrationForm user) {
         if (this.checkIfEmailExists(user.getEmail())) {
             throw new EmailAlreadyExists();
         }
         User user_to_create = userMapper.convertRegistrationUserToUser(user);
-        userRepository.save(user_to_create);
+        return userMapper.getUserDTO(userRepository.save(user_to_create));
     }
 
     @Override

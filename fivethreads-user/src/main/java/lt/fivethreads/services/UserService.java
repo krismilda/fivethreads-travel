@@ -13,15 +13,13 @@ import java.util.List;
 public interface UserService {
     List<UserDTO> getAllUser();
 
-    User getUserByID (Long id) throws UserIDNotExists;
+    User getUserByID(Long id)throws UserIDNotExists;
 
-    UserDTO getUserDTOByID(Long id) throws UserIDNotExists;
+    UserDTO updateUser(UserDTO user)throws UserIDNotExists;
 
-    void updateUser(UserDTO user) throws UserIDNotExists;
+    void deleteUser(Long id)throws UserIDNotExists;
 
-    void deleteUser(Long id);
-
-    void createUser(RegistrationForm user) throws  EmailAlreadyExists;
+    UserDTO createUser(RegistrationForm user)throws  EmailAlreadyExists;
 
     boolean checkIfEmailExists(String email);
 

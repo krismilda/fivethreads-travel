@@ -1,10 +1,12 @@
 package lt.fivethreads.mapper;
 
+import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.Role;
 import lt.fivethreads.entities.RoleName;
 import lt.fivethreads.entities.User;
 import lt.fivethreads.entities.request.RegistrationForm;
 import lt.fivethreads.entities.request.UserDTO;
+import lt.fivethreads.repositories.OfficeRepository;
 import lt.fivethreads.repositories.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,8 +25,12 @@ public class UserMapper {
     @Autowired
     RoleRepository roleRepository;
 
+    @Autowired
+    OfficeRepository officeRepository;
+
     public User convertRegistrationUserToUser(RegistrationForm registrationForm) {
         User user = new User();
+
         user.setEmail(registrationForm.getEmail());
         user.setFirstname(registrationForm.getFirstname());
         user.setLastName(registrationForm.getLastname());
@@ -32,6 +38,33 @@ public class UserMapper {
         user.setPhone(registrationForm.getPhone());
         Set<String> strRoles = registrationForm.getRole();
         user.setRoles(getRoles(strRoles));
+
+
+        if(!(registrationForm.getOfficeId() == null)){
+            Office office;
+            office = officeRepository.getOne(registrationForm.getOfficeId());
+            user.setOffice(office);
+        }
+
+        return user;
+    }
+
+    public User getUser(UserDTO userDTO) {
+        User user = new User();
+
+        user.setLastName(userDTO.getLastname());
+        user.setFirstname(userDTO.getFirstname());
+        user.setEmail(userDTO.getEmail());
+        user.setPhone(userDTO.getPhone());
+
+        Set<String> strRoles = userDTO.getRole();
+        user.setRoles(getRoles(strRoles));
+
+        if(!(userDTO.getOfficeId() == null)){
+            Office office = officeRepository.getOne(userDTO.getOfficeId());
+            user.setOffice(office);
+        }
+
         return user;
     }
 
@@ -46,6 +79,12 @@ public class UserMapper {
                 .stream()
                 .map(e -> e.getName().toString())
                 .collect(Collectors.toSet()));
+
+        Office usersOffice = user.getOffice();
+
+        if(!(usersOffice == null)){
+            userDTO.setOfficeId(user.getOffice().getId());
+        }
         return userDTO;
     }
 

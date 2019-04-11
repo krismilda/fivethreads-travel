@@ -39,7 +39,7 @@ public class RoomServiceImplementation implements RoomService {
     }
 
     @Override
-    public void updateRoom (RoomDTO roomDTO) {
+    public RoomDTO updateRoom (RoomDTO roomDTO) {
 
         Room room = roomRepository.findById(roomDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Fail! -> Cause: Wrong roomId"));
@@ -48,7 +48,7 @@ public class RoomServiceImplementation implements RoomService {
         Apartment apartment= new Apartment();
         apartment.setId(roomDTO.getApartmentId());
         room.setApartment(apartment);
-        roomRepository.save(room);
+        return roomMapper.getRoomDTO(roomRepository.save(room));
     }
 
 
@@ -56,9 +56,9 @@ public class RoomServiceImplementation implements RoomService {
         roomRepository.deleteById(id); }
 
 
-    public void createRoom (RoomForm roomForm) {
+    public RoomDTO createRoom (RoomForm roomForm) {
         Room room_to_save = roomMapper.convertRegisteredRoomToRoom(roomForm);
-        roomRepository.save(room_to_save);
+        return roomMapper.getRoomDTO(roomRepository.save(room_to_save));
     }
 
     @Override
