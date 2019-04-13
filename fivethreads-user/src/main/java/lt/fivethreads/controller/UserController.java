@@ -1,5 +1,6 @@
 package lt.fivethreads.controller;
 
+import lt.fivethreads.entities.request.ChangePasswordForm;
 import lt.fivethreads.entities.request.RegistrationForm;
 import lt.fivethreads.entities.request.UserDTO;
 import lt.fivethreads.services.UserImportService;
@@ -11,6 +12,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -54,15 +58,6 @@ public class UserController {
     @PostMapping("/admin/user/create")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerUser(@Validated @RequestBody RegistrationForm registrationForm) {
-        if (registrationForm == null) {
-            return new ResponseEntity<>("Fail -> RegistrationForm is null!",
-                    HttpStatus.BAD_REQUEST);
-        }
-
-        if (userService.checkIfEmailExists(registrationForm.getEmail())) {
-            return new ResponseEntity<>("Fail -> Email is already taken!",
-                    HttpStatus.BAD_REQUEST);
-        }
         UserDTO createdUser = userService.createUser(registrationForm);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
@@ -73,5 +68,12 @@ public class UserController {
         userImportService.importUsers(file);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PutMapping("/admin/user/changePassword")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> changePassword(@RequestBody @Validated ChangePasswordForm changePasswordForm) {
+        userService.changePassword(changePasswordForm);
+        return new ResponseEntity<>("Password changed successfully!", HttpStatus.OK);
     }
 }

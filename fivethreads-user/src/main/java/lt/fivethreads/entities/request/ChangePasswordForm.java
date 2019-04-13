@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-public class LoginForm {
+public class ChangePasswordForm {
     @NotNull(message="Email cannot be null.")
     @Email(message="Wrong email format.")
     private String email;

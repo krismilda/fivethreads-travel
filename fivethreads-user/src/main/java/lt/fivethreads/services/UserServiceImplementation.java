@@ -2,11 +2,16 @@ package lt.fivethreads.services;
 
 import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.User;
+import lt.fivethreads.entities.request.ChangePasswordForm;
 import lt.fivethreads.entities.request.RegistrationForm;
 import lt.fivethreads.entities.request.UserDTO;
+import lt.fivethreads.exception.file.EmailAlreadyExists;
+import lt.fivethreads.exception.file.EmailNotExists;
+import lt.fivethreads.exception.file.UserIDNotExists;
 import lt.fivethreads.mapper.UserMapper;
 import lt.fivethreads.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,6 +25,18 @@ public class UserServiceImplementation implements UserService {
     @Autowired
     UserMapper userMapper;
 
+    @Autowired
+    PasswordEncoder encoder;
+
+    @Override
+    public User getUserByEmail(String email) throws UserIDNotExists
+    {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserIDNotExists());
+        return user;
+    }
+
+    @Override
     public List<UserDTO> getAllUser() {
         List<User> users = userRepository.findAll();
         return users.stream()
@@ -27,16 +44,26 @@ public class UserServiceImplementation implements UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserDTO getUserByID(Long id) {
+    @Override
+    public User getUserByID(Long id) throws UserIDNotExists {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Fail! -> Cause: Wrong userid"));
+                .orElseThrow(() -> new UserIDNotExists());
+        return user;
+    }
+
+    public UserDTO getUserDTOByID(Long id) throws UserIDNotExists {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserIDNotExists());
         return userMapper.getUserDTO(user);
     }
 
+    @Override
     public UserDTO updateUser(UserDTO userDTO) {
-
         User user = userRepository.findById(userDTO.getId())
-                .orElseThrow(() -> new RuntimeException("Fail! -> Cause: Wrong userid"));
+                .orElseThrow(() -> new UserIDNotExists());
+        if (this.checkIfEmailExists(userDTO.getEmail()) && !userDTO.getEmail().equals(user.getEmail())) {
+            throw new EmailAlreadyExists();
+        }
         user.setEmail(userDTO.getEmail());
         user.setFirstname(userDTO.getFirstname());
         user.setLastName(userDTO.getLastname());
@@ -53,6 +80,7 @@ public class UserServiceImplementation implements UserService {
         return userMapper.getUserDTO(userRepository.save(user));
     }
 
+    @Override
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
@@ -62,8 +90,20 @@ public class UserServiceImplementation implements UserService {
         return userRepository.existsByEmail(email);
     }
 
+    @Override
     public UserDTO createUser(RegistrationForm user) {
+        if (this.checkIfEmailExists(user.getEmail())) {
+            throw new EmailAlreadyExists();
+        }
         User user_to_create = userMapper.convertRegistrationUserToUser(user);
         return userMapper.getUserDTO(userRepository.save(user_to_create));
     }
+
+    @Override
+    public void changePassword(ChangePasswordForm changePasswordForm) throws EmailNotExists {
+        User user = userRepository.findByEmail(changePasswordForm.getEmail())
+                .orElseThrow(() -> new EmailNotExists());
+        user.setPassword(encoder.encode(changePasswordForm.getPassword()));
+    }
+
 }

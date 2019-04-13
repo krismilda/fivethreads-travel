@@ -8,10 +8,14 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-public class LoginForm {
+public class CancelledTrip {
+    @NotNull
+    private long tripID;
     @NotNull(message="Email cannot be null.")
+
     @Email(message="Wrong email format.")
     private String email;
-    @NotNull (message = "Password cannot be null.")
-    private String password;
+
+    @NotNull
+    private String reason;
 }
