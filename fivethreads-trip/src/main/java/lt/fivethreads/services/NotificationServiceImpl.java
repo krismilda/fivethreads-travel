@@ -130,4 +130,10 @@ public class NotificationServiceImpl implements NotificationService {
         }
         return notificationDTOList;
     }
+
+    public void deactivateNotification(Long id){
+        Notification notification = notificationRepository.getNotificationByID(id);
+        notification.setIsActive(false);
+        notificationRepository.updateNotification(notification);
+    }
 }

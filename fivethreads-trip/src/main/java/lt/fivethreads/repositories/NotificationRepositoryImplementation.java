@@ -31,4 +31,13 @@ public class NotificationRepositoryImplementation implements NotificationReposit
                 .setParameter("email", email)
                 .getResultList();
     }
+
+    public Notification getNotificationByID(Long id) {
+        return em.createNamedQuery("Notification.FindByID", Notification.class)
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+    public void updateNotification(Notification notification){
+        em.merge(notification);
+    }
 }

@@ -16,4 +16,5 @@ public interface NotificationService {
     void tripCancelled(CancelledTrip cancelledTrip);
     void createNotifications (Trip trip, String name);
     List<NotificationDTO> getNotificationsByEmail(String email);
+    void deactivateNotification(Long id);
 }
