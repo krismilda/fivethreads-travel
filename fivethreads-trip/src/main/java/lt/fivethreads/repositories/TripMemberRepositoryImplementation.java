@@ -66,9 +66,40 @@ public class TripMemberRepositoryImplementation implements TripMemberRepository 
                 em.remove(tripMemberOld.getTripAccommodation());
             }
         }
+        if (tripMember.getFlightTicket() != null) {
+            if (tripMemberOld.getFlightTicket()==null){
+                em.persist(tripMemberOld.getFlightTicket());
+            }
+            else{
+                tripMember.getFlightTicket().setId(tripMemberOld.getFlightTicket().getId());
+            }
+        }
+        else{
+            if(tripMemberOld.getFlightTicket()!=null){
+                em.remove(tripMemberOld.getFlightTicket());
+            }
+        }
         em.merge(tripMember);
     }
 
+    public void saveFlightTicket(TripMember tripMember){
+        if(tripMember.getFlightTicket()!=null){
+            em.persist(tripMember.getFlightTicket());
+            em.merge(tripMember);
+        }
+    }
+    public void saveCarTicket(TripMember tripMember){
+        if(tripMember.getCarTicket()!=null){
+            em.persist(tripMember.getCarTicket());
+            em.merge(tripMember);
+        }
+    }
+    public void saveAccommodationTicket(TripMember tripMember){
+        if(tripMember.getTripAccommodation()!=null){
+            em.persist(tripMember.getTripAccommodation());
+            em.merge(tripMember);
+        }
+    }
     public TripMember findById(Long id) {
         return em.find(TripMember.class, id);
     }
@@ -85,5 +116,21 @@ public class TripMemberRepositoryImplementation implements TripMemberRepository 
     public void addCancellation(TripCancellation tripCancellation){
         em.persist(tripCancellation);
         em.merge(tripCancellation.getTripMember());
+    }
+
+    public TripMember findByFlightFileID(Long fileID){
+        return em.createNamedQuery("TripMember.findByFlightFileID", TripMember.class)
+                .setParameter("fileID", fileID)
+                .getSingleResult();
+    }
+    public TripMember findByCarFileID(Long fileID){
+        return em.createNamedQuery("TripMember.findByCarFileID", TripMember.class)
+                .setParameter("fileID", fileID)
+                .getSingleResult();
+    }
+    public TripMember findByAccommodationFileID(Long fileID){
+        return em.createNamedQuery("TripMember.findByAccommodationFileID", TripMember.class)
+                .setParameter("fileID", fileID)
+                .getSingleResult();
     }
 }

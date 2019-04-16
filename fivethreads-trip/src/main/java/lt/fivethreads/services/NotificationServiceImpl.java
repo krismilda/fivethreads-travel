@@ -76,11 +76,11 @@ public class NotificationServiceImpl implements NotificationService {
             ) {
                 if (tripMember.getUser().getId() != tripOtherMember.getUser().getId()) {
                     TripMemberHistory tripMemberHistory = new TripMemberHistory();
-                    tripMemberHistory.setEmail(tripMember.getUser().getEmail());
-                    tripMemberHistory.setId(tripMember.getUser().getId());
-                    tripMemberHistory.setFirstname(tripMember.getUser().getFirstname());
-                    tripMemberHistory.setLastName(tripMember.getUser().getLastName());
-                    tripMemberHistory.setPhone(tripMember.getUser().getPhone());
+                    tripMemberHistory.setEmail(tripOtherMember.getUser().getEmail());
+                    tripMemberHistory.setId(tripOtherMember.getUser().getId());
+                    tripMemberHistory.setFirstname(tripOtherMember.getUser().getFirstname());
+                    tripMemberHistory.setLastName(tripOtherMember.getUser().getLastName());
+                    tripMemberHistory.setPhone(tripOtherMember.getUser().getPhone());
                     tripMemberHistory.setTripHistory(tripHistory);
                     tripMemberHistoryList.add(tripMemberHistory);
                 }
@@ -129,5 +129,17 @@ public class NotificationServiceImpl implements NotificationService {
             notificationDTOList.add(notificationMapper.convertNotificationToNotificationDTO(notification));
         }
         return notificationDTOList;
+    }
+
+    public void deactivateNotification(Long id) {
+        Notification notification = notificationRepository.getNotificationByID(id);
+        notification.setIsActive(false);
+        notificationRepository.updateNotification(notification);
+    }
+
+    public NotificationDTO getNotificationByID(Long notification_id) {
+        Notification notification = notificationRepository.getNotificationByID(notification_id);
+        NotificationDTO notificationDTO = notificationMapper.convertNotificationToNotificationDTO(notification);
+        return notificationDTO;
     }
 }

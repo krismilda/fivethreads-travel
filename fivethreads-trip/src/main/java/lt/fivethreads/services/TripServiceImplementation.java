@@ -1,15 +1,19 @@
 package lt.fivethreads.services;
 
-import lt.fivethreads.entities.Trip;
-import lt.fivethreads.entities.TripStatus;
+import lt.fivethreads.entities.*;
 import lt.fivethreads.entities.request.CreateTripForm;
+import lt.fivethreads.entities.request.FileDTO;
 import lt.fivethreads.entities.request.TripDTO;
+import lt.fivethreads.exception.TripIsNotEditable;
 import lt.fivethreads.exception.WrongTripData;
 import lt.fivethreads.mapper.TripMapper;
+import lt.fivethreads.repositories.FileRepository;
+import lt.fivethreads.repositories.TripMemberRepository;
 import lt.fivethreads.repositories.TripRepository;
 import lt.fivethreads.validation.TripValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +26,9 @@ public class TripServiceImplementation implements TripService
 
     @Autowired
     TripRepository tripRepository;
+
+    @Autowired
+    TripMemberRepository tripMemberRepository;
 
     @Autowired
     TripValidation tripValidation;
@@ -37,10 +44,6 @@ public class TripServiceImplementation implements TripService
         trip.setTripStatus(TripStatus.PLANNED);
         tripRepository.createTrip(trip);
         notificationService.createNotifications(trip, "New trip is waiting for your approval.");
-    }
-
-    public void addTripMember(){
-
     }
 
     public List<TripDTO> getAllTrips(){

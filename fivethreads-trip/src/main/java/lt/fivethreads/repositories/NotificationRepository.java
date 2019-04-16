@@ -8,4 +8,6 @@ import java.util.List;
 public interface NotificationRepository {
     void saveNotification(Notification notification);
     List<Notification> getAllNotificationByEmail(String email);
+    Notification getNotificationByID(Long id);
+    void updateNotification(Notification notification);
 }

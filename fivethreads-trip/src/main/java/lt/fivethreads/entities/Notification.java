@@ -14,7 +14,10 @@ import java.util.Date;
 @NamedQueries({
         @NamedQuery(name = "Notification.FindAllByEmail", query = "select tr from Notification as tr " +
                 "JOIN FETCH tr.user as m " +
-                "WHERE m.email=:email")
+                "WHERE m.email=:email"),
+        @NamedQuery(name = "Notification.FindByID", query = "select tr from Notification as tr " +
+                "WHERE tr.id=:id")
+
 })
 public class Notification {
     @Id
