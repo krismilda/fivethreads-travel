@@ -17,4 +17,5 @@ public interface NotificationService {
     void createNotifications (Trip trip, String name);
     List<NotificationDTO> getNotificationsByEmail(String email);
     void deactivateNotification(Long id);
+    NotificationDTO getNotificationByID(Long notification_id);
 }
