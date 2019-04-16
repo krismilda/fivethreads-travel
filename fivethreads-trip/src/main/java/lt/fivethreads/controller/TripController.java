@@ -1,11 +1,9 @@
 package lt.fivethreads.controller;
 
-import lt.fivethreads.entities.RoleName;
 import lt.fivethreads.entities.request.*;
-import lt.fivethreads.services.FileService;
 import lt.fivethreads.services.NotificationService;
+import lt.fivethreads.services.TripFilesService;
 import lt.fivethreads.services.TripService;
-import lt.fivethreads.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +24,9 @@ public class TripController {
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    TripFilesService tripFilesService;
 
     @PostMapping("/trip/create")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
@@ -51,22 +52,59 @@ public class TripController {
     @GetMapping("/allTrips")
     @PreAuthorize("hasRole('ORGANIZER') or hasRole('ADMIN')")
     public List<TripDTO> getAllTrips() {
-            return tripService.getAllTrips();
+        return tripService.getAllTrips();
     }
 
-    @GetMapping("/organizer/myTrips/")
+    @GetMapping("/myTrips/")
     @PreAuthorize("hasRole('ORGANIZER') or hasRole('ADMIN') or hasRole('USER') ")
     public List<TripDTO> getAllOrganizerTrips() {
-        Collection authorities= SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-        if(authorities.stream().anyMatch(r -> r.toString().equals("ROLE_ADMIN"))){
+        Collection authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        if (authorities.stream().anyMatch(r -> r.toString().equals("ROLE_ADMIN"))) {
             tripService.getAllTrips();
         }
-        if(authorities.stream().anyMatch(r -> r.toString().equals("ROLE_ORGANIZER"))){
+        if (authorities.stream().anyMatch(r -> r.toString().equals("ROLE_ORGANIZER"))) {
             tripService.getAllTripsByOrganizerEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         }
-        if(authorities.stream().anyMatch(r -> r.toString().equals("ROLE_USER"))){
+        if (authorities.stream().anyMatch(r -> r.toString().equals("ROLE_USER"))) {
             tripService.getAllTripsByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         }
         return null;
+    }
+
+    @PostMapping("/tripMember/flight/{trip_id}/{email}")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public FileDTO uploadFlightTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file) throws Exception {
+        return tripFilesService.addFlightTicket(tripID, email, file);
+    }
+    @PostMapping("/tripMember/car/{trip_id}/{email}")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public FileDTO uploadCarTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file) throws Exception {
+        return tripFilesService.addCarTicket(tripID, email, file);
+    }
+    @PostMapping("/tripMember/accommodation/{trip_id}/{email}")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public FileDTO uploadAccommodationTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file) throws Exception {
+        return tripFilesService.addAccommodationTicket(tripID, email, file);
+    }
+
+    @DeleteMapping("/tripMember/flight/{file_id}")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public ResponseEntity<?> deleteFlightTicket(@PathVariable("file_id") Long fileID) throws Exception {
+        tripFilesService.deleteFlightTicket(fileID);
+        return new ResponseEntity<>("File deleted successfully!", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/tripMember/car/{file_id}")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public ResponseEntity<?> deleteCarTicket(@PathVariable("file_id") Long fileID) throws Exception {
+        tripFilesService.deleteCarTicket(fileID);
+        return new ResponseEntity<>("File deleted successfully!", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/tripMember/accommodation/{file_id}")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public ResponseEntity<?> deleteAccommodationTicket(@PathVariable("file_id") Long fileID) throws Exception {
+        tripFilesService.deleteAccommodationTicket(fileID);
+        return new ResponseEntity<>("File deleted successfully!", HttpStatus.OK);
     }
 }

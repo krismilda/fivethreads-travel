@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,11 +13,15 @@ import java.util.List;
 @Table(name = "TripAccommodation")
 @Getter
 @Setter
-public class TripAccommodation {
+public class TripAccommodation implements Serializable
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
+    @Column(name="unique_id")
+    private String uniqueID;
 
     private Date accommodationStart;
 
@@ -33,12 +39,15 @@ public class TripAccommodation {
 
     private double price;
 
-    @OneToOne
-    @JoinColumn(name="TRIPMEMBER_ID")
+    @OneToOne(mappedBy = "tripAccommodation")
     private TripMember tripMember;
 
     @OneToMany
-    @JoinColumn(name="tickect_id")
-    private List<File> file;
+    @JoinColumns({
+            @JoinColumn(
+                    name = "tickect_id",
+                    referencedColumnName = "unique_id")
+    })
+    private List<File> file =  new ArrayList<>();
 
 }
