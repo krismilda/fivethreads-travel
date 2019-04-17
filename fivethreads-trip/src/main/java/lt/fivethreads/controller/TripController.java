@@ -107,4 +107,11 @@ public class TripController {
         tripFilesService.deleteAccommodationTicket(fileID);
         return new ResponseEntity<>("File deleted successfully!", HttpStatus.OK);
     }
+
+    @PostMapping("/tripMember/{tripID}")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public ResponseEntity<?> addNewTripMember(@Validated @RequestBody TripMemberDTO tripMemberDTO,@PathVariable("tripID") Long tripID){
+        tripService.addNewTripMember(tripMemberDTO, tripID);
+        return new ResponseEntity<>("Trip member added successfully!", HttpStatus.OK);
+    }
 }

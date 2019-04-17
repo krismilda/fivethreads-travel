@@ -45,53 +45,57 @@ public class NotificationServiceImpl implements NotificationService {
     public void createNotifications(Trip trip, String name) {
         for (TripMember tripMember : trip.getTripMembers()
         ) {
-            Notification notification = new Notification();
-            notification.setName(name);
-            notification.setIsActive(Boolean.TRUE);
-            notification.setCreated_date(new Date());
-            TripHistory tripHistory = new TripHistory();
-            tripHistory.setStartDate(trip.getStartDate());
-            tripHistory.setFinishDate(trip.getFinishDate());
-            tripHistory.setArrival(trip.getArrival());
-            tripHistory.setDeparture(trip.getDeparture());
-            tripHistory.setOrganizer(trip.getOrganizer());
-            tripHistory.setIsFlightTickedNeeded(tripMember.getIsFlightTickedNeeded());
-            tripHistory.setIsCarNeeded(tripMember.getIsCarNeeded());
-            tripHistory.setIsAccommodationNeeded(tripMember.getIsAccommodationNeeded());
-            if (tripHistory.getIsAccommodationNeeded()) {
-                tripHistory.setAccommodationPrice(tripMember.getTripAccommodation().getPrice());
-                tripHistory.setAccommodationStart(tripMember.getTripAccommodation().getAccommodationStart());
-                tripHistory.setAccommodationFinish(tripMember.getTripAccommodation().getAccommodationFinish());
-            }
-            if (tripHistory.getIsCarNeeded()) {
-                tripHistory.setCarPrice(tripMember.getCarTicket().getPrice());
-                tripHistory.setCarRentStart(tripMember.getCarTicket().getCarRentStart());
-                tripHistory.setCarRentFinish(tripMember.getCarTicket().getCarRentFinish());
-            }
-            if (tripMember.getFlightTicket() != null) {
-                tripHistory.setFlightPrice(tripMember.getFlightTicket().getPrice());
-            }
-            List<TripMemberHistory> tripMemberHistoryList = new ArrayList<>();
-            for (TripMember tripOtherMember : trip.getTripMembers()
-            ) {
-                if (tripMember.getUser().getId() != tripOtherMember.getUser().getId()) {
-                    TripMemberHistory tripMemberHistory = new TripMemberHistory();
-                    tripMemberHistory.setEmail(tripOtherMember.getUser().getEmail());
-                    tripMemberHistory.setId(tripOtherMember.getUser().getId());
-                    tripMemberHistory.setFirstname(tripOtherMember.getUser().getFirstname());
-                    tripMemberHistory.setLastName(tripOtherMember.getUser().getLastName());
-                    tripMemberHistory.setPhone(tripOtherMember.getUser().getPhone());
-                    tripMemberHistory.setTripHistory(tripHistory);
-                    tripMemberHistoryList.add(tripMemberHistory);
-                }
-            }
-            notification.setUser(tripMember.getUser());
-            notification.setTrip(trip);
-            notification.setTripHistory(tripHistory);
-            notification.getTripHistory().setTripMembers(tripMemberHistoryList);
-            notificationRepository.saveNotification(notification);
+            this.createNotificationForTripMember(tripMember, name);
         }
 
+    }
+
+    public void createNotificationForTripMember(TripMember tripMember, String name){
+        Notification notification = new Notification();
+        notification.setName(name);
+        notification.setIsActive(Boolean.TRUE);
+        notification.setCreated_date(new Date());
+        TripHistory tripHistory = new TripHistory();
+        tripHistory.setStartDate(tripMember.getTrip().getStartDate());
+        tripHistory.setFinishDate(tripMember.getTrip().getFinishDate());
+        tripHistory.setArrival(tripMember.getTrip().getArrival());
+        tripHistory.setDeparture(tripMember.getTrip().getDeparture());
+        tripHistory.setOrganizer(tripMember.getTrip().getOrganizer());
+        tripHistory.setIsFlightTickedNeeded(tripMember.getIsFlightTickedNeeded());
+        tripHistory.setIsCarNeeded(tripMember.getIsCarNeeded());
+        tripHistory.setIsAccommodationNeeded(tripMember.getIsAccommodationNeeded());
+        if (tripHistory.getIsAccommodationNeeded()) {
+            tripHistory.setAccommodationPrice(tripMember.getTripAccommodation().getPrice());
+            tripHistory.setAccommodationStart(tripMember.getTripAccommodation().getAccommodationStart());
+            tripHistory.setAccommodationFinish(tripMember.getTripAccommodation().getAccommodationFinish());
+        }
+        if (tripHistory.getIsCarNeeded()) {
+            tripHistory.setCarPrice(tripMember.getCarTicket().getPrice());
+            tripHistory.setCarRentStart(tripMember.getCarTicket().getCarRentStart());
+            tripHistory.setCarRentFinish(tripMember.getCarTicket().getCarRentFinish());
+        }
+        if (tripMember.getFlightTicket() != null) {
+            tripHistory.setFlightPrice(tripMember.getFlightTicket().getPrice());
+        }
+        List<TripMemberHistory> tripMemberHistoryList = new ArrayList<>();
+        for (TripMember tripOtherMember : tripMember.getTrip().getTripMembers()
+        ) {
+            if (tripMember.getUser().getId() != tripOtherMember.getUser().getId()) {
+                TripMemberHistory tripMemberHistory = new TripMemberHistory();
+                tripMemberHistory.setEmail(tripOtherMember.getUser().getEmail());
+                tripMemberHistory.setId(tripOtherMember.getUser().getId());
+                tripMemberHistory.setFirstname(tripOtherMember.getUser().getFirstname());
+                tripMemberHistory.setLastName(tripOtherMember.getUser().getLastName());
+                tripMemberHistory.setPhone(tripOtherMember.getUser().getPhone());
+                tripMemberHistory.setTripHistory(tripHistory);
+                tripMemberHistoryList.add(tripMemberHistory);
+            }
+        }
+        notification.setUser(tripMember.getUser());
+        notification.setTrip(tripMember.getTrip());
+        notification.setTripHistory(tripHistory);
+        notification.getTripHistory().setTripMembers(tripMemberHistoryList);
+        notificationRepository.saveNotification(notification);
     }
 
     public void tripAccepted(AcceptedTrip acceptedTrip) {

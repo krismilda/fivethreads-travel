@@ -29,77 +29,81 @@ public class TripMemberRepositoryImplementation implements TripMemberRepository 
     UserRepository userRepository;
 
     public void saveTripMember(TripMember tripMember) {
+        if(tripMember.getCarTicket() != null){
+            carTicketRepository.saveCarTicket(tripMember.getCarTicket());
+        }
+        if(tripMember.getTripAccommodation() != null){
+            tripAccommodationRepository.saveTripAccommodation(tripMember.getTripAccommodation());
+        }
         em.persist(tripMember);
     }
 
-    public Boolean checkIfExistByID(Long id){
-        if(em.find(TripMember.class, id)==null){
+    public Boolean checkIfExistByID(Long id) {
+        if (em.find(TripMember.class, id) == null) {
             return false;
         }
         return true;
     }
+
     public void updateTripMember(TripMember tripMember) {
-        TripMember tripMemberOld =em.find(TripMember.class, tripMember.getId());
+        TripMember tripMemberOld = em.find(TripMember.class, tripMember.getId());
         if (tripMember.getCarTicket() != null) {
-            if (tripMemberOld.getCarTicket()==null){
+            if (tripMemberOld.getCarTicket() == null) {
                 carTicketRepository.saveCarTicket(tripMember.getCarTicket());
-            }
-            else{
+            } else {
                 tripMember.getCarTicket().setId(tripMemberOld.getCarTicket().getId());
             }
-        }
-        else{
-            if(tripMemberOld.getCarTicket()!=null){
+        } else {
+            if (tripMemberOld.getCarTicket() != null) {
                 em.remove(tripMemberOld.getCarTicket());
             }
         }
         if (tripMember.getTripAccommodation() != null) {
-            if (tripMemberOld.getTripAccommodation()==null){
+            if (tripMemberOld.getTripAccommodation() == null) {
                 tripAccommodationRepository.saveTripAccommodation(tripMember.getTripAccommodation());
-            }
-            else{
+            } else {
                 tripMember.getTripAccommodation().setId(tripMemberOld.getTripAccommodation().getId());
             }
-        }
-        else{
-            if(tripMemberOld.getTripAccommodation()!=null){
+        } else {
+            if (tripMemberOld.getTripAccommodation() != null) {
                 em.remove(tripMemberOld.getTripAccommodation());
             }
         }
         if (tripMember.getFlightTicket() != null) {
-            if (tripMemberOld.getFlightTicket()==null){
+            if (tripMemberOld.getFlightTicket() == null) {
                 em.persist(tripMemberOld.getFlightTicket());
-            }
-            else{
+            } else {
                 tripMember.getFlightTicket().setId(tripMemberOld.getFlightTicket().getId());
             }
-        }
-        else{
-            if(tripMemberOld.getFlightTicket()!=null){
+        } else {
+            if (tripMemberOld.getFlightTicket() != null) {
                 em.remove(tripMemberOld.getFlightTicket());
             }
         }
         em.merge(tripMember);
     }
 
-    public void saveFlightTicket(TripMember tripMember){
-        if(tripMember.getFlightTicket()!=null){
+    public void saveFlightTicket(TripMember tripMember) {
+        if (tripMember.getFlightTicket() != null) {
             em.persist(tripMember.getFlightTicket());
             em.merge(tripMember);
         }
     }
-    public void saveCarTicket(TripMember tripMember){
-        if(tripMember.getCarTicket()!=null){
+
+    public void saveCarTicket(TripMember tripMember) {
+        if (tripMember.getCarTicket() != null) {
             em.persist(tripMember.getCarTicket());
             em.merge(tripMember);
         }
     }
-    public void saveAccommodationTicket(TripMember tripMember){
-        if(tripMember.getTripAccommodation()!=null){
+
+    public void saveAccommodationTicket(TripMember tripMember) {
+        if (tripMember.getTripAccommodation() != null) {
             em.persist(tripMember.getTripAccommodation());
             em.merge(tripMember);
         }
     }
+
     public TripMember findById(Long id) {
         return em.find(TripMember.class, id);
     }
@@ -118,17 +122,19 @@ public class TripMemberRepositoryImplementation implements TripMemberRepository 
         em.merge(tripCancellation.getTripMember());
     }
 
-    public TripMember findByFlightFileID(Long fileID){
+    public TripMember findByFlightFileID(Long fileID) {
         return em.createNamedQuery("TripMember.findByFlightFileID", TripMember.class)
                 .setParameter("fileID", fileID)
                 .getSingleResult();
     }
-    public TripMember findByCarFileID(Long fileID){
+
+    public TripMember findByCarFileID(Long fileID) {
         return em.createNamedQuery("TripMember.findByCarFileID", TripMember.class)
                 .setParameter("fileID", fileID)
                 .getSingleResult();
     }
-    public TripMember findByAccommodationFileID(Long fileID){
+
+    public TripMember findByAccommodationFileID(Long fileID) {
         return em.createNamedQuery("TripMember.findByAccommodationFileID", TripMember.class)
                 .setParameter("fileID", fileID)
                 .getSingleResult();
