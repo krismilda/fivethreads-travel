@@ -97,6 +97,7 @@ public class NotificationServiceImpl implements NotificationService {
         notification.getTripHistory().setTripMembers(tripMemberHistoryList);
         notificationRepository.saveNotification(notification);
     }
+
     public void tripAccepted(AcceptedTrip acceptedTrip) {
         TripMember tripMember = tripMemberMapper.convertTripMemberDAOtoTripMember(acceptedTrip.getTripMemberDTO());
         Trip trip = tripRepository.findByID(acceptedTrip.getTripID());

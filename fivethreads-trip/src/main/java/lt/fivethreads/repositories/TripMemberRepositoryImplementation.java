@@ -117,7 +117,7 @@ public class TripMemberRepositoryImplementation implements TripMemberRepository 
                 .getSingleResult();
     }
 
-    public void addCancellation(TripCancellation tripCancellation) {
+    public void addCancellation(TripCancellation tripCancellation){
         em.persist(tripCancellation);
         em.merge(tripCancellation.getTripMember());
     }
