@@ -5,7 +5,9 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 @Getter
@@ -19,4 +21,6 @@ public class CarTicketDTO {
     @DateTimeFormat
     @NotNull(message = "Car Rent Finish cannot be null.")
     private Date carRentFinish;
+
+    private List<Long> fileID = new ArrayList<>();
 }

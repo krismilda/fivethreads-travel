@@ -1,11 +1,9 @@
 package lt.fivethreads.mapper;
 
-import lt.fivethreads.entities.CarTicket;
-import lt.fivethreads.entities.TripAccommodation;
-import lt.fivethreads.entities.TripMember;
-import lt.fivethreads.entities.User;
+import lt.fivethreads.entities.*;
 import lt.fivethreads.entities.request.AccommodationDTO;
 import lt.fivethreads.entities.request.CarTicketDTO;
+import lt.fivethreads.entities.request.FlightTicketDTO;
 import lt.fivethreads.entities.request.TripMemberDTO;
 import lt.fivethreads.repositories.TripMemberRepository;
 import lt.fivethreads.services.UserService;
@@ -31,6 +29,9 @@ public class TripMemberMapper {
         }
         if (tripMember.getTripAccommodation() != null && tripMember.getIsAccommodationNeeded() == true) {
             tripMemberDTO.setAccommodationDTO(convertAccomodationToAccomodationDAO(tripMember.getTripAccommodation()));
+        }
+        if (tripMember.getFlightTicket() != null && tripMember.getIsFlightTickedNeeded() == true) {
+            tripMemberDTO.setFlightTicketDTO(convertFlightTicketToFlightTicketDAO(tripMember.getFlightTicket()));
         }
         return tripMemberDTO;
     }
@@ -63,7 +64,7 @@ public class TripMemberMapper {
         return carTicket;
     }
 
-    public TripAccommodation convertAccommodationDAOToTripAccommodation(AccommodationDTO accommodationDTO){
+    public TripAccommodation convertAccommodationDAOToTripAccommodation(AccommodationDTO accommodationDTO) {
         TripAccommodation tripAccommodation = new TripAccommodation();
         tripAccommodation.setAccommodationStart(accommodationDTO.getAccommodationStart());
         tripAccommodation.setAccommodationFinish(accommodationDTO.getAccommodationFinish());
@@ -74,6 +75,13 @@ public class TripMemberMapper {
         CarTicketDTO carTicketDTO = new CarTicketDTO();
         carTicketDTO.setCarRentFinish(carTicket.getCarRentFinish());
         carTicketDTO.setCarRentStart(carTicket.getCarRentStart());
+        if(carTicket.getFile()!=null){
+            for (File file : carTicket.getFile()
+            ) {
+                carTicketDTO.getFileID().add(file.getId());
+            }
+        }
+
         return carTicketDTO;
     }
 
@@ -81,6 +89,23 @@ public class TripMemberMapper {
         AccommodationDTO accommodationDTO = new AccommodationDTO();
         accommodationDTO.setAccommodationStart(tripAccommodation.getAccommodationStart());
         accommodationDTO.setAccommodationFinish(tripAccommodation.getAccommodationFinish());
+        if(tripAccommodation.getFile()!=null){
+            for (File file : tripAccommodation.getFile()
+            ) {
+                accommodationDTO.getFileID().add(file.getId());
+            }
+        }
         return accommodationDTO;
+    }
+
+    public FlightTicketDTO convertFlightTicketToFlightTicketDAO(FlightTicket flightTicket) {
+        FlightTicketDTO flightTicketDTO = new FlightTicketDTO();
+        if(flightTicket.getFile()!=null){
+            for (File file : flightTicket.getFile()
+            ) {
+                flightTicketDTO.getFileID().add(file.getId());
+            }
+        }
+        return flightTicketDTO;
     }
 }

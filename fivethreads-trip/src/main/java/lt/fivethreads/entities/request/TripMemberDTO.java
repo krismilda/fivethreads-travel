@@ -22,6 +22,8 @@ public class TripMemberDTO {
     @NotNull
     private Boolean isCarNeeded;
 
+    private FlightTicketDTO flightTicketDTO;
+
     private CarTicketDTO carTicketDTO;
 
     private AccommodationDTO accommodationDTO;

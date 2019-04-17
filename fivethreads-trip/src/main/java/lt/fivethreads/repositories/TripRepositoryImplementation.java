@@ -39,13 +39,7 @@ public class TripRepositoryImplementation implements TripRepository
     public void createTrip(Trip trip){
         for (TripMember tripMember:trip.getTripMembers()
              ) {
-            if(tripMember.getCarTicket() != null){
-                carTicketRepository.saveCarTicket(tripMember.getCarTicket());
-            }
-            if(tripMember.getTripAccommodation() != null){
-                tripAccommodationRepository.saveTripAccommodation(tripMember.getTripAccommodation());
-            }
-            tripMemberRepository.saveTripMember(tripMember);
+                tripMemberRepository.saveTripMember(tripMember);
         }
         em.persist(trip);
     }
