@@ -55,9 +55,9 @@ public class OccupancyMapper{
         occupancyDTO.setId(occupancy.getId());
         occupancyDTO.setStartDate(occupancy.getStartDate());
         occupancyDTO.setFinishDate(occupancy.getFinishDate());
-        occupancyDTO.setRoom(occupancy.getRoom());
-        occupancyDTO.setUser(occupancy.getUser());
-        occupancyDTO.setTrip(occupancy.getTrip());
+        occupancyDTO.setRoomId(occupancy.getRoom().getId());
+        occupancyDTO.setUserId(occupancy.getUser().getId());
+        occupancyDTO.setTripId(occupancy.getTrip().getId());
 
         return occupancyDTO;
     }

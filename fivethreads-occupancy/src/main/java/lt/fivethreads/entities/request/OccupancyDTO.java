@@ -16,11 +16,11 @@ public class OccupancyDTO {
     @NotNull(message = "ID cannot be null")
     private Long id;
     @NotNull(message = "Room cannot be null")
-    private Room room;
+    private Long roomId;
     @NotNull(message = "User cannot be null")
-    private User user;
-    @NotNull(message = "User cannot be null")
-    private Trip trip;
+    private Long userId;
+    @NotNull(message = "Trip cannot be null")
+    private Long tripId;
     @NotNull(message="Start date cannot be null.")
     @DateTimeFormat
     private Date startDate;

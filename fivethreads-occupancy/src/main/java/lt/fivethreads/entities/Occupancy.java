@@ -1,7 +1,5 @@
 package lt.fivethreads.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,7 +31,6 @@ public class Occupancy {
 
     @NotNull(message = "Room cannot be null.")
     @OneToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
     @JoinColumn(name = "room_ID")
     private Room room;
 
