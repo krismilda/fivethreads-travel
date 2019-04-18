@@ -35,8 +35,10 @@ public class OccupancyMapper{
 
     public Occupancy convertCreateOccupancyFormToOccupancy (OccupancyForm occupancyForm){
         Occupancy occupancy = new Occupancy();
-        Room room = roomRepository.getOne(occupancyForm.getRoomId());
-        User user = userRepository.getOne(occupancyForm.getUserId());
+        Room room = roomRepository.findById(occupancyForm.getRoomId())
+                .orElseThrow(() -> new RuntimeException("Fail! -> Cause: Room not find."));;
+        User user = userRepository.findById(occupancyForm.getUserId())
+                .orElseThrow(() -> new RuntimeException("Fail! -> Cause: User not find."));
         Trip trip = tripRepository.findByID(occupancyForm.getTripId());
         occupancy.setUser(user);
         occupancy.setRoom(room);

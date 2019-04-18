@@ -18,8 +18,8 @@ public class OccupancyController {
     @Autowired
     OccupancyService occupancyService;
 
-    @GetMapping("hasRole('ADMIN') or hasRole('ORGANISER')")
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/occupancies")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
     public ResponseEntity<?> getAllOccupancies() {
         return new ResponseEntity<>(occupancyService.getAllOccupancies(), HttpStatus.OK);
     }

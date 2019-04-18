@@ -29,7 +29,8 @@ public class OccupancyServiceImplementation implements OccupancyService {
     public OccupancyDTO createOccupancy(OccupancyForm occupancyForm) throws WrongOccupancyData {
 
         Occupancy occupancy = occupancyMapper.convertCreateOccupancyFormToOccupancy(occupancyForm);
-        return occupancyMapper.getOccupancyDTO(occupancyRepository.createOccupancy(occupancy));
+        Occupancy occupancy1 =occupancyRepository.createOccupancy(occupancy);
+        return occupancyMapper.getOccupancyDTO(occupancy1);
 
     }
 
