@@ -70,9 +70,11 @@ public class NotificationServiceImpl implements NotificationService {
             tripHistory.setAccommodationFinish(tripMember.getTripAccommodation().getAccommodationFinish());
         }
         if (tripHistory.getIsCarNeeded()) {
-            tripHistory.setCarPrice(tripMember.getCarTicket().getPrice());
             tripHistory.setCarRentStart(tripMember.getCarTicket().getCarRentStart());
             tripHistory.setCarRentFinish(tripMember.getCarTicket().getCarRentFinish());
+            if(tripMember.getCarTicket().getPrice()!=null){
+                tripHistory.setCarPrice(tripMember.getCarTicket().getPrice());
+            }
         }
         if (tripMember.getFlightTicket() != null) {
             tripHistory.setFlightPrice(tripMember.getFlightTicket().getPrice());
@@ -96,6 +98,8 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setTripHistory(tripHistory);
         notification.getTripHistory().setTripMembers(tripMemberHistoryList);
         notificationRepository.saveNotification(notification);
+    }
+
     }
 
     public void tripAccepted(AcceptedTrip acceptedTrip) {
