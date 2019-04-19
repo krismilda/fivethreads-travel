@@ -24,11 +24,12 @@ public class TripAccommodationMapper {
 
         TripAccommodation tripAccommodation = new TripAccommodation();
 
-        switch (tripAccommodation.getAccommodationType()){
+        switch (form.getAccommodationType()){
             case HOTEL:
                 tripAccommodation.setHotelAddress(form.getHotelAddress());
                 tripAccommodation.setHotelName(form.getHotelName());
                 tripAccommodation.setPrice(form.getPrice());
+                break;
 
 
             case DEVRIDGE_APARTAMENTS:
@@ -37,6 +38,8 @@ public class TripAccommodationMapper {
                 tripAccommodation.setHotelName(room.getApartment().getOffice().getName());
                 tripAccommodation.setHotelAddress(room.getApartment().getOffice().getAddress()+
                         ", "+ room.getApartment().getAddress());
+                break;
+               
         }
         TripMember member = tripMemberRepository.findById(form.getTripMemberId());
         tripAccommodation.setAccommodationStart(form.getAccommodationStart());
@@ -55,7 +58,7 @@ public class TripAccommodationMapper {
         tripAccommodationDTO.setAccommodationFinish(tripAccommodation.getAccommodationFinish());
         tripAccommodationDTO.setTripMemberId(tripAccommodation.getTripMember().getId());
         tripAccommodationDTO.setAccommodationType(tripAccommodation.getAccommodationType());
-        tripAccommodationDTO.setRoomId(tripAccommodation.getRoom().getId());
+        if(tripAccommodation.getRoom() != null) tripAccommodationDTO.setRoomId(tripAccommodation.getRoom().getId());
         tripAccommodationDTO.setHotelAddress(tripAccommodation.getHotelAddress());
         tripAccommodationDTO.setHotelName(tripAccommodation.getHotelName());
         tripAccommodationDTO.setPrice(tripAccommodation.getPrice());

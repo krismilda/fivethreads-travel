@@ -2,6 +2,7 @@ package lt.fivethreads.services;
 
 import lt.fivethreads.entities.Trip;
 import lt.fivethreads.entities.TripAccommodation;
+import lt.fivethreads.entities.TripMember;
 import lt.fivethreads.entities.request.TripAccommodationDTO;
 import lt.fivethreads.entities.request.TripAccommodationForm;
 import lt.fivethreads.exception.WrongTripData;
@@ -31,6 +32,7 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
     TripMemberRepository tripMemberRepository;
 
 
+
     public TripAccommodationDTO getTripAccommodation(long tripAccommodationId){
         TripAccommodation tripAccommodation = tripAccommodationRepository.findByID(tripAccommodationId);
         TripAccommodationDTO tripAccommodationDTO = tripAccommodationMapper.getTripAccommodationDTO(tripAccommodation);
@@ -44,13 +46,18 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
         tripAccommodationValidation.checkStartDateToday(tripAccommodationForm.getAccommodationStart());
         tripAccommodationValidation.checkPrice(tripAccommodationForm.getPrice());
 
-        Trip trip = tripMemberRepository.findById(tripAccommodationForm.getTripMemberId()).getTrip();
+        TripMember tripMember = tripMemberRepository.findById(tripAccommodationForm.getTripMemberId());
+
+        Trip trip = tripMember.getTrip();
         tripAccommodationValidation.checkTripAccommodationDatesAgainstTripDates(tripAccommodationForm.getAccommodationStart(),
                 tripAccommodationForm.getAccommodationFinish(), trip);
+        TripAccommodation created = tripAccommodationMapper
+                .convertCreateTripAccommodationFormToTripAccommodation(tripAccommodationForm);
+        TripAccommodation tripAccommodation = tripAccommodationRepository.createTripAccommodation(created);
+
         TripAccommodationDTO tripAccommodationDTO =
                 tripAccommodationMapper
-                        .getTripAccommodationDTO(tripAccommodationMapper
-                                .convertCreateTripAccommodationFormToTripAccommodation(tripAccommodationForm));
+                        .getTripAccommodationDTO(tripAccommodation);
 
         return tripAccommodationDTO;
     }

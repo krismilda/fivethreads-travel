@@ -27,15 +27,15 @@ public class TripAccommodationDTO {
     @DateTimeFormat
     @NotNull(message = "TripAccommodation Finish cannot be null.")
     private Date accommodationFinish;
-    private long roomId;
+    private Long roomId;
     @NotNull(message = "AccommodationType cannot be null.")
     private AccommodationType accommodationType;
     @NotNull(message = "HotelName cannot be null.")
     private String hotelName;
     @NotNull(message = "HotelAddress cannot be null.")
     private String hotelAddress;
-    private double price;
+    private Double price;
     @NotNull(message = "TripMember cannot be null")
-    private long tripMemberId;
+    private Long tripMemberId;
 
 }

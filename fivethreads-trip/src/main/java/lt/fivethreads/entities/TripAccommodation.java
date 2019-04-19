@@ -42,13 +42,13 @@ public class TripAccommodation {
     @NotNull(message = "AccommodationType cannot be null.")
     private AccommodationType accommodationType;
 
-    @NotNull(message = "Hotel cannot be null.")
+    @Column(name = "hotelName")
     private String hotelName;
-
-    @NotNull(message = "Hotel address cannot be null.")
+    @Column(name = "hotelAddress")
     private String hotelAddress;
 
-    private double price;
+    @Column(name = "price")
+    private Double price;
 
     @NotNull(message = "TripMember cannot be null")
     @OneToOne
