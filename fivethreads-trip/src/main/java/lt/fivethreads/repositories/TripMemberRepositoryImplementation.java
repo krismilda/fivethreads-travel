@@ -55,7 +55,7 @@ public class TripMemberRepositoryImplementation implements TripMemberRepository 
         }
         if (tripMember.getTripAccommodation() != null) {
             if (tripMemberOld.getTripAccommodation()==null){
-                tripAccommodationRepository.saveTripAccommodation(tripMember.getTripAccommodation());
+                tripAccommodationRepository.createTripAccommodation(tripMember.getTripAccommodation());
             }
             else{
                 tripMember.getTripAccommodation().setId(tripMemberOld.getTripAccommodation().getId());

@@ -24,5 +24,5 @@ public class TripMemberDTO {
 
     private CarTicketDTO carTicketDTO;
 
-    private AccommodationDTO accommodationDTO;
+    private TripAccommodationDTO accommodationDTO;
 }

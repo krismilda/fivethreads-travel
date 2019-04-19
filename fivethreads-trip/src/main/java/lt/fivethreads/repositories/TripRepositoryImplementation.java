@@ -43,7 +43,7 @@ public class TripRepositoryImplementation implements TripRepository
                 carTicketRepository.saveCarTicket(tripMember.getCarTicket());
             }
             if(tripMember.getTripAccommodation() != null){
-                tripAccommodationRepository.saveTripAccommodation(tripMember.getTripAccommodation());
+                tripAccommodationRepository.createTripAccommodation(tripMember.getTripAccommodation());
             }
             tripMemberRepository.saveTripMember(tripMember);
         }

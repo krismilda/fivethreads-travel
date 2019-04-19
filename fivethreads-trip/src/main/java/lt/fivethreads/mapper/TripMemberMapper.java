@@ -4,7 +4,7 @@ import lt.fivethreads.entities.CarTicket;
 import lt.fivethreads.entities.TripAccommodation;
 import lt.fivethreads.entities.TripMember;
 import lt.fivethreads.entities.User;
-import lt.fivethreads.entities.request.AccommodationDTO;
+import lt.fivethreads.entities.request.TripAccommodationDTO;
 import lt.fivethreads.entities.request.CarTicketDTO;
 import lt.fivethreads.entities.request.TripMemberDTO;
 import lt.fivethreads.repositories.TripMemberRepository;
@@ -63,7 +63,7 @@ public class TripMemberMapper {
         return carTicket;
     }
 
-    public TripAccommodation convertAccommodationDAOToTripAccommodation(AccommodationDTO accommodationDTO){
+    public TripAccommodation convertAccommodationDAOToTripAccommodation(TripAccommodationDTO accommodationDTO){
         TripAccommodation tripAccommodation = new TripAccommodation();
         tripAccommodation.setAccommodationStart(accommodationDTO.getAccommodationStart());
         tripAccommodation.setAccommodationFinish(accommodationDTO.getAccommodationFinish());
@@ -77,8 +77,8 @@ public class TripMemberMapper {
         return carTicketDTO;
     }
 
-    public AccommodationDTO convertAccomodationToAccomodationDAO(TripAccommodation tripAccommodation) {
-        AccommodationDTO accommodationDTO = new AccommodationDTO();
+    public TripAccommodationDTO convertAccomodationToAccomodationDAO(TripAccommodation tripAccommodation) {
+        TripAccommodationDTO accommodationDTO = new TripAccommodationDTO();
         accommodationDTO.setAccommodationStart(tripAccommodation.getAccommodationStart());
         accommodationDTO.setAccommodationFinish(tripAccommodation.getAccommodationFinish());
         return accommodationDTO;

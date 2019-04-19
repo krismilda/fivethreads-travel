@@ -8,7 +8,7 @@
         <module>fivethreads-user</module>
         <module>fivethreads-office</module>
         <module>fivethreads-trip</module>
-        <module>fivethreads-occupancy</module>
+       <!-- <module>fivethreads-occupancy</module>-->
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
