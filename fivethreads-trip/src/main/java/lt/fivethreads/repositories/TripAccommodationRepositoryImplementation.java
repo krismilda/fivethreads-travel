@@ -1,5 +1,6 @@
 package lt.fivethreads.repositories;
 
+import lt.fivethreads.entities.Room;
 import lt.fivethreads.entities.TripAccommodation;
 import lt.fivethreads.entities.TripMember;
 import lt.fivethreads.entities.User;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -48,6 +50,13 @@ public class TripAccommodationRepositoryImplementation implements TripAccommodat
     public List<TripAccommodation> getAllByApartment(long apartmentId) {
         return em.createNamedQuery("TripAccommodation.FindByApartment", TripAccommodation.class)
                 .setParameter("apartment_ID", apartmentId)
+                .getResultList();
+    }
+
+    public List <Room> getUnoccupiedRooms(Date startDate, Date finishDate){
+        return em.createNamedQuery("TripAccommodation.FindUnoccupiedAccommodation", Room.class)
+                .setParameter("startDate", startDate)
+                .setParameter("finishDate", finishDate)
                 .getResultList();
     }
 

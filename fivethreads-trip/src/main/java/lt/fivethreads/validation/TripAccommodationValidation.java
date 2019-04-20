@@ -1,5 +1,6 @@
 package lt.fivethreads.validation;
 
+import lt.fivethreads.entities.AccommodationType;
 import lt.fivethreads.entities.Trip;
 import lt.fivethreads.exception.WrongTripData;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,13 @@ public class TripAccommodationValidation {
             throw new WrongTripData("Finish Date is earlier trip start date.");
     }
 
-    public void checkPrice(double price){
+    public void hotelRequiredFields(String hotelName, String hotelAddress, Double price){
+        if(hotelName == null)
+            throw new WrongTripData("Hotel Name cannot be null.");
+        if(hotelAddress == null)
+            throw new  WrongTripData("Hotel Address cannot be null.");
+        if(price == null)
+            throw  new  WrongTripData("Price cannot be null.");
         if(price <=0)
             throw new WrongTripData("Price cannot be negative");
     }

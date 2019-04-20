@@ -1,12 +1,13 @@
 package lt.fivethreads.services;
 
-import lt.fivethreads.entities.Trip;
-import lt.fivethreads.entities.TripAccommodation;
-import lt.fivethreads.entities.TripMember;
+import lt.fivethreads.entities.*;
+import lt.fivethreads.entities.request.RoomDTO;
 import lt.fivethreads.entities.request.TripAccommodationDTO;
 import lt.fivethreads.entities.request.TripAccommodationForm;
 import lt.fivethreads.exception.WrongTripData;
+import lt.fivethreads.mapper.RoomMapper;
 import lt.fivethreads.mapper.TripAccommodationMapper;
+import lt.fivethreads.repositories.RoomRepository;
 import lt.fivethreads.repositories.TripAccommodationRepository;
 import lt.fivethreads.repositories.TripMemberRepository;
 import lt.fivethreads.validation.TripAccommodationValidation;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -31,6 +33,8 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
     @Autowired
     TripMemberRepository tripMemberRepository;
 
+    @Autowired
+    RoomMapper roomMapper;
 
 
     public TripAccommodationDTO getTripAccommodation(long tripAccommodationId){
@@ -44,11 +48,15 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
         tripAccommodationValidation.checkFinishStartDates(tripAccommodationForm.getAccommodationStart(),
                 tripAccommodationForm.getAccommodationFinish(), "Finish date is earlier than start date.");
         tripAccommodationValidation.checkStartDateToday(tripAccommodationForm.getAccommodationStart());
-        tripAccommodationValidation.checkPrice(tripAccommodationForm.getPrice());
+
+
+        if(tripAccommodationForm.getAccommodationType() == AccommodationType.HOTEL)
+        tripAccommodationValidation.hotelRequiredFields(tripAccommodationForm.getHotelName(),
+                tripAccommodationForm.getHotelAddress(), tripAccommodationForm.getPrice());
 
         TripMember tripMember = tripMemberRepository.findById(tripAccommodationForm.getTripMemberId());
-
         Trip trip = tripMember.getTrip();
+
         tripAccommodationValidation.checkTripAccommodationDatesAgainstTripDates(tripAccommodationForm.getAccommodationStart(),
                 tripAccommodationForm.getAccommodationFinish(), trip);
         TripAccommodation created = tripAccommodationMapper
@@ -97,5 +105,17 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
             tripAccommodationDTOList.add(tripAccommodationMapper.getTripAccommodationDTO(tripAccommodation));
         }
         return tripAccommodationDTOList;
+    }
+
+    public List <RoomDTO> getAllUnoccupiedAccommodations(Date startDate, Date finishDate){
+        tripAccommodationValidation.checkFinishStartDates(startDate,
+                finishDate, "Finish date is earlier than start date.");
+        tripAccommodationValidation.checkStartDateToday(startDate);
+        List<Room> roomList = tripAccommodationRepository.getUnoccupiedRooms(startDate, finishDate);
+        List<RoomDTO> roomDTOList = new ArrayList<>();
+        for(Room room : roomList){
+            roomDTOList.add(roomMapper.getRoomDTO(room));
+        }
+        return roomDTOList;
     }
 }

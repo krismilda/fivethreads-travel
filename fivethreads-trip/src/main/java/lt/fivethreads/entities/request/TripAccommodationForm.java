@@ -20,9 +20,7 @@ public class TripAccommodationForm {
     private Long roomId;
     @NotNull(message = "AccommodationType cannot be null.")
     private AccommodationType accommodationType;
-    @NotNull(message = "HotelName cannot be null.")
     private String hotelName;
-    @NotNull(message = "HotelAddress cannot be null.")
     private String hotelAddress;
     private Double price;
     @NotNull(message = "TripMember cannot be null")
