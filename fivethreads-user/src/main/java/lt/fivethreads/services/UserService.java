@@ -13,7 +13,7 @@ import java.util.List;
 public interface UserService {
     List<ExtendedUserDTO> getAllUser();
 
-    ExtendedUserDTO getUserByID(Long id);
+    User getUserByID(Long id);
 
     ExtendedUserDTO updateUser(ExtendedUserDTO user)throws UserIDNotExists;
 
