@@ -2,6 +2,7 @@ package lt.fivethreads.entities.request;
 
 import lombok.Getter;
 import lombok.Setter;
+import lt.fivethreads.entities.TripAcceptance;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -27,4 +28,6 @@ public class TripMemberDTO {
     private CarTicketDTO carTicketDTO;
 
     private AccommodationDTO accommodationDTO;
+
+    private TripAcceptance status;
 }

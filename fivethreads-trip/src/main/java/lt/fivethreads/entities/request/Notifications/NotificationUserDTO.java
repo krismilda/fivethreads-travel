@@ -1,4 +1,4 @@
-package lt.fivethreads.entities.request;
+package lt.fivethreads.entities.request.Notifications;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-public class NotificationTripMemberDTO {
+public class NotificationUserDTO {
     @NotNull(message = "Email cannot be null.")
     @Email
     private String email;

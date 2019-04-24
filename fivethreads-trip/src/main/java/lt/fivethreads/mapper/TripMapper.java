@@ -36,7 +36,7 @@ public class TripMapper {
         trip.setOrganizer(organizer);
         for (TripMemberDTO tripMemberCreateDAO : form.getTripMembers()
         ) {
-            TripMember tripMember = tripMemberMapper.convertTripMemberDAOtoTripMember(tripMemberCreateDAO);
+            TripMember tripMember = tripMemberMapper.convertTripMemberDTOtoTripMember(tripMemberCreateDAO);
             tripMember.setTrip(trip);
             tripMember.setTripAcceptance(TripAcceptance.PENDING);
             trip.getTripMembers().add(tripMember);
@@ -46,20 +46,19 @@ public class TripMapper {
 
     public TripCancellation convertCancelledTripToObject(CancelledTrip cancelledTrip) {
         TripCancellation tripCancellation = new TripCancellation();
-        TripMember tripMember = tripMemberRepository.getTripMemberByTripIDAndEmail(cancelledTrip.getTripID(),
-                cancelledTrip.getEmail());
+        TripMember tripMember = tripMemberRepository.getTripMemberByTripIDAndEmail(cancelledTrip.getTripID(), cancelledTrip.getEmail());
         tripCancellation.setTripMember(tripMember);
         tripCancellation.setReason(cancelledTrip.getReason());
         return tripCancellation;
     }
 
-    public TripDTO converTripToTripDAO(Trip trip) {
+    public TripDTO converTripToTripDTO(Trip trip) {
         TripDTO tripDTO = new TripDTO();
         tripDTO.setId(trip.getId());
         List<TripMemberDTO> tripMemberDTOList = new ArrayList<>();
         for (TripMember tripMember : trip.getTripMembers()
         ) {
-            tripMemberDTOList.add(tripMemberMapper.convertTripMemberToTripMemberDAO(tripMember));
+            tripMemberDTOList.add(tripMemberMapper.convertTripMemberToTripMemberDTO(tripMember));
         }
         tripDTO.setTripMembers(tripMemberDTOList);
         tripDTO.setArrival(trip.getArrival());

@@ -60,13 +60,13 @@ public class TripController {
     public List<TripDTO> getAllOrganizerTrips() {
         Collection authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
         if (authorities.stream().anyMatch(r -> r.toString().equals("ROLE_ADMIN"))) {
-            tripService.getAllTrips();
+            return tripService.getAllTrips();
         }
         if (authorities.stream().anyMatch(r -> r.toString().equals("ROLE_ORGANIZER"))) {
-            tripService.getAllTripsByOrganizerEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+            return tripService.getAllTripsByOrganizerEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         }
         if (authorities.stream().anyMatch(r -> r.toString().equals("ROLE_USER"))) {
-            tripService.getAllTripsByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+            return tripService.getAllTripsByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         }
         return null;
     }
@@ -76,42 +76,51 @@ public class TripController {
     public FileDTO uploadFlightTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file) throws Exception {
         return tripFilesService.addFlightTicket(tripID, email, file);
     }
+
     @PostMapping("/tripMember/car/{trip_id}/{email}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public FileDTO uploadCarTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file) throws Exception {
+    public FileDTO uploadCarTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file){
         return tripFilesService.addCarTicket(tripID, email, file);
     }
+
     @PostMapping("/tripMember/accommodation/{trip_id}/{email}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public FileDTO uploadAccommodationTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file) throws Exception {
+    public FileDTO uploadAccommodationTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file){
         return tripFilesService.addAccommodationTicket(tripID, email, file);
     }
 
     @DeleteMapping("/tripMember/flight/{file_id}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public ResponseEntity<?> deleteFlightTicket(@PathVariable("file_id") Long fileID) throws Exception {
+    public ResponseEntity<?> deleteFlightTicket(@PathVariable("file_id") Long fileID){
         tripFilesService.deleteFlightTicket(fileID);
         return new ResponseEntity<>("File deleted successfully!", HttpStatus.OK);
     }
 
     @DeleteMapping("/tripMember/car/{file_id}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public ResponseEntity<?> deleteCarTicket(@PathVariable("file_id") Long fileID) throws Exception {
+    public ResponseEntity<?> deleteCarTicket(@PathVariable("file_id") Long fileID){
         tripFilesService.deleteCarTicket(fileID);
         return new ResponseEntity<>("File deleted successfully!", HttpStatus.OK);
     }
 
     @DeleteMapping("/tripMember/accommodation/{file_id}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public ResponseEntity<?> deleteAccommodationTicket(@PathVariable("file_id") Long fileID) throws Exception {
+    public ResponseEntity<?> deleteAccommodationTicket(@PathVariable("file_id") Long fileID){
         tripFilesService.deleteAccommodationTicket(fileID);
         return new ResponseEntity<>("File deleted successfully!", HttpStatus.OK);
     }
 
     @PostMapping("/tripMember/{tripID}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public ResponseEntity<?> addNewTripMember(@Validated @RequestBody TripMemberDTO tripMemberDTO,@PathVariable("tripID") Long tripID){
+    public ResponseEntity<?> addNewTripMember(@Validated @RequestBody TripMemberDTO tripMemberDTO, @PathVariable("tripID") Long tripID) {
         tripService.addNewTripMember(tripMemberDTO, tripID);
         return new ResponseEntity<>("Trip member added successfully!", HttpStatus.OK);
+    }
+
+    @DeleteMapping("{tripID}")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public ResponseEntity<?> deleteTrip(@PathVariable("tripID") Long tripID) {
+        tripService.deleteTrip(tripID);
+        return new ResponseEntity<>("Trip deleted successfully!", HttpStatus.OK);
     }
 }

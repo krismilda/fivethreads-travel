@@ -139,4 +139,17 @@ public class TripMemberRepositoryImplementation implements TripMemberRepository 
                 .setParameter("fileID", fileID)
                 .getSingleResult();
     }
+
+    public void deleteTripMember(TripMember tripMember){
+        if(tripMember.getTripAccommodation()!=null){
+            em.remove(tripMember.getTripAccommodation());
+        }
+        if(tripMember.getCarTicket()!=null){
+            em.remove(tripMember.getCarTicket());
+        }
+        if(tripMember.getFlightTicket()!=null){
+            em.remove(tripMember.getFlightTicket());
+        }
+        em.remove(tripMember);
+    }
 }

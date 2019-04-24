@@ -58,4 +58,12 @@ public class TripRepositoryImplementation implements TripRepository
                  .setParameter("user_email", email)
                  .getResultList();
      }
+
+     public void deleteTrip(Trip trip){
+        for (TripMember tripMember:trip.getTripMembers()
+              ) {
+             tripMemberRepository.deleteTripMember(tripMember);
+         }
+         em.remove(trip);
+     }
 }

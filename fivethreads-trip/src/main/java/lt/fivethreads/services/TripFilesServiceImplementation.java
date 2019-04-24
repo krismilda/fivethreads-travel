@@ -138,15 +138,15 @@ public class TripFilesServiceImplementation implements TripFilesService
         for (TripMember tripMember:trip.getTripMembers()
         ) {
             if(tripMember.getTripAccommodation()!=null &&
-                    tripMember.getTripAccommodation().getFile().size()==0){
+                    tripMember.getTripAccommodation().getFile()!=null){
                 return true;
             }
             if(tripMember.getCarTicket()!=null &&
-                    tripMember.getCarTicket().getFile().size()==0){
+                    tripMember.getCarTicket().getFile()!=null){
                 return true;
             }
             if(tripMember.getFlightTicket()!=null &&
-                    tripMember.getFlightTicket().getFile().size()==0){
+                    tripMember.getFlightTicket().getFile()!=null){
                 return true;
             }
         }

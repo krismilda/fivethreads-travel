@@ -14,5 +14,5 @@ public interface TripService {
     List<TripDTO> getAllTripsByOrganizerEmail(String email);
     List<TripDTO> getAllTripsByUserEmail(String email);
     void addNewTripMember(TripMemberDTO tripMemberDTO, Long tripID);
-    void deleteTrip(String tripID);
+    void deleteTrip(Long tripID);
 }

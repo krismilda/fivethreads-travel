@@ -9,5 +9,8 @@ import java.util.List;
 @Getter
 @Setter
 public class FlightTicketDTO {
+
+    private double price;
+
     private List<Long> fileID = new ArrayList<>();
-        }
+}

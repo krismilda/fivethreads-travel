@@ -16,4 +16,5 @@ public interface TripMemberRepository {
     TripMember findByCarFileID(Long fileID);
     TripMember findByAccommodationFileID(Long fileID);
     void saveAccommodationTicket(TripMember tripMember);
+    void deleteTripMember(TripMember tripMember);
 }

@@ -12,9 +12,13 @@ import java.util.Date;
 @Getter
 @Setter
 @NamedQueries({
-        @NamedQuery(name = "Notification.FindAllByEmail", query = "select tr from Notification as tr " +
+        @NamedQuery(name = "Notification.FindAllUserByEmail", query = "select tr from Notification as tr " +
                 "JOIN FETCH tr.user as m " +
-                "WHERE m.email=:email"),
+                "WHERE m.email=:email AND tr.notificationType in (0, 3)"),
+        @NamedQuery(name = "Notification.FindAllOrganizerByEmail", query = "select tr from Notification as tr " +
+                "JOIN FETCH tr.tripHistory as m " +
+                "JOIN FETCH m.organizer as u " +
+                "WHERE u.email=:email AND tr.notificationType in (1, 2)"),
         @NamedQuery(name = "Notification.FindByID", query = "select tr from Notification as tr " +
                 "WHERE tr.id=:id")
 
@@ -24,10 +28,6 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "TRIP_ID")
-    private Trip trip;
 
     private Boolean isActive;
 
@@ -42,4 +42,8 @@ public class Notification {
     @ManyToOne
     @JoinColumn(name = "TRIP_HISTORY_ID")
     private TripHistory tripHistory;
+
+    private NotificationType notificationType;
+
+    private String reason;
 }
