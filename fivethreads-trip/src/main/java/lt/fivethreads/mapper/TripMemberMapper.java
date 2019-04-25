@@ -24,7 +24,6 @@ public class TripMemberMapper {
         tripMemberDTO.setIsAccommodationNeeded(tripMember.getIsAccommodationNeeded());
         tripMemberDTO.setIsCarNeeded(tripMember.getIsCarNeeded());
         tripMemberDTO.setIsFlightTickedNeeded(tripMember.getIsFlightTickedNeeded());
-        System.out.println(tripMember.getTripAcceptance().toString());
         tripMemberDTO.setStatus(tripMember.getTripAcceptance());
         if (tripMember.getCarTicket() != null && tripMember.getIsCarNeeded() == true) {
             tripMemberDTO.setCarTicketDTO(convertCarTicketToCarTicketDTO(tripMember.getCarTicket()));

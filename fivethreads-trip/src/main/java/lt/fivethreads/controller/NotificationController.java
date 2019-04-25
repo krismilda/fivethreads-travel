@@ -38,7 +38,7 @@ public class NotificationController {
     }
     @GetMapping("/notifications/ForApproval/{notification_id}")
     @PreAuthorize("hasRole('USER')")
-    public NotificationForApprovalDTO getNotificationByIDforApproval(@PathVariable("notification_id") Long notification_id){
+    public NotificationForApprovalDTO getNotificationByIDForApproval(@PathVariable("notification_id") Long notification_id){
         return notificationService.getNotificationByIDForApproval(notification_id,SecurityContextHolder.getContext().getAuthentication().getName() );
     }
 
@@ -54,9 +54,9 @@ public class NotificationController {
     }
     @PutMapping("/notification/deactivate/{notification_id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> deactivateNotification(@PathVariable("notification_id") Long notification_id) {
-        notificationService.deactivateNotification(notification_id);
-        return new ResponseEntity<>("Notification deactivated successfully!", HttpStatus.OK);
+    public ResponseEntity<NotificationListDTO> deactivateNotification(@PathVariable("notification_id") Long notification_id) {
+        NotificationListDTO notificationListDTO = notificationService.deactivateNotification(notification_id);
+        return new ResponseEntity<NotificationListDTO>(notificationListDTO, HttpStatus.OK);
     }
 
     @GetMapping("/notifications/Deleted/{notification_id}")

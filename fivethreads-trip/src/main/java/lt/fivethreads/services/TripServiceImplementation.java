@@ -1,6 +1,7 @@
 package lt.fivethreads.services;
 
 import lt.fivethreads.entities.Trip;
+import lt.fivethreads.entities.TripAcceptance;
 import lt.fivethreads.entities.TripMember;
 import lt.fivethreads.entities.TripStatus;
 import lt.fivethreads.entities.request.CreateTripForm;
@@ -43,16 +44,18 @@ public class TripServiceImplementation implements TripService {
     @Autowired
     TripFilesService tripFilesService;
 
-    public void createTrip(CreateTripForm form) throws WrongTripData {
+    public TripDTO createTrip(CreateTripForm form) throws WrongTripData {
         tripValidation.checkFnishStartDates(form.getStartDate(), form.getFinishDate(), "Finish date is earlier than start date.");
         tripValidation.checkStartDateToday(form.getStartDate());
         Trip trip = tripMapper.ConvertCreateTripFormToTrip(form);
         for (TripMember tripMember : trip.getTripMembers()) {
             tripValidation.validateTripMember(tripMember);
+            tripMember.setTripAcceptance(TripAcceptance.PENDING);
         }
         trip.setTripStatus(TripStatus.PLANNED);
         tripRepository.createTrip(trip);
         createNotificationService.createNotificationsForApproval(trip, "New trip is waiting for your approval.");
+        return tripMapper.converTripToTripDTO(trip);
     }
 
     public List<TripDTO> getAllTrips() {
@@ -85,8 +88,9 @@ public class TripServiceImplementation implements TripService {
         return tripDTO;
     }
 
-    public void addNewTripMember(TripMemberDTO tripMemberDTO, Long tripID) {
+    public TripMemberDTO addNewTripMember(TripMemberDTO tripMemberDTO, Long tripID) {
         TripMember tripMember = tripMemberMapper.convertTripMemberDTOtoTripMember(tripMemberDTO);
+        tripMember.setTripAcceptance(TripAcceptance.PENDING);
         Trip trip = tripRepository.findByID(tripID);
         tripMember.setTrip(trip);
         tripValidation.validateTripMember(tripMember);
@@ -95,6 +99,7 @@ public class TripServiceImplementation implements TripService {
         }
         tripMemberRepository.saveTripMember(tripMember);
         createNotificationService.createNotificationForApprovalTripMember(tripMember, "New trip is waiting for your approval.");
+        return tripMemberMapper.convertTripMemberToTripMemberDTO(tripMember);
     }
 
     public void deleteTrip(Long tripID) {
@@ -110,7 +115,7 @@ public class TripServiceImplementation implements TripService {
     }
 
 
-    public void editTripInformation(EditTripInformation editTripInformation) {
+    public TripDTO editTripInformation(EditTripInformation editTripInformation) {
         if (tripFilesService.checkIfDocumentsExist(editTripInformation.getId())) {
             throw new TripIsNotEditable("Trip cannot be deleted because financial documents exist.");
         }
@@ -130,5 +135,6 @@ public class TripServiceImplementation implements TripService {
         trip.setArrival(editTripInformation.getArrival());
         trip.setDeparture(editTripInformation.getDeparture());
         tripRepository.updateTrip(trip);
+        return tripMapper.converTripToTripDTO(trip);
     }
 }

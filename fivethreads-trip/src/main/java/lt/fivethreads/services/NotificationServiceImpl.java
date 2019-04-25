@@ -4,6 +4,7 @@ import lt.fivethreads.entities.*;
 import lt.fivethreads.entities.request.AcceptedTrip;
 import lt.fivethreads.entities.request.CancelledTrip;
 import lt.fivethreads.entities.request.Notifications.*;
+import lt.fivethreads.entities.request.TripMemberDTO;
 import lt.fivethreads.exception.WrongNotificationTypeOrID;
 import lt.fivethreads.exception.WrongTripData;
 import lt.fivethreads.mapper.NotificationMapper;
@@ -45,7 +46,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Autowired
     CreateNotificationService createNotificationService;
 
-    public void tripAccepted(AcceptedTrip acceptedTrip) {
+    public TripMemberDTO tripAccepted(AcceptedTrip acceptedTrip) {
         TripMember tripMember = tripMemberMapper.convertTripMemberDTOtoTripMember(acceptedTrip.getTripMemberDTO());
         Trip trip = tripRepository.findByID(acceptedTrip.getTripID());
         if (trip == null) {
@@ -63,14 +64,16 @@ public class NotificationServiceImpl implements NotificationService {
         tripMember.setTripAcceptance(TripAcceptance.ACCEPTED);
         tripMemberRepository.updateTripMember(tripMember);
         createNotificationService.createNotificationForApproval(tripMember, "Trip was approved.");
+        return tripMemberMapper.convertTripMemberToTripMemberDTO(tripMember);
     }
 
-    public void tripCancelled(CancelledTrip cancelledTrip) {
+    public TripMemberDTO tripCancelled(CancelledTrip cancelledTrip) {
         TripCancellation tripCancellation = tripMapper.convertCancelledTripToObject(cancelledTrip);
         tripCancellation.getTripMember().setTripCancellation(tripCancellation);
         tripCancellation.getTripMember().setTripAcceptance(TripAcceptance.CANCELLED);
         tripMemberRepository.addCancellation(tripCancellation);
         createNotificationService.createNotificationForCancellation(tripCancellation, "Trip was cancelled.");
+        return tripMemberMapper.convertTripMemberToTripMemberDTO(tripCancellation.getTripMember());
     }
 
     public List<NotificationListDTO> getUserNotification(String email) {
@@ -95,10 +98,11 @@ public class NotificationServiceImpl implements NotificationService {
         return notificationListDTOS;
     }
 
-    public void deactivateNotification(Long id) {
+    public NotificationListDTO deactivateNotification(Long id) {
         Notification notification = notificationRepository.getNotificationByID(id);
         notification.setIsActive(false);
         notificationRepository.updateNotification(notification);
+        return notificationMapper.convertNotificationToNotificationListDTO(notification);
     }
 
     public NotificationForApprovalDTO getNotificationByIDForApproval(Long notification_id, String email){
