@@ -2,8 +2,7 @@ package lt.fivethreads.controller;
 
 import lt.fivethreads.entities.request.ChangePasswordForm;
 import lt.fivethreads.entities.request.RegistrationForm;
-import lt.fivethreads.entities.request.UserDTO;
-import lt.fivethreads.services.UserImportService;
+import lt.fivethreads.entities.request.ExtendedUserDTO;
 import lt.fivethreads.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,10 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -22,9 +17,6 @@ public class UserController {
 
     @Autowired
     UserService userService;
-
-    @Autowired
-    UserImportService userImportService;
 
     @GetMapping("/admin/user")
     @PreAuthorize("hasRole('ADMIN')")
@@ -49,25 +41,17 @@ public class UserController {
 
     @PutMapping("/admin/user")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateUser(@Validated @RequestBody UserDTO user) {
+    public ResponseEntity<?> updateUser(@Validated @RequestBody ExtendedUserDTO user) {
 
-        UserDTO updatedUser = userService.updateUser(user);
+        ExtendedUserDTO updatedUser = userService.updateUser(user);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
     @PostMapping("/admin/user/create")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerUser(@Validated @RequestBody RegistrationForm registrationForm) {
-        UserDTO createdUser = userService.createUser(registrationForm);
+        ExtendedUserDTO createdUser = userService.createUser(registrationForm);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
-    }
-
-    @PostMapping("/admin/user/import")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> registerUser(@RequestParam("file") MultipartFile file) {
-        userImportService.importUsers(file);
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/admin/user/changePassword")

@@ -1,7 +1,7 @@
-package lt.fivethreads.services;
+package lt.fivethreads.importing;
 
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserImportService {
-    void importUsers(MultipartFile multipartFile);
+    void importEntities(MultipartFile multipartFile);
 }

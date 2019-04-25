@@ -1,19 +1,19 @@
-email,firstname,lastname,phone,role
-kobi.dodson@mail.com,Kobi,Dodson,+860000000,user
-alastair.pratt@mail.com,Alastair,Pratt,+860000001,user
-tahlia.duggan@mail.com,Tahlia,Duggan,+860000002,user
-mahlia.frey@mail.com,Malia,Frey,+860000003,user
-lila.serrao@mail.com,Lila,Serrano,+860000004,user
-derren.munro@mail.com,Derren,Munro,+860000005,user
-rhianna.strickland@mail.com,Rhianna,Strickland,+860000006,user
-jayne.slater@mail.com,Jayne,Slater,+860000007,user
-darnell.goodman@mail.com,Darnell,Goodman,+860000008,user
-brogan.sharpe@mail.com,Brogan,Sharpe,+860000009,user
-malachy.snider@mail.com,Malachy,Snider,+860000010,user
-shelbie.jarvis@mail.com,Shelbie,Jarvis,+860000011,user
-eli.winters@mail.com,Eli,Winters,+860000011,user
-saxon.waller@mail.com,Saxon,Waller,+860000012,user
-taya.fulton@mail.com,Taya,Fulton,+860000013,user
-paula.gray@mail.com,Paula,Gray,+860000014,user
-glyn.stein@mail.com,Glyn,Stein,+860000015,user
-donnie.espinosa@mail.com,Donnie,Espinosa,+860000016,user
+email,firstname,lastname,phone,officeName,role
+kobi.dodson@mail.com,Kobi,Dodson,+860000000,Devbridge Vilnius,user
+alastair.pratt@mail.com,Alastair,Pratt,+860000001,Devbridge Vilnius,user
+tahlia.duggan@mail.com,Tahlia,Duggan,+860000002,Devbridge Vilnius,user
+mahlia.frey@mail.com,Malia,Frey,+860000003,Devbridge Vilnius,user
+lila.serrao@mail.com,Lila,Serrano,+860000004,Devbridge Chicago,user
+derren.munro@mail.com,Derren,Munro,+860000005,Devbridge Chicago,user
+rhianna.strickland@mail.com,Rhianna,Strickland,+860000006,Devbridge Chicago,user
+jayne.slater@mail.com,Jayne,Slater,+860000007,Devbridge Chicago,user
+darnell.goodman@mail.com,Darnell,Goodman,+860000008,Devbridge Chicago,user
+brogan.sharpe@mail.com,Brogan,Sharpe,+860000009,Devbridge Chicago,user
+malachy.snider@mail.com,Malachy,Snider,+860000010,Devbridge Chicago,user
+shelbie.jarvis@mail.com,Shelbie,Jarvis,+860000011,Devbridge Chicago,user
+eli.winters@mail.com,Eli,Winters,+860000011,Devbridge Chicago,user
+saxon.waller@mail.com,Saxon,Waller,+860000012,Devbridge Chicago,user
+taya.fulton@mail.com,Taya,Fulton,+860000013,Devbridge Chicago,user
+paula.gray@mail.com,Paula,Gray,+860000014,Devbridge Chicago,user
+glyn.stein@mail.com,Glyn,Stein,+860000015,Devbridge Toronto,user
+donnie.espinosa@mail.com,Donnie,Espinosa,+860000016,Devbridge Toronto,user

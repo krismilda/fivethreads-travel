@@ -9,24 +9,20 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>fivethreads-trip</artifactId>
+    <artifactId>fivethreads-files</artifactId>
     <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-csv</artifactId>
+            <version>2.9.8</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>lt.fivethreads</groupId>
             <artifactId>fivethreads-user</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>lt.fivethreads</groupId>
-            <artifactId>fivethreads-office</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>lt.fivethreads</groupId>
-            <artifactId>fivethreads-files</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
-
+    
 </project>

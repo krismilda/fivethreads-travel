@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface OfficeRepository extends JpaRepository<Office, Long> {
     Boolean existsByAddressAndName(String address, String name);
+    Optional<Office> findByName(String name);
 }
