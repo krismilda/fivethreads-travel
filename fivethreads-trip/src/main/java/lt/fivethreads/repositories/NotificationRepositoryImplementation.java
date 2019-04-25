@@ -20,10 +20,8 @@ public class NotificationRepositoryImplementation implements NotificationReposit
         em.persist(notification);
         for (TripMemberHistory tripMemberHistory : notification.getTripHistory().getTripMembers()
         ) {
-
             em.merge(tripMemberHistory);
         }
-
     }
 
     public List<Notification> getAllUserNotificationByEmail(String email) {

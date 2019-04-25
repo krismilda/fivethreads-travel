@@ -102,4 +102,11 @@ public class CreateNotificationServiceImplementation implements CreateNotificati
         notification.setNotificationType(NotificationType.Approved);
         notificationRepository.saveNotification(notification);
     }
+
+    public void  createNotificaitonDeleted(TripMember tripMember, String name){
+        Notification notification = createNotificationFullInfo(tripMember, name);
+        notification.setNotificationType(NotificationType.Deleted);
+        notificationRepository.saveNotification(notification);
+    }
+
 }

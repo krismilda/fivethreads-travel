@@ -18,7 +18,7 @@ public class NotificationController {
     @Autowired
     NotificationService notificationService;
 
-    @GetMapping("/user/notifications")
+    @GetMapping("/notifications")
     @PreAuthorize("hasRole('ORGANIZER') or hasRole('USER')")
     public List<NotificationListDTO> getAllNotifications(){
         Collection authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
@@ -31,31 +31,37 @@ public class NotificationController {
         return null;
     }
 
-    @GetMapping("/user/notifications/approved/{notification_id}")
+    @GetMapping("/notifications/approved/{notification_id}")
     @PreAuthorize("hasRole('ORGANIZER')")
     public NotificationApproved getNotificationByIDApproved(@PathVariable("notification_id") Long notification_id){
         return notificationService.getNotificationByIDForApproved(notification_id,SecurityContextHolder.getContext().getAuthentication().getName() );
     }
-    @GetMapping("/user/notifications/ForApproval/{notification_id}")
+    @GetMapping("/notifications/ForApproval/{notification_id}")
     @PreAuthorize("hasRole('USER')")
     public NotificationForApprovalDTO getNotificationByIDforApproval(@PathVariable("notification_id") Long notification_id){
         return notificationService.getNotificationByIDForApproval(notification_id,SecurityContextHolder.getContext().getAuthentication().getName() );
     }
 
-    @GetMapping("/user/notifications/Cancelled/{notification_id}")
+    @GetMapping("/notifications/Cancelled/{notification_id}")
     @PreAuthorize("hasRole('ORGANIZER')")
     public NotificationCancelled getNotificationByIDCancelled(@PathVariable("notification_id") Long notification_id){
         return notificationService.getNotificationByIDForCancelled(notification_id,SecurityContextHolder.getContext().getAuthentication().getName() );
     }
-    @GetMapping("/user/notifications/InfoChanged/{notification_id}")
-    @PreAuthorize("hasRole('ORGANIZER')")
+    @GetMapping("/notifications/InfoChanged/{notification_id}")
+    @PreAuthorize("hasRole('USER')")
     public NotificationInformationChanged getNotificationByIDInfoChanged(@PathVariable("notification_id") Long notification_id){
         return notificationService.getNotificationByIDForInformationChanged(notification_id,SecurityContextHolder.getContext().getAuthentication().getName() );
     }
-    @PutMapping("/user/notification/deactivate/{notification_id}")
+    @PutMapping("/notification/deactivate/{notification_id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> deactivateNotification(@PathVariable("notification_id") Long notification_id) {
         notificationService.deactivateNotification(notification_id);
         return new ResponseEntity<>("Notification deactivated successfully!", HttpStatus.OK);
+    }
+
+    @GetMapping("/notifications/Deleted/{notification_id}")
+    @PreAuthorize("hasRole('USER')")
+    public NotificationTripDeleted getNotificationByIDDeleted(@PathVariable("notification_id") Long notification_id){
+        return notificationService.getNotificationByIDDeleted(notification_id,SecurityContextHolder.getContext().getAuthentication().getName() );
     }
 }

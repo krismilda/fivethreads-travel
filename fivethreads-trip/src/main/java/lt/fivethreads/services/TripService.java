@@ -1,9 +1,7 @@
 package lt.fivethreads.services;
 
-import lt.fivethreads.entities.request.CreateTripForm;
-import lt.fivethreads.entities.request.FileDTO;
-import lt.fivethreads.entities.request.TripDTO;
-import lt.fivethreads.entities.request.TripMemberDTO;
+import lt.fivethreads.entities.TripMember;
+import lt.fivethreads.entities.request.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -15,4 +13,5 @@ public interface TripService {
     List<TripDTO> getAllTripsByUserEmail(String email);
     void addNewTripMember(TripMemberDTO tripMemberDTO, Long tripID);
     void deleteTrip(Long tripID);
+    void editTripInformation(EditTripInformation editTripInformation);
 }

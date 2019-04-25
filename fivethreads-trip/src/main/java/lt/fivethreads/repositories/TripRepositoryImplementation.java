@@ -1,6 +1,5 @@
 package lt.fivethreads.repositories;
 
-import lt.fivethreads.entities.AccommodationType;
 import lt.fivethreads.entities.Trip;
 import lt.fivethreads.entities.TripMember;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +12,7 @@ import java.util.List;
 
 @Repository
 @Transactional
-public class TripRepositoryImplementation implements TripRepository
-{
+public class TripRepositoryImplementation implements TripRepository {
 
     @PersistenceContext
     private EntityManager em;
@@ -28,42 +26,43 @@ public class TripRepositoryImplementation implements TripRepository
     @Autowired
     private TripAccommodationRepository tripAccommodationRepository;
 
-    public Trip findByID(long id){
+    public Trip findByID(long id) {
         return em.find(Trip.class, id);
     }
 
-    public List<Trip> getAll(){
+    public List<Trip> getAll() {
         return em.createNamedQuery("Trip.findAll", Trip.class).getResultList();
     }
 
-    public void createTrip(Trip trip){
-        for (TripMember tripMember:trip.getTripMembers()
-             ) {
-                tripMemberRepository.saveTripMember(tripMember);
+    public void createTrip(Trip trip) {
+        for (TripMember tripMember : trip.getTripMembers()
+        ) {
+            tripMemberRepository.saveTripMember(tripMember);
         }
         em.persist(trip);
     }
 
-    public void updateTrip(Trip trip){
-
+    public void updateTrip(Trip trip) {
+        em.merge(trip);
     }
 
-    public List<Trip> getAllByOrganizerEmail(String email){
+    public List<Trip> getAllByOrganizerEmail(String email) {
         return em.createNamedQuery("Trip.findByOrganizer", Trip.class)
                 .setParameter("organizer_email", email)
                 .getResultList();
     }
-     public List<Trip> getAllByUserEmail(String email){
-         return em.createNamedQuery("Trip.findUserEmail", Trip.class)
-                 .setParameter("user_email", email)
-                 .getResultList();
-     }
 
-     public void deleteTrip(Trip trip){
-        for (TripMember tripMember:trip.getTripMembers()
-              ) {
-             tripMemberRepository.deleteTripMember(tripMember);
-         }
-         em.remove(trip);
-     }
+    public List<Trip> getAllByUserEmail(String email) {
+        return em.createNamedQuery("Trip.findUserEmail", Trip.class)
+                .setParameter("user_email", email)
+                .getResultList();
+    }
+
+    public void deleteTrip(Trip trip) {
+        for (TripMember tripMember : trip.getTripMembers()
+        ) {
+            tripMemberRepository.deleteTripMember(tripMember);
+        }
+        em.remove(trip);
+    }
 }

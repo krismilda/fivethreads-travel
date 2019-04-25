@@ -26,6 +26,9 @@ public class TripFilesServiceImplementation implements TripFilesService
     @Autowired
     TripMemberRepository tripMemberRepository;
 
+    @Autowired
+    CreateNotificationService createNotificationService;
+
     public FileDTO addFlightTicket(Long tripID, String memberEmail, MultipartFile file){
         Trip trip = tripRepository.findByID(tripID);
         TripMember tripMember = tripMemberRepository.getTripMemberByTripIDAndEmail(tripID, memberEmail);
@@ -48,6 +51,7 @@ public class TripFilesServiceImplementation implements TripFilesService
         tripMember.getFlightTicket().setUniqueID(newID);
         tripMember.getFlightTicket().getFile().add(uploadedFile);
         tripMemberRepository.saveFlightTicket(tripMember);
+        createNotificationService.createNotificationInformationChanged(tripMember, "Information was changed.");
         return fileDTO;
     }
 
@@ -76,6 +80,7 @@ public class TripFilesServiceImplementation implements TripFilesService
         tripMember.getCarTicket().setUniqueID(newID);
         tripMember.getCarTicket().getFile().add(uploadedFile);
         tripMemberRepository.saveCarTicket(tripMember);
+        createNotificationService.createNotificationInformationChanged(tripMember, "Information was changed.");
         return fileDTO;
     }
     public FileDTO addAccommodationTicket(Long tripID, String memberEmail, MultipartFile file){
@@ -101,6 +106,7 @@ public class TripFilesServiceImplementation implements TripFilesService
         tripMember.getTripAccommodation().setUniqueID(newID);
         tripMember.getCarTicket().getFile().add(uploadedFile);
         tripMemberRepository.saveCarTicket(tripMember);
+        createNotificationService.createNotificationInformationChanged(tripMember, "Information was changed.");
         return fileDTO;
     }
     public void deleteFlightTicket(Long fileID){

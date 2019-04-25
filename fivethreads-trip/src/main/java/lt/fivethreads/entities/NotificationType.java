@@ -4,5 +4,6 @@ public enum NotificationType {
     ForApproval,
     Approved,
     Cancelled,
-    InformationChanged
+    InformationChanged,
+    Deleted
 }

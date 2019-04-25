@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.ws.Response;
 import java.util.Collection;
 import java.util.List;
 
@@ -122,5 +123,13 @@ public class TripController {
     public ResponseEntity<?> deleteTrip(@PathVariable("tripID") Long tripID) {
         tripService.deleteTrip(tripID);
         return new ResponseEntity<>("Trip deleted successfully!", HttpStatus.OK);
+    }
+
+
+    @PutMapping("/editTrip")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public ResponseEntity<?> editTripInformation(@Validated @RequestBody EditTripInformation editTripInformation) {
+        tripService.editTripInformation(editTripInformation);
+        return new ResponseEntity<>("Trip edited successfully!", HttpStatus.OK);
     }
 }

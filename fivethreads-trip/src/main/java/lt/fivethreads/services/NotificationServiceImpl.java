@@ -6,8 +6,7 @@ import lt.fivethreads.entities.request.CancelledTrip;
 import lt.fivethreads.entities.request.Notifications.*;
 import lt.fivethreads.exception.WrongNotificationTypeOrID;
 import lt.fivethreads.exception.WrongTripData;
-import lt.fivethreads.mapper.NotificationForApprovalMapper;
-import lt.fivethreads.mapper.NotificationListMapper;
+import lt.fivethreads.mapper.NotificationMapper;
 import lt.fivethreads.mapper.TripMapper;
 import lt.fivethreads.mapper.TripMemberMapper;
 import lt.fivethreads.repositories.NotificationRepository;
@@ -18,9 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class NotificationServiceImpl implements NotificationService {
@@ -43,10 +40,7 @@ public class NotificationServiceImpl implements NotificationService {
     NotificationRepository notificationRepository;
 
     @Autowired
-    NotificationForApprovalMapper notificationForApprovalMapper;
-
-    @Autowired
-    NotificationListMapper notificationListMapper;
+    NotificationMapper notificationMapper;
 
     @Autowired
     CreateNotificationService createNotificationService;
@@ -85,7 +79,7 @@ public class NotificationServiceImpl implements NotificationService {
         for (Notification notification :
                 notificationList
         ) {
-            notificationListDTOS.add(notificationListMapper.convertNotificationToNotificationListDTO(notification));
+            notificationListDTOS.add(notificationMapper.convertNotificationToNotificationListDTO(notification));
         }
         return notificationListDTOS;
     }
@@ -96,7 +90,7 @@ public class NotificationServiceImpl implements NotificationService {
         for (Notification notification :
                 notificationList
         ) {
-            notificationListDTOS.add(notificationListMapper.convertNotificationToNotificationListDTO(notification));
+            notificationListDTOS.add(notificationMapper.convertNotificationToNotificationListDTO(notification));
         }
         return notificationListDTOS;
     }
@@ -112,7 +106,7 @@ public class NotificationServiceImpl implements NotificationService {
         if(!notification.getUser().getEmail().equals(email) || !notification.getNotificationType().toString().equals("ForApproval")){
             throw new WrongNotificationTypeOrID("Wrong notification ID or type.");
         }
-        NotificationForApprovalDTO notificationForApprovalDTO = notificationForApprovalMapper.convertNotificationForApprovalToNotificationDTO(notification);
+        NotificationForApprovalDTO notificationForApprovalDTO = notificationMapper.convertNotificationForApprovalToNotificationDTO(notification);
         return notificationForApprovalDTO;
     }
 
@@ -121,7 +115,7 @@ public class NotificationServiceImpl implements NotificationService {
         if(!notification.getTripHistory().getOrganizer().getEmail().equals(email) || !notification.getNotificationType().toString().equals("Approved")){
             throw new WrongNotificationTypeOrID("Wrong notification ID or type.");
         }
-        NotificationApproved notificationApproved = notificationForApprovalMapper.convertNotificationToNotificationApprovedDTO(notification);
+        NotificationApproved notificationApproved = notificationMapper.convertNotificationToNotificationApprovedDTO(notification);
         return  notificationApproved;
     }
 
@@ -131,7 +125,7 @@ public class NotificationServiceImpl implements NotificationService {
         if(!notification.getTripHistory().getOrganizer().getEmail().equals(email) || !notification.getNotificationType().toString().equals("Cancelled")){
             throw new WrongNotificationTypeOrID("Wrong notification ID or type.");
         }
-        NotificationCancelled notificationCancelled = notificationForApprovalMapper.convertNotificationToNotificationCancelled(notification);
+        NotificationCancelled notificationCancelled = notificationMapper.convertNotificationToNotificationCancelled(notification);
         return  notificationCancelled;
     }
 
@@ -140,7 +134,16 @@ public class NotificationServiceImpl implements NotificationService {
         if(!notification.getUser().getEmail().equals(email) || !notification.getNotificationType().toString().equals("InformationChanged")){
             throw new WrongNotificationTypeOrID("Wrong notification ID or type.");
         }
-        NotificationInformationChanged notificationInformationChanged = notificationForApprovalMapper.convertNotificationToNotificationInformationChangedDTO(notification);
+        NotificationInformationChanged notificationInformationChanged = notificationMapper.convertNotificationToNotificationInformationChangedDTO(notification);
         return  notificationInformationChanged;
+    }
+
+    public NotificationTripDeleted getNotificationByIDDeleted(Long notification_id, String email){
+        Notification notification = notificationRepository.getNotificationByID(notification_id);
+        if(!notification.getUser().getEmail().equals(email) || !notification.getNotificationType().toString().equals("Deleted")){
+            throw new WrongNotificationTypeOrID("Wrong notification ID or type.");
+        }
+        NotificationTripDeleted notificationTripDeleted = notificationMapper.convertNotificationToNotificationTripDeleted(notification);
+        return  notificationTripDeleted;
     }
 }

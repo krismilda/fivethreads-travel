@@ -14,7 +14,7 @@ import java.util.Date;
 @NamedQueries({
         @NamedQuery(name = "Notification.FindAllUserByEmail", query = "select tr from Notification as tr " +
                 "JOIN FETCH tr.user as m " +
-                "WHERE m.email=:email AND tr.notificationType in (0, 3)"),
+                "WHERE m.email=:email AND tr.notificationType in (0, 3, 4)"),
         @NamedQuery(name = "Notification.FindAllOrganizerByEmail", query = "select tr from Notification as tr " +
                 "JOIN FETCH tr.tripHistory as m " +
                 "JOIN FETCH m.organizer as u " +

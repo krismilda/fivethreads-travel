@@ -10,4 +10,5 @@ public interface CreateNotificationService {
     void createNotificationInformationChanged(TripMember tripMember, String name);
     void createNotificationForCancellation(TripCancellation tripCancellation, String name);
     void createNotificationForApproval(TripMember tripMember, String name);
+    void createNotificaitonDeleted(TripMember tripMember, String name);
 }
