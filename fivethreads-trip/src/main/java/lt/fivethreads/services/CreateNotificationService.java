@@ -8,7 +8,7 @@ public interface CreateNotificationService {
     void createNotificationsForApproval(Trip trip, String name);
     void createNotificationForApprovalTripMember(TripMember tripMember, String name);
     void createNotificationInformationChanged(TripMember tripMember, String name);
-    void createNotificationForCancellation(TripCancellation tripCancellation, String name);
+    void createNotificationCancellation(TripCancellation tripCancellation, String name);
     void createNotificationForApproval(TripMember tripMember, String name);
-    void createNotificaitonDeleted(TripMember tripMember, String name);
+    void createNotificationDeleted(TripMember tripMember, String name);
 }

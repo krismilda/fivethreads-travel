@@ -72,7 +72,7 @@ public class NotificationServiceImpl implements NotificationService {
         tripCancellation.getTripMember().setTripCancellation(tripCancellation);
         tripCancellation.getTripMember().setTripAcceptance(TripAcceptance.CANCELLED);
         tripMemberRepository.addCancellation(tripCancellation);
-        createNotificationService.createNotificationForCancellation(tripCancellation, "Trip was cancelled.");
+        createNotificationService.createNotificationCancellation(tripCancellation, "Trip was cancelled.");
         return tripMemberMapper.convertTripMemberToTripMemberDTO(tripCancellation.getTripMember());
     }
 

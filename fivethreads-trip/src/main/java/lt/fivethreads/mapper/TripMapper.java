@@ -34,6 +34,7 @@ public class TripMapper {
         trip.setArrival(form.getArrival());
         trip.setDeparture(form.getDeparture());
         trip.setOrganizer(organizer);
+        trip.setIsFlexible(form.getIsFlexible());
         for (TripMemberDTO tripMemberCreateDAO : form.getTripMembers()
         ) {
             TripMember tripMember = tripMemberMapper.convertTripMemberDTOtoTripMember(tripMemberCreateDAO);
@@ -65,6 +66,7 @@ public class TripMapper {
         tripDTO.setDeparture(trip.getDeparture());
         tripDTO.setStartDate(trip.getStartDate());
         tripDTO.setFinishDate(trip.getFinishDate());
+        tripDTO.setIsFlexible(trip.getIsFlexible());
         tripDTO.setOrganizer_email(trip.getOrganizer().getEmail());
         return tripDTO;
     }

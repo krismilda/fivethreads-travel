@@ -109,7 +109,7 @@ public class TripServiceImplementation implements TripService {
         Trip trip = tripRepository.findByID(tripID);
         for (TripMember tripMember: trip.getTripMembers()
              ) {
-            createNotificationService.createNotificaitonDeleted(tripMember, "Trip was deleted.");
+            createNotificationService.createNotificationDeleted(tripMember, "Trip was deleted.");
         }
         tripRepository.deleteTrip(trip);
     }
@@ -126,7 +126,7 @@ public class TripServiceImplementation implements TripService {
                 || !trip.getDeparture().equals(editTripInformation.getDeparture())) {
             for (TripMember tripMember: trip.getTripMembers()
             ) {
-                createNotificationService.createNotificationForApproval(tripMember, "Trip's information was changed. Trip is waiting for your approval.");
+                createNotificationService.createNotificationForApprovalTripMember(tripMember, "Trip's information was changed. Trip is waiting for your approval.");
             }
         }
         trip.setTripStatus(TripStatus.NOTSTARTED);

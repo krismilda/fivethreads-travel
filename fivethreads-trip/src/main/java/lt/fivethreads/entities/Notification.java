@@ -14,11 +14,11 @@ import java.util.Date;
 @NamedQueries({
         @NamedQuery(name = "Notification.FindAllUserByEmail", query = "select tr from Notification as tr " +
                 "JOIN FETCH tr.user as m " +
-                "WHERE m.email=:email AND tr.notificationType in (0, 3, 4)"),
+                "WHERE m.email=:email AND tr.notificationType in ('ForApproval', 'InformationChanged', 'Deleted')"),
         @NamedQuery(name = "Notification.FindAllOrganizerByEmail", query = "select tr from Notification as tr " +
                 "JOIN FETCH tr.tripHistory as m " +
                 "JOIN FETCH m.organizer as u " +
-                "WHERE u.email=:email AND tr.notificationType in (1, 2)"),
+                "WHERE u.email=:email AND tr.notificationType in ('Approved', 'Cancelled')"),
         @NamedQuery(name = "Notification.FindByID", query = "select tr from Notification as tr " +
                 "WHERE tr.id=:id")
 
@@ -43,6 +43,7 @@ public class Notification {
     @JoinColumn(name = "TRIP_HISTORY_ID")
     private TripHistory tripHistory;
 
+    @Enumerated(EnumType.STRING)
     private NotificationType notificationType;
 
     private String reason;

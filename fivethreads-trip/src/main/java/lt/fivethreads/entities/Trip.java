@@ -1,5 +1,6 @@
 package lt.fivethreads.entities;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,6 +27,8 @@ public class Trip {
     @Column(name = "id")
     private Long id;
 
+    @NotNull(message = "Is flexible cannot be null.")
+    private Boolean isFlexible;
     @NotNull(message="Start date cannot be null.")
     @Column(name="START_DATE")
     private Date startDate;

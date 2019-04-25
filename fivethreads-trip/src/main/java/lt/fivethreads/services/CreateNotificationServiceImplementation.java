@@ -78,7 +78,7 @@ public class CreateNotificationServiceImplementation implements CreateNotificati
         notificationRepository.saveNotification(notification);
     }
 
-    public void createNotificationForCancellation(TripCancellation tripCancellation, String name) {
+    public void createNotificationCancellation(TripCancellation tripCancellation, String name) {
         Notification notification = new Notification();
         notification.setNotificationType(NotificationType.Cancelled);
         notification.setIsActive(true);
@@ -103,7 +103,7 @@ public class CreateNotificationServiceImplementation implements CreateNotificati
         notificationRepository.saveNotification(notification);
     }
 
-    public void  createNotificaitonDeleted(TripMember tripMember, String name){
+    public void createNotificationDeleted(TripMember tripMember, String name){
         Notification notification = createNotificationFullInfo(tripMember, name);
         notification.setNotificationType(NotificationType.Deleted);
         notificationRepository.saveNotification(notification);
