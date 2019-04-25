@@ -3,7 +3,9 @@ package lt.fivethreads.services;
 import lt.fivethreads.entities.*;
 import lt.fivethreads.entities.request.AcceptedTrip;
 import lt.fivethreads.entities.request.CancelledTrip;
-import lt.fivethreads.entities.request.NotificationDTO;
+import lt.fivethreads.entities.request.Notifications.*;
+import lt.fivethreads.entities.request.TripMemberDTO;
+import lt.fivethreads.exception.WrongNotificationTypeOrID;
 import lt.fivethreads.exception.WrongTripData;
 import lt.fivethreads.mapper.NotificationMapper;
 import lt.fivethreads.mapper.TripMapper;
@@ -42,66 +44,11 @@ public class NotificationServiceImpl implements NotificationService {
     @Autowired
     NotificationMapper notificationMapper;
 
-    public void createNotifications(Trip trip, String name) {
-        for (TripMember tripMember : trip.getTripMembers()
-        ) {
-            this.createNotificationForTripMember(tripMember, name);
-        }
+    @Autowired
+    CreateNotificationService createNotificationService;
 
-    }
-
-    public void createNotificationForTripMember(TripMember tripMember, String name){
-        Notification notification = new Notification();
-        notification.setName(name);
-        notification.setIsActive(Boolean.TRUE);
-        notification.setCreated_date(new Date());
-        TripHistory tripHistory = new TripHistory();
-        tripHistory.setStartDate(tripMember.getTrip().getStartDate());
-        tripHistory.setFinishDate(tripMember.getTrip().getFinishDate());
-        tripHistory.setArrival(tripMember.getTrip().getArrival());
-        tripHistory.setDeparture(tripMember.getTrip().getDeparture());
-        tripHistory.setOrganizer(tripMember.getTrip().getOrganizer());
-        tripHistory.setIsFlightTickedNeeded(tripMember.getIsFlightTickedNeeded());
-        tripHistory.setIsCarNeeded(tripMember.getIsCarNeeded());
-        tripHistory.setIsAccommodationNeeded(tripMember.getIsAccommodationNeeded());
-        if (tripHistory.getIsAccommodationNeeded()) {
-            tripHistory.setAccommodationPrice(tripMember.getTripAccommodation().getPrice());
-            tripHistory.setAccommodationStart(tripMember.getTripAccommodation().getAccommodationStart());
-            tripHistory.setAccommodationFinish(tripMember.getTripAccommodation().getAccommodationFinish());
-        }
-        if (tripHistory.getIsCarNeeded()) {
-            tripHistory.setCarRentStart(tripMember.getCarTicket().getCarRentStart());
-            tripHistory.setCarRentFinish(tripMember.getCarTicket().getCarRentFinish());
-            if(tripMember.getCarTicket().getPrice()!=null){
-                tripHistory.setCarPrice(tripMember.getCarTicket().getPrice());
-            }
-        }
-        if (tripMember.getFlightTicket() != null) {
-            tripHistory.setFlightPrice(tripMember.getFlightTicket().getPrice());
-        }
-        List<TripMemberHistory> tripMemberHistoryList = new ArrayList<>();
-        for (TripMember tripOtherMember : tripMember.getTrip().getTripMembers()
-        ) {
-            if (tripMember.getUser().getId() != tripOtherMember.getUser().getId()) {
-                TripMemberHistory tripMemberHistory = new TripMemberHistory();
-                tripMemberHistory.setEmail(tripOtherMember.getUser().getEmail());
-                tripMemberHistory.setId(tripOtherMember.getUser().getId());
-                tripMemberHistory.setFirstname(tripOtherMember.getUser().getFirstname());
-                tripMemberHistory.setLastName(tripOtherMember.getUser().getLastName());
-                tripMemberHistory.setPhone(tripOtherMember.getUser().getPhone());
-                tripMemberHistory.setTripHistory(tripHistory);
-                tripMemberHistoryList.add(tripMemberHistory);
-            }
-        }
-        notification.setUser(tripMember.getUser());
-        notification.setTrip(tripMember.getTrip());
-        notification.setTripHistory(tripHistory);
-        notification.getTripHistory().setTripMembers(tripMemberHistoryList);
-        notificationRepository.saveNotification(notification);
-    }
-
-    public void tripAccepted(AcceptedTrip acceptedTrip) {
-        TripMember tripMember = tripMemberMapper.convertTripMemberDAOtoTripMember(acceptedTrip.getTripMemberDTO());
+    public TripMemberDTO tripAccepted(AcceptedTrip acceptedTrip) {
+        TripMember tripMember = tripMemberMapper.convertTripMemberDTOtoTripMember(acceptedTrip.getTripMemberDTO());
         Trip trip = tripRepository.findByID(acceptedTrip.getTripID());
         if (trip == null) {
             throw new WrongTripData("Trip ID does not exist.");
@@ -117,35 +64,91 @@ public class NotificationServiceImpl implements NotificationService {
         tripValidation.validateTripMember(tripMember);
         tripMember.setTripAcceptance(TripAcceptance.ACCEPTED);
         tripMemberRepository.updateTripMember(tripMember);
+        createNotificationService.createNotificationForApproval(tripMember, "Trip was approved.");
+        return tripMemberMapper.convertTripMemberToTripMemberDTO(tripMember);
     }
 
-    public void tripCancelled(CancelledTrip cancelledTrip) {
+    public TripMemberDTO tripCancelled(CancelledTrip cancelledTrip) {
         TripCancellation tripCancellation = tripMapper.convertCancelledTripToObject(cancelledTrip);
         tripCancellation.getTripMember().setTripCancellation(tripCancellation);
         tripCancellation.getTripMember().setTripAcceptance(TripAcceptance.CANCELLED);
         tripMemberRepository.addCancellation(tripCancellation);
+        createNotificationService.createNotificationCancellation(tripCancellation, "Trip was cancelled.");
+        return tripMemberMapper.convertTripMemberToTripMemberDTO(tripCancellation.getTripMember());
     }
 
-    public List<NotificationDTO> getNotificationsByEmail(String email) {
-        List<Notification> notificationList = notificationRepository.getAllNotificationByEmail(email);
-        List<NotificationDTO> notificationDTOList = new ArrayList<>();
+    public List<NotificationListDTO> getUserNotification(String email) {
+        List<Notification> notificationList = notificationRepository.getAllUserNotificationByEmail(email);
+        List<NotificationListDTO> notificationListDTOS = new ArrayList<>();
         for (Notification notification :
                 notificationList
         ) {
-            notificationDTOList.add(notificationMapper.convertNotificationToNotificationDTO(notification));
+            notificationListDTOS.add(notificationMapper.convertNotificationToNotificationListDTO(notification));
         }
-        return notificationDTOList;
+        return notificationListDTOS;
     }
 
-    public void deactivateNotification(Long id) {
+    public List<NotificationListDTO> getOrganizerNotification(String email) {
+        List<Notification> notificationList = notificationRepository.getAllOrganizerNotificationByEmail(email);
+        List<NotificationListDTO> notificationListDTOS = new ArrayList<>();
+        for (Notification notification :
+                notificationList
+        ) {
+            notificationListDTOS.add(notificationMapper.convertNotificationToNotificationListDTO(notification));
+        }
+        return notificationListDTOS;
+    }
+
+    public NotificationListDTO deactivateNotification(Long id) {
         Notification notification = notificationRepository.getNotificationByID(id);
         notification.setIsActive(false);
         notificationRepository.updateNotification(notification);
+        return notificationMapper.convertNotificationToNotificationListDTO(notification);
     }
 
-    public NotificationDTO getNotificationByID(Long notification_id) {
+    public NotificationForApprovalDTO getNotificationByIDForApproval(Long notification_id, String email){
         Notification notification = notificationRepository.getNotificationByID(notification_id);
-        NotificationDTO notificationDTO = notificationMapper.convertNotificationToNotificationDTO(notification);
-        return notificationDTO;
+        if(!notification.getUser().getEmail().equals(email) || !notification.getNotificationType().toString().equals("ForApproval")){
+            throw new WrongNotificationTypeOrID("Wrong notification ID or type.");
+        }
+        NotificationForApprovalDTO notificationForApprovalDTO = notificationMapper.convertNotificationForApprovalToNotificationDTO(notification);
+        return notificationForApprovalDTO;
+    }
+
+    public NotificationApproved getNotificationByIDForApproved(Long notification_id, String email){
+        Notification notification = notificationRepository.getNotificationByID(notification_id);
+        if(!notification.getTripHistory().getOrganizer().getEmail().equals(email) || !notification.getNotificationType().toString().equals("Approved")){
+            throw new WrongNotificationTypeOrID("Wrong notification ID or type.");
+        }
+        NotificationApproved notificationApproved = notificationMapper.convertNotificationToNotificationApprovedDTO(notification);
+        return  notificationApproved;
+    }
+
+
+    public NotificationCancelled getNotificationByIDForCancelled(Long notification_id, String email){
+        Notification notification = notificationRepository.getNotificationByID(notification_id);
+        if(!notification.getTripHistory().getOrganizer().getEmail().equals(email) || !notification.getNotificationType().toString().equals("Cancelled")){
+            throw new WrongNotificationTypeOrID("Wrong notification ID or type.");
+        }
+        NotificationCancelled notificationCancelled = notificationMapper.convertNotificationToNotificationCancelled(notification);
+        return  notificationCancelled;
+    }
+
+    public NotificationInformationChanged getNotificationByIDForInformationChanged(Long notification_id, String email){
+        Notification notification = notificationRepository.getNotificationByID(notification_id);
+        if(!notification.getUser().getEmail().equals(email) || !notification.getNotificationType().toString().equals("InformationChanged")){
+            throw new WrongNotificationTypeOrID("Wrong notification ID or type.");
+        }
+        NotificationInformationChanged notificationInformationChanged = notificationMapper.convertNotificationToNotificationInformationChangedDTO(notification);
+        return  notificationInformationChanged;
+    }
+
+    public NotificationTripDeleted getNotificationByIDDeleted(Long notification_id, String email){
+        Notification notification = notificationRepository.getNotificationByID(notification_id);
+        if(!notification.getUser().getEmail().equals(email) || !notification.getNotificationType().toString().equals("Deleted")){
+            throw new WrongNotificationTypeOrID("Wrong notification ID or type.");
+        }
+        NotificationTripDeleted notificationTripDeleted = notificationMapper.convertNotificationToNotificationTripDeleted(notification);
+        return  notificationTripDeleted;
     }
 }

@@ -1,22 +1,25 @@
 package lt.fivethreads.services;
 
-import lt.fivethreads.entities.Notification;
 import lt.fivethreads.entities.Trip;
-import lt.fivethreads.entities.TripCancellation;
 import lt.fivethreads.entities.TripMember;
 import lt.fivethreads.entities.request.AcceptedTrip;
 import lt.fivethreads.entities.request.CancelledTrip;
-import lt.fivethreads.entities.request.NotificationDTO;
+import lt.fivethreads.entities.request.Notifications.*;
+import lt.fivethreads.entities.request.TripMemberDTO;
 
 import java.util.List;
 
 public interface NotificationService {
-    //void sendNotificationsCreatedTrip (Trip trip);
-    void tripAccepted(AcceptedTrip acceptedTrip);
-    void tripCancelled(CancelledTrip cancelledTrip);
-    void createNotifications (Trip trip, String name);
-    List<NotificationDTO> getNotificationsByEmail(String email);
-    void deactivateNotification(Long id);
-    NotificationDTO getNotificationByID(Long notification_id);
-    void createNotificationForTripMember(TripMember tripMember, String name);
+    TripMemberDTO tripAccepted(AcceptedTrip acceptedTrip);
+    TripMemberDTO tripCancelled(CancelledTrip cancelledTrip);
+    List<NotificationListDTO> getUserNotification(String email);
+    List<NotificationListDTO> getOrganizerNotification(String email);
+    NotificationListDTO deactivateNotification(Long id);
+    NotificationInformationChanged getNotificationByIDForInformationChanged(Long notification_id, String email);
+    NotificationCancelled getNotificationByIDForCancelled(Long notification_id, String email);
+    NotificationApproved getNotificationByIDForApproved(Long notification_id, String email);
+    NotificationForApprovalDTO getNotificationByIDForApproval(Long notification_id, String email);
+    NotificationTripDeleted getNotificationByIDDeleted(Long notification_id, String email);
+
 }
+

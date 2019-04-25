@@ -6,11 +6,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
-public class CreateTripForm {
+public class EditTripInformation {
+    @NotNull(message = "ID cannot be null.")
+    private Long id;
     @NotNull(message="Start date cannot be null.")
     @DateTimeFormat
     private Date startDate;
@@ -21,9 +22,4 @@ public class CreateTripForm {
     private String arrival;
     @NotNull(message="Departure cannot be null.")
     private String departure;
-    private List<TripMemberDTO> tripMembers;
-    @NotNull(message="Organizer cannot be null.")
-    private String organizer_email;
-    @NotNull(message = "Is flexible cannot be null.")
-    private Boolean isFlexible;
 }

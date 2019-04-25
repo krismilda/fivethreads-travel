@@ -26,4 +26,6 @@ public class TripDTO {
     private List<TripMemberDTO> tripMembers;
     @NotNull(message="Organizer cannot be null.")
     private String organizer_email;
+    @NotNull(message = "Is flexible cannot be null.")
+    private Boolean isFlexible;
 }

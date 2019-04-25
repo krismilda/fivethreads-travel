@@ -1,54 +1,234 @@
 package lt.fivethreads.mapper;
 
 import lt.fivethreads.entities.Notification;
+import lt.fivethreads.entities.TripMember;
 import lt.fivethreads.entities.TripMemberHistory;
-import lt.fivethreads.entities.request.NotificationDTO;
-import lt.fivethreads.entities.request.NotificationTripMemberDTO;
+import lt.fivethreads.entities.request.*;
+import lt.fivethreads.entities.request.Notifications.*;
+import lt.fivethreads.repositories.TripMemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class NotificationMapper {
 
-    public NotificationDTO convertNotificationToNotificationDTO(Notification notification){
-        NotificationDTO notificationDTO = new NotificationDTO();
-        notificationDTO.setId(notification.getId());
-        notificationDTO.setIsActive(notification.getIsActive());
-        notificationDTO.setName(notification.getName());
-        notificationDTO.setCreated_date(notification.getCreated_date());
-        notificationDTO.setTrip_id(notification.getTrip().getId());
-        notificationDTO.setStartDate(notification.getTripHistory().getStartDate());
-        notificationDTO.setFinishDate(notification.getTripHistory().getFinishDate());
-        notificationDTO.setArrival(notification.getTripHistory().getArrival());
-        notificationDTO.setDeparture(notification.getTripHistory().getDeparture());
-        NotificationTripMemberDTO notificationTripMemberDTO = new NotificationTripMemberDTO();
-        notificationTripMemberDTO.setEmail(notification.getTripHistory().getOrganizer().getEmail());
-        notificationTripMemberDTO.setFirstName(notification.getTripHistory().getOrganizer().getFirstname());
-        notificationTripMemberDTO.setLastName(notification.getTripHistory().getOrganizer().getLastName());
-        notificationTripMemberDTO.setPhone(notification.getTripHistory().getOrganizer().getPhone());
-        notificationDTO.setOrganizer(notificationTripMemberDTO);
-        notificationDTO.setIsAccommodationNeeded(notification.getTripHistory().getIsAccommodationNeeded());
-        notificationDTO.setIsCarNeeded(notification.getTripHistory().getIsCarNeeded());
-        notificationDTO.setIsFlightTickedNeeded(notification.getTripHistory().getIsFlightTickedNeeded());
-        notificationDTO.setAccommodationPrice(notification.getTripHistory().getAccommodationPrice());
-        notificationDTO.setAccommodationStart(notification.getTripHistory().getAccommodationStart());
-        notificationDTO.setAccommodationFinish(notification.getTripHistory().getAccommodationFinish());
-        notificationDTO.setCarPrice(notification.getTripHistory().getCarPrice());
-        notificationDTO.setCarRentStart(notification.getTripHistory().getCarRentStart());
-        notificationDTO.setCarRentFinish(notification.getTripHistory().getCarRentFinish());
-        List<NotificationTripMemberDTO> otherTripMembers =new ArrayList<>();
-        for (TripMemberHistory tripMemberHistory:notification.getTripHistory().getTripMembers()
-             ) {
-            NotificationTripMemberDTO notificationTripMemberDTO1 = new NotificationTripMemberDTO();
-            notificationTripMemberDTO1.setEmail(tripMemberHistory.getEmail());
-            notificationTripMemberDTO1.setFirstName(tripMemberHistory.getFirstname());
-            notificationTripMemberDTO1.setLastName(tripMemberHistory.getLastName());
-            notificationTripMemberDTO1.setPhone(tripMemberHistory.getPhone());
-            otherTripMembers.add(notificationTripMemberDTO1);
+    @Autowired
+    TripMemberRepository tripMemberRepository;
+
+    public NotificationForApprovalDTO convertNotificationForApprovalToNotificationDTO(Notification notification) {
+        NotificationForApprovalDTO notificationForApprovalDTO = new NotificationForApprovalDTO();
+        notificationForApprovalDTO.setId(notification.getId());
+        notificationForApprovalDTO.setIsActive(notification.getIsActive());
+        notificationForApprovalDTO.setNotificationType(notification.getNotificationType().toString());
+        notificationForApprovalDTO.setName(notification.getName());
+        notificationForApprovalDTO.setCreated_date(notification.getCreated_date());
+        notificationForApprovalDTO.setTrip_id(notification.getTripHistory().getTripID());
+        notificationForApprovalDTO.setStartDate(notification.getTripHistory().getStartDate());
+        notificationForApprovalDTO.setFinishDate(notification.getTripHistory().getFinishDate());
+        notificationForApprovalDTO.setArrival(notification.getTripHistory().getArrival());
+        notificationForApprovalDTO.setDeparture(notification.getTripHistory().getDeparture());
+        NotificationUserDTO notificationUserDTO = new NotificationUserDTO();
+        notificationUserDTO.setEmail(notification.getTripHistory().getOrganizer().getEmail());
+        notificationUserDTO.setFirstName(notification.getTripHistory().getOrganizer().getFirstname());
+        notificationUserDTO.setLastName(notification.getTripHistory().getOrganizer().getLastName());
+        notificationUserDTO.setPhone(notification.getTripHistory().getOrganizer().getPhone());
+        notificationForApprovalDTO.setOrganizer(notificationUserDTO);
+        notificationForApprovalDTO.setIsAccommodationNeeded(notification.getTripHistory().getIsAccommodationNeeded());
+        notificationForApprovalDTO.setIsCarNeeded(notification.getTripHistory().getIsCarNeeded());
+        notificationForApprovalDTO.setIsFlightTickedNeeded(notification.getTripHistory().getIsFlightTickedNeeded());
+        if (notificationForApprovalDTO.getIsAccommodationNeeded()) {
+            AccommodationDTOWithoutFiles accommodationDTO = new AccommodationDTOWithoutFiles();
+            accommodationDTO.setAccommodationStart(notification.getTripHistory().getAccommodationStart());
+            accommodationDTO.setAccommodationFinish(notification.getTripHistory().getAccommodationFinish());
+            notificationForApprovalDTO.setAccommodationDTO(accommodationDTO);
         }
-        notificationDTO.setOtherTripMembers(otherTripMembers);
-        return notificationDTO;
+        if (notificationForApprovalDTO.getIsCarNeeded()) {
+            CarTicketDTOWithoutFiles carTicketDTO = new CarTicketDTOWithoutFiles();
+            carTicketDTO.setCarRentStart(notification.getTripHistory().getCarRentStart());
+            carTicketDTO.setCarRentFinish(notification.getTripHistory().getCarRentFinish());
+            notificationForApprovalDTO.setCarTicketDTO(carTicketDTO);
+        }
+        notificationForApprovalDTO.setNotificationType(notification.getNotificationType().toString());
+        List<NotificationUserDTO> otherTripMembers = new ArrayList<>();
+        for (TripMemberHistory tripMemberHistory : notification.getTripHistory().getTripMembers()
+        ) {
+            NotificationUserDTO notificationUserDTO1 = new NotificationUserDTO();
+            notificationUserDTO1.setEmail(tripMemberHistory.getEmail());
+            notificationUserDTO1.setFirstName(tripMemberHistory.getFirstname());
+            notificationUserDTO1.setLastName(tripMemberHistory.getLastName());
+            notificationUserDTO1.setPhone(tripMemberHistory.getPhone());
+            otherTripMembers.add(notificationUserDTO1);
+        }
+        notificationForApprovalDTO.setOtherTripMembers(otherTripMembers);
+        return notificationForApprovalDTO;
+    }
+
+    public NotificationInformationChanged convertNotificationToNotificationInformationChangedDTO(Notification notification) {
+        NotificationInformationChanged notificationInformationChanged = new NotificationInformationChanged();
+        notificationInformationChanged.setId(notification.getId());
+        notificationInformationChanged.setNotificationType(notification.getNotificationType().toString());
+        notificationInformationChanged.setIsActive(notification.getIsActive());
+        notificationInformationChanged.setName(notification.getName());
+        notificationInformationChanged.setCreated_date(notification.getCreated_date());
+        notificationInformationChanged.setTrip_id(notification.getTripHistory().getTripID());
+        notificationInformationChanged.setStartDate(notification.getTripHistory().getStartDate());
+        notificationInformationChanged.setFinishDate(notification.getTripHistory().getFinishDate());
+        notificationInformationChanged.setArrival(notification.getTripHistory().getArrival());
+        notificationInformationChanged.setDeparture(notification.getTripHistory().getDeparture());
+        NotificationUserDTO notificationUserDTO = new NotificationUserDTO();
+        notificationUserDTO.setEmail(notification.getTripHistory().getOrganizer().getEmail());
+        notificationUserDTO.setFirstName(notification.getTripHistory().getOrganizer().getFirstname());
+        notificationUserDTO.setLastName(notification.getTripHistory().getOrganizer().getLastName());
+        notificationUserDTO.setPhone(notification.getTripHistory().getOrganizer().getPhone());
+        notificationInformationChanged.setOrganizer(notificationUserDTO);
+        notificationInformationChanged.setIsAccommodationNeeded(notification.getTripHistory().getIsAccommodationNeeded());
+        notificationInformationChanged.setIsCarNeeded(notification.getTripHistory().getIsCarNeeded());
+        notificationInformationChanged.setIsFlightTickedNeeded(notification.getTripHistory().getIsFlightTickedNeeded());
+        TripMember tripMember = tripMemberRepository.getTripMemberByTripIDAndEmail(notification.getTripHistory().getTripID(),
+                notification.getUser().getEmail());
+        if (notificationInformationChanged.getIsAccommodationNeeded()) {
+            AccommodationDTO accommodationDTO = new AccommodationDTO();
+            accommodationDTO.setAccommodationStart(notification.getTripHistory().getAccommodationStart());
+            accommodationDTO.setAccommodationFinish(notification.getTripHistory().getAccommodationFinish());
+            accommodationDTO.setPrice(notification.getTripHistory().getAccommodationPrice());
+            if (tripMember.getTripAccommodation().getFile() != null) {
+                accommodationDTO.setFileID(tripMember.getTripAccommodation()
+                        .getFile()
+                        .stream()
+                        .map(e -> e.getId())
+                        .collect(Collectors.toList()));
+            }
+            notificationInformationChanged.setAccommodationDTO(accommodationDTO);
+        }
+        if (notificationInformationChanged.getIsCarNeeded()) {
+            CarTicketDTO carTicketDTO = new CarTicketDTO();
+            carTicketDTO.setCarRentStart(notification.getTripHistory().getCarRentStart());
+            carTicketDTO.setCarRentFinish(notification.getTripHistory().getCarRentFinish());
+            carTicketDTO.setPrice(notification.getTripHistory().getCarPrice());
+            if (tripMember.getCarTicket().getFile() != null) {
+                carTicketDTO.setFileID(tripMember.getCarTicket()
+                        .getFile()
+                        .stream()
+                        .map(e -> e.getId())
+                        .collect(Collectors.toList()));
+            }
+            notificationInformationChanged.setCarTicketDTO(carTicketDTO);
+        }
+        if (notificationInformationChanged.getIsFlightTickedNeeded()) {
+            FlightTicketDTO flightTicketDTO = new FlightTicketDTO();
+            flightTicketDTO.setPrice(notification.getTripHistory().getFlightPrice());
+            if(tripMember.getFlightTicket().getFile()!=null) {
+                flightTicketDTO.setFileID(tripMember.getFlightTicket()
+                        .getFile()
+                        .stream()
+                        .map(e -> e.getId())
+                        .collect(Collectors.toList()));
+            }
+            notificationInformationChanged.setFlightTicketDTO(flightTicketDTO);
+        }
+        notificationInformationChanged.setNotificationType(notification.getNotificationType().toString());
+        List<NotificationUserDTO> otherTripMembers = new ArrayList<>();
+        for (TripMemberHistory tripMemberHistory : notification.getTripHistory().getTripMembers()
+        ) {
+            NotificationUserDTO notificationUserDTO1 = new NotificationUserDTO();
+            notificationUserDTO1.setEmail(tripMemberHistory.getEmail());
+            notificationUserDTO1.setFirstName(tripMemberHistory.getFirstname());
+            notificationUserDTO1.setLastName(tripMemberHistory.getLastName());
+            notificationUserDTO1.setPhone(tripMemberHistory.getPhone());
+            otherTripMembers.add(notificationUserDTO1);
+        }
+        notificationInformationChanged.setOtherTripMembers(otherTripMembers);
+        return notificationInformationChanged;
+    }
+
+    public NotificationApproved convertNotificationToNotificationApprovedDTO(Notification notification) {
+        NotificationApproved notificationApproved = new NotificationApproved();
+        notificationApproved.setId(notification.getId());
+        notificationApproved.setNotificationType(notification.getNotificationType().toString());
+        notificationApproved.setIsActive(notification.getIsActive());
+        notificationApproved.setName(notification.getName());
+        notificationApproved.setCreated_date(notification.getCreated_date());
+        notificationApproved.setTrip_id(notification.getTripHistory().getTripID());
+        notificationApproved.setStartDate(notification.getTripHistory().getStartDate());
+        notificationApproved.setFinishDate(notification.getTripHistory().getFinishDate());
+        notificationApproved.setArrival(notification.getTripHistory().getArrival());
+        notificationApproved.setDeparture(notification.getTripHistory().getDeparture());
+        NotificationUserDTO notificationUserDTO = new NotificationUserDTO();
+        notificationUserDTO.setEmail(notification.getUser().getEmail());
+        notificationUserDTO.setFirstName(notification.getUser().getFirstname());
+        notificationUserDTO.setLastName(notification.getUser().getLastName());
+        notificationUserDTO.setPhone(notification.getUser().getPhone());
+        notificationApproved.setTripMember(notificationUserDTO);
+        notificationApproved.setIsAccommodationNeeded(notification.getTripHistory().getIsAccommodationNeeded());
+        notificationApproved.setIsCarNeeded(notification.getTripHistory().getIsCarNeeded());
+        notificationApproved.setIsFlightTickedNeeded(notification.getTripHistory().getIsFlightTickedNeeded());
+        if (notificationApproved.getIsAccommodationNeeded()) {
+            AccommodationDTOWithoutFiles accommodationDTO = new AccommodationDTOWithoutFiles();
+            accommodationDTO.setAccommodationStart(notification.getTripHistory().getAccommodationStart());
+            accommodationDTO.setAccommodationFinish(notification.getTripHistory().getAccommodationFinish());
+            notificationApproved.setAccommodationDTO(accommodationDTO);
+        }
+        if (notificationApproved.getIsCarNeeded()) {
+            CarTicketDTOWithoutFiles carTicketDTO = new CarTicketDTOWithoutFiles();
+            carTicketDTO.setCarRentStart(notification.getTripHistory().getCarRentStart());
+            carTicketDTO.setCarRentFinish(notification.getTripHistory().getCarRentFinish());
+            notificationApproved.setCarTicketDTO(carTicketDTO);
+        }
+        notificationApproved.setNotificationType(notification.getNotificationType().toString());
+        return notificationApproved;
+    }
+
+    public NotificationCancelled convertNotificationToNotificationCancelled(Notification notification) {
+        NotificationCancelled notificationCancelled = new NotificationCancelled();
+        notificationCancelled.setId(notification.getId());
+        notificationCancelled.setNotificationType(notification.getNotificationType().toString());
+        notificationCancelled.setIsActive(notification.getIsActive());
+        notificationCancelled.setName(notification.getName());
+        notificationCancelled.setReason(notification.getReason());
+        NotificationUserDTO notificationUserDTO = new NotificationUserDTO();
+        notificationUserDTO.setEmail(notification.getUser().getEmail());
+        notificationUserDTO.setFirstName(notification.getUser().getFirstname());
+        notificationUserDTO.setLastName(notification.getUser().getLastName());
+        notificationUserDTO.setPhone(notification.getUser().getPhone());
+        notificationCancelled.setTripMember(notificationUserDTO);
+        notificationCancelled.setTrip_id(notification.getTripHistory().getTripID());
+        notificationCancelled.setStartDate(notification.getTripHistory().getStartDate());
+        notificationCancelled.setFinishDate(notification.getTripHistory().getFinishDate());
+        notificationCancelled.setArrival(notification.getTripHistory().getArrival());
+        notificationCancelled.setDeparture(notification.getTripHistory().getDeparture());
+        return notificationCancelled;
+    }
+
+    public NotificationTripDeleted convertNotificationToNotificationTripDeleted(Notification notification){
+        NotificationTripDeleted notificationTripDeleted = new NotificationTripDeleted();
+        notificationTripDeleted.setId(notification.getId());
+        notificationTripDeleted.setNotificationType(notification.getNotificationType().toString());
+        notificationTripDeleted.setIsActive(notification.getIsActive());
+        notificationTripDeleted.setName(notification.getName());
+        NotificationUserDTO notificationUserDTO = new NotificationUserDTO();
+        notificationUserDTO.setEmail(notification.getTripHistory().getOrganizer().getEmail());
+        notificationUserDTO.setFirstName(notification.getTripHistory().getOrganizer().getFirstname());
+        notificationUserDTO.setLastName(notification.getTripHistory().getOrganizer().getLastName());
+        notificationUserDTO.setPhone(notification.getTripHistory().getOrganizer().getPhone());
+        notificationTripDeleted.setOrganizer(notificationUserDTO);
+        notificationTripDeleted.setTrip_id(notification.getTripHistory().getTripID());
+        notificationTripDeleted.setStartDate(notification.getTripHistory().getStartDate());
+        notificationTripDeleted.setFinishDate(notification.getTripHistory().getFinishDate());
+        notificationTripDeleted.setArrival(notification.getTripHistory().getArrival());
+        notificationTripDeleted.setDeparture(notification.getTripHistory().getDeparture());
+        return notificationTripDeleted;
+    }
+    public NotificationListDTO convertNotificationToNotificationListDTO(Notification notification){
+        NotificationListDTO notificationListDTO = new NotificationListDTO();
+        notificationListDTO.setId(notification.getId());
+        notificationListDTO.setCreated_date(notification.getCreated_date());
+        notificationListDTO.setIsActive(notification.getIsActive());
+        notificationListDTO.setName(notification.getName());
+        notificationListDTO.setNotificationType(notification.getNotificationType().toString());
+        return  notificationListDTO;
     }
 }

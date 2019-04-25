@@ -1,25 +1,23 @@
-package lt.fivethreads.entities.request;
+package lt.fivethreads.entities.request.Notifications;
 
 import lombok.Getter;
 import lombok.Setter;
-import lt.fivethreads.entities.Trip;
-import lt.fivethreads.entities.TripHistory;
-import lt.fivethreads.entities.TripMemberHistory;
-import lt.fivethreads.entities.User;
+import lt.fivethreads.entities.request.AccommodationDTO;
+import lt.fivethreads.entities.request.CarTicketDTO;
+import lt.fivethreads.entities.request.FlightTicketDTO;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
-
 @Getter
 @Setter
-public class NotificationDTO {
-    @NotNull (message = "ID cannot be null.")
+public class NotificationInformationChanged {
+    @NotNull(message = "ID cannot be null.")
     private Long id;
     @NotNull (message = "IsActive cannot be null.")
     private Boolean isActive;
+    private String notificationType;
     @NotNull (message = "Name cannot be null.")
     private String name;
     @DateTimeFormat
@@ -36,23 +34,15 @@ public class NotificationDTO {
     @NotNull (message = "Trip departure cannot be null.")
     private String departure;
     @NotNull (message = "Organizer cannot be null.")
-    private NotificationTripMemberDTO organizer;
+    private NotificationUserDTO organizer;
     @NotNull (message = "IsFlightTickedNeeded cannot be null.")
     private Boolean isFlightTickedNeeded;
+    private FlightTicketDTO flightTicketDTO;
     @NotNull (message = "IsAccommodationNeeded cannot be null.")
     private Boolean isAccommodationNeeded;
+    private AccommodationDTO accommodationDTO;
     @NotNull (message = "IsCarNeeded cannot be null.")
     private Boolean isCarNeeded;
-    private List<NotificationTripMemberDTO> otherTripMembers;
-    private double flightPrice;
-    private double accommodationPrice;
-    @DateTimeFormat
-    private Date accommodationStart;
-    @DateTimeFormat
-    private Date accommodationFinish;
-    private double carPrice;
-    @DateTimeFormat
-    private Date carRentStart;
-    @DateTimeFormat
-    private Date carRentFinish;
+    private CarTicketDTO carTicketDTO;
+    private List<NotificationUserDTO> otherTripMembers;
 }

@@ -19,6 +19,8 @@ public class TripHistory {
     @Column(name = "id")
     private Long id;
 
+    private Long tripID;
+
     @NotNull(message="Start date cannot be null.")
     @Column(name="START_DATE")
     private Date startDate;
@@ -58,6 +60,7 @@ public class TripHistory {
 
     @DateTimeFormat
     private Date accommodationFinish;
+
     private double carPrice;
 
     @DateTimeFormat

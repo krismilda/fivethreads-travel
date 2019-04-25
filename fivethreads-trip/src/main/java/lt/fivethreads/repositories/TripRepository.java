@@ -11,5 +11,5 @@ public interface TripRepository {
     List<Trip> getAllByOrganizerEmail(String email);
     List<Trip> getAllByUserEmail(String email);
     void updateTrip(Trip trip);
-
+    void deleteTrip(Trip trip);
 }

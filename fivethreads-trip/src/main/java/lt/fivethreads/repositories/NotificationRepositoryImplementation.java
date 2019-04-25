@@ -20,14 +20,12 @@ public class NotificationRepositoryImplementation implements NotificationReposit
         em.persist(notification);
         for (TripMemberHistory tripMemberHistory : notification.getTripHistory().getTripMembers()
         ) {
-
             em.merge(tripMemberHistory);
         }
-
     }
 
-    public List<Notification> getAllNotificationByEmail(String email) {
-        return em.createNamedQuery("Notification.FindAllByEmail", Notification.class)
+    public List<Notification> getAllUserNotificationByEmail(String email) {
+        return em.createNamedQuery("Notification.FindAllUserByEmail", Notification.class)
                 .setParameter("email", email)
                 .getResultList();
     }
@@ -37,7 +35,13 @@ public class NotificationRepositoryImplementation implements NotificationReposit
                 .setParameter("id", id)
                 .getSingleResult();
     }
-    public void updateNotification(Notification notification){
+
+    public List<Notification> getAllOrganizerNotificationByEmail(String email){
+        return em.createNamedQuery("Notification.FindAllOrganizerByEmail", Notification.class)
+                .setParameter("email", email)
+                .getResultList();
+    }
+    public void updateNotification(Notification notification) {
         em.merge(notification);
     }
 }
