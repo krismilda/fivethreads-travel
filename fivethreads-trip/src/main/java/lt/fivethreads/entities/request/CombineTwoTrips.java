@@ -6,13 +6,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
-public class TripDTO {
-    @NotNull(message = "ID cannot be null.")
-    private Long id;
+public class CombineTwoTrips {
+    @NotNull(message = "Trip ID cannot be null.")
+    private Long tripID1;
+    @NotNull(message = "Trip ID cannot be null.")
+    private Long tripID2;
     @NotNull(message="Start date cannot be null.")
     @DateTimeFormat
     private Date startDate;
@@ -20,14 +21,7 @@ public class TripDTO {
     @NotNull(message="Finish date cannot be null.")
     private Date finishDate;
     @NotNull(message="Arrival cannot be null.")
-    private ShortAddressDTO arrival;
+    private FullAddressDTO arrival;
     @NotNull(message="Departure cannot be null.")
-    private ShortAddressDTO departure;
-    private List<TripMemberDTO> tripMembers;
-    @NotNull(message="Organizer cannot be null.")
-    private String organizer_email;
-    @NotNull(message = "Is flexible cannot be null.")
-    private Boolean isFlexible;
-    @NotNull(message = "IsCombined cannot be null")
-    private Boolean isCombined;
+    private FullAddressDTO departure;
 }

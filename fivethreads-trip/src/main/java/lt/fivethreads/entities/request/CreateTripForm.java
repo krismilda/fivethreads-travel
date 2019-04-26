@@ -18,12 +18,10 @@ public class CreateTripForm {
     @NotNull(message="Finish date cannot be null.")
     private Date finishDate;
     @NotNull(message="Arrival cannot be null.")
-    private String arrival;
+    private FullAddressDTO arrival;
     @NotNull(message="Departure cannot be null.")
-    private String departure;
+    private FullAddressDTO departure;
     private List<TripMemberDTO> tripMembers;
-    @NotNull(message="Organizer cannot be null.")
-    private String organizer_email;
     @NotNull(message = "Is flexible cannot be null.")
     private Boolean isFlexible;
 }

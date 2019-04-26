@@ -1,7 +1,10 @@
 package lt.fivethreads.repositories;
 
+import lt.fivethreads.entities.Address;
 import lt.fivethreads.entities.Trip;
 import lt.fivethreads.entities.TripMember;
+import lt.fivethreads.repository.AddressRepository;
+import lt.fivethreads.services.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -64,5 +67,11 @@ public class TripRepositoryImplementation implements TripRepository {
             tripMemberRepository.deleteTripMember(tripMember);
         }
         em.remove(trip);
+    }
+
+    public  void combineTrips(Trip newTrip, Trip trip1, Trip trip2){
+        createTrip(newTrip);
+        deleteTrip(trip1);
+        deleteTrip(trip2);
     }
 }

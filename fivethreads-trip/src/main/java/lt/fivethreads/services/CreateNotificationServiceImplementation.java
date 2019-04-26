@@ -1,5 +1,6 @@
 package lt.fivethreads.services;
 
+import lt.fivethreads.Mapper.AddressMapper;
 import lt.fivethreads.entities.*;
 import lt.fivethreads.repositories.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ public class CreateNotificationServiceImplementation implements CreateNotificati
     @Autowired
     NotificationRepository notificationRepository;
 
+    @Autowired
+    AddressMapper addressMapper;
+
     public Notification createNotificationFullInfo(TripMember tripMember, String name) {
         Notification notification = new Notification();
         notification.setName(name);
@@ -22,8 +26,8 @@ public class CreateNotificationServiceImplementation implements CreateNotificati
         TripHistory tripHistory = new TripHistory();
         tripHistory.setStartDate(tripMember.getTrip().getStartDate());
         tripHistory.setFinishDate(tripMember.getTrip().getFinishDate());
-        tripHistory.setArrival(tripMember.getTrip().getArrival());
-        tripHistory.setDeparture(tripMember.getTrip().getDeparture());
+        tripHistory.setArrival(addressMapper.copyInstance(tripMember.getTrip().getArrival()));
+        tripHistory.setDeparture(addressMapper.copyInstance(tripMember.getTrip().getDeparture()));
         tripHistory.setOrganizer(tripMember.getTrip().getOrganizer());
         tripHistory.setIsFlightTickedNeeded(tripMember.getIsFlightTickedNeeded());
         tripHistory.setIsCarNeeded(tripMember.getIsCarNeeded());
