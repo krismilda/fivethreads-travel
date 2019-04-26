@@ -19,7 +19,7 @@ public class EditTripInformation {
     @NotNull(message="Finish date cannot be null.")
     private Date finishDate;
     @NotNull(message="Arrival cannot be null.")
-    private String arrival;
+    private FullAddressDTO arrival;
     @NotNull(message="Departure cannot be null.")
-    private String departure;
+    private FullAddressDTO departure;
 }

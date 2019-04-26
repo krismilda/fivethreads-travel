@@ -9,6 +9,7 @@
         <module>fivethreads-office</module>
         <module>fivethreads-trip</module>
         <module>fivethreads-files</module>
+        <module>fivethreads-location</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

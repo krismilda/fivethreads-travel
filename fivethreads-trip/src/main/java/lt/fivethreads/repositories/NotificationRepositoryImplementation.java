@@ -16,6 +16,8 @@ public class NotificationRepositoryImplementation implements NotificationReposit
     EntityManager em;
 
     public void saveNotification(Notification notification) {
+        em.persist(notification.getTripHistory().getArrival());
+        em.persist(notification.getTripHistory().getDeparture());
         em.persist(notification.getTripHistory());
         em.persist(notification);
         for (TripMemberHistory tripMemberHistory : notification.getTripHistory().getTripMembers()
