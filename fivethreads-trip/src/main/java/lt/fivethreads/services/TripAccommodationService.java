@@ -1,11 +1,7 @@
 package lt.fivethreads.services;
 
-import lt.fivethreads.entities.TripAccommodation;
-import lt.fivethreads.entities.request.RoomDTO;
-import lt.fivethreads.entities.request.TripAccommodationDTO;
-import lt.fivethreads.entities.request.TripAccommodationForm;
+import lt.fivethreads.entities.request.*;
 
-import java.util.Date;
 import java.util.List;
 
 public interface TripAccommodationService {
@@ -15,6 +11,4 @@ public interface TripAccommodationService {
     List<TripAccommodationDTO> getAllTripAccommodationsByUser(long userId);
     List<TripAccommodationDTO> getAllTripAccommodationsByTrip(long tripId);
     List<TripAccommodationDTO> getAllTripAccommodationsByApartment(long apartmentId);
-    List <RoomDTO> getAllUnoccupiedAccommodations(Date startDate, Date finishDate);
-
 }

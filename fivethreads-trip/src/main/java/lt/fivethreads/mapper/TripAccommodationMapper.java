@@ -33,7 +33,7 @@ public class TripAccommodationMapper {
 
 
             case DEVRIDGE_APARTAMENTS:
-                Room room = roomRepository.getOne(form.getRoomId());
+                Room room = roomRepository.findById(form.getRoomId());
                 tripAccommodation.setRoom(room);
                 tripAccommodation.setHotelName(room.getApartment().getOffice().getName());
                 tripAccommodation.setHotelAddress(room.getApartment().getOffice().getAddress()+

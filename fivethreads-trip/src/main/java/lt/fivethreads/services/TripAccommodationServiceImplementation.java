@@ -1,10 +1,10 @@
 package lt.fivethreads.services;
 
 import lt.fivethreads.entities.*;
-import lt.fivethreads.entities.request.RoomDTO;
-import lt.fivethreads.entities.request.TripAccommodationDTO;
-import lt.fivethreads.entities.request.TripAccommodationForm;
+import lt.fivethreads.entities.request.*;
 import lt.fivethreads.exception.WrongTripData;
+import lt.fivethreads.mapper.ApartmentMapper;
+import lt.fivethreads.mapper.OfficeMapper;
 import lt.fivethreads.mapper.RoomMapper;
 import lt.fivethreads.mapper.TripAccommodationMapper;
 import lt.fivethreads.repositories.RoomRepository;
@@ -34,7 +34,13 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
     TripMemberRepository tripMemberRepository;
 
     @Autowired
+    ApartmentMapper apartmentMapper;
+
+    @Autowired
     RoomMapper roomMapper;
+
+    @Autowired
+    OfficeMapper officeMapper;
 
 
     public TripAccommodationDTO getTripAccommodation(long tripAccommodationId){
@@ -105,17 +111,5 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
             tripAccommodationDTOList.add(tripAccommodationMapper.getTripAccommodationDTO(tripAccommodation));
         }
         return tripAccommodationDTOList;
-    }
-
-    public List <RoomDTO> getAllUnoccupiedAccommodations(Date startDate, Date finishDate){
-        tripAccommodationValidation.checkFinishStartDates(startDate,
-                finishDate, "Finish date is earlier than start date.");
-        tripAccommodationValidation.checkStartDateToday(startDate);
-        List<Room> roomList = tripAccommodationRepository.getUnoccupiedRooms(startDate, finishDate);
-        List<RoomDTO> roomDTOList = new ArrayList<>();
-        for(Room room : roomList){
-            roomDTOList.add(roomMapper.getRoomDTO(room));
-        }
-        return roomDTOList;
     }
 }

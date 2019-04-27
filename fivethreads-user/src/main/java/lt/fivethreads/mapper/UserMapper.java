@@ -42,7 +42,7 @@ public class UserMapper {
 
         if(!(registrationForm.getOfficeId() == null)){
             Office office;
-            office = officeRepository.getOne(registrationForm.getOfficeId());
+            office = officeRepository.findById(registrationForm.getOfficeId());
             user.setOffice(office);
         }
 
@@ -61,7 +61,7 @@ public class UserMapper {
         user.setRoles(getRoles(strRoles));
 
         if(!(userDTO.getOfficeId() == null)){
-            Office office = officeRepository.getOne(userDTO.getOfficeId());
+            Office office = officeRepository.findById(userDTO.getOfficeId());
             user.setOffice(office);
         }
 

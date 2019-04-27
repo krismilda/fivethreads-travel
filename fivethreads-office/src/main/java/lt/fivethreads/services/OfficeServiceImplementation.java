@@ -5,9 +5,12 @@ import lt.fivethreads.entities.request.OfficeDTO;
 import lt.fivethreads.entities.request.OfficeForm;
 import lt.fivethreads.mapper.OfficeMapper;
 import lt.fivethreads.repositories.OfficeRepository;
+import lt.fivethreads.validation.DateValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,41 +23,56 @@ public class OfficeServiceImplementation implements OfficeService {
     @Autowired
     OfficeMapper officeMapper;
 
+    @Autowired
+    DateValidation dateValidation;
+
     public List<OfficeDTO> getAllOffices() {
-        List<Office> offices = officeRepository.findAll();
+        List<Office> offices = officeRepository.getAll();
         return offices.stream()
                 .map(e -> officeMapper.getOfficeDTO(e))
                 .collect(Collectors.toList());
     }
 
     public OfficeDTO getOfficeById(Long id) {
-        Office office = officeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Fail! -> Cause: Wrong officeId"));
+        Office office = officeRepository.findById(id);
         return officeMapper.getOfficeDTO(office);
     }
 
     public OfficeDTO updateOffice(OfficeDTO officeDTO) {
 
-        Office office = officeRepository.findById(officeDTO.getId())
-                .orElseThrow(() -> new RuntimeException("Fail! -> Cause: Wrong officeId"));
+        Office office = officeRepository.findById(officeDTO.getId());
         office.setAddress(officeDTO.getAddress());
         office.setName(officeDTO.getName());
         office.setId(officeDTO.getId());
-        return officeMapper.getOfficeDTO(officeRepository.save(office));
+        return officeMapper.getOfficeDTO(officeRepository.updateOffice(office));
     }
 
     public void deleteOffice(Long id) {
-        officeRepository.deleteById(id);
+        officeRepository.deleteOffice(id);
     }
 
     public OfficeDTO createOffice(OfficeForm officeForm) {
         Office office_to_save = officeMapper.convertRegisteredOfficeToOffice(officeForm);
-        return officeMapper.getOfficeDTO(officeRepository.save(office_to_save));
+        return officeMapper.getOfficeDTO(officeRepository.createOffice(office_to_save));
     }
 
     @Override
     public boolean checkIfOfficeExists(String name, String address) {
 
         return officeRepository.existsByAddressAndName(address, name);
+    }
+
+    @Override
+    public List<OfficeDTO> getAllUnoccupiedAccommodationOffices(Date startDate, Date finishDate) {
+        dateValidation.checkFinishStartDates(startDate,
+                finishDate, "Finish date is earlier than start date.");
+        dateValidation.checkStartDateToday(startDate);
+        List<Office> officeList = officeRepository.getOfficesWithUnoccupiedRooms(
+                startDate, finishDate);
+        List<OfficeDTO> officeDTOList= new ArrayList<>();
+        for(Office office: officeList){
+            officeDTOList.add(officeMapper.getOfficeDTO(office));
+        }
+        return officeDTOList;
     }
 }

@@ -1,9 +1,6 @@
 package lt.fivethreads.repositories;
 
-import lt.fivethreads.entities.Room;
-import lt.fivethreads.entities.TripAccommodation;
-import lt.fivethreads.entities.TripMember;
-import lt.fivethreads.entities.User;
+import lt.fivethreads.entities.*;
 import lt.fivethreads.exception.WrongTripData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -57,8 +54,37 @@ public class TripAccommodationRepositoryImplementation implements TripAccommodat
         return em.createNamedQuery("TripAccommodation.FindUnoccupiedAccommodation", Room.class)
                 .setParameter("startDate", startDate)
                 .setParameter("finishDate", finishDate)
-                .getResultList();
+                .getResultList();//copied
     }
+
+    public List<Apartment> getUnoccupiedRoomApartments(Date startDate, Date finishDate){
+        return em.createNamedQuery("TripAccommodation.FindUnoccupiedAccommodationApartments", Apartment.class)
+                .setParameter("startDate", startDate)
+                .setParameter("finishDate", finishDate)
+                .getResultList();
+    }//copied
+
+    public List<Office> getUnoccupiedRoomOffices(Date startDate, Date finishDate){
+        return em.createNamedQuery("TripAccommodation.FindUnoccupiedAccommodationOffices", Office.class)
+                .setParameter("startDate", startDate)
+                .setParameter("finishDate", finishDate)
+                .getResultList();
+    }//copied
+    public List <Room> getUnoccupiedRoomsByApartment(Date startDate, Date finishDate, Long apartmentId){
+        return em.createNamedQuery("TripAccommodation.FindUnoccupiedRoomsByApartmentId", Room.class)
+                .setParameter("startDate", startDate)
+                .setParameter("finishDate", finishDate)
+                .setParameter("apartment_ID", apartmentId)
+                .getResultList();//copied
+    }
+    public List <Apartment> getUnoccupiedApartmentsByOffice(Date startDate, Date finishDate, Long officeId){
+        return em.createNamedQuery("TripAccommodation.FindUnoccupiedApartmentsByOfficeId", Apartment.class)
+                .setParameter("startDate", startDate)
+                .setParameter("finishDate", finishDate)
+                .setParameter("office_ID", officeId)
+                .getResultList();//copied
+    }
+
 
 
 }

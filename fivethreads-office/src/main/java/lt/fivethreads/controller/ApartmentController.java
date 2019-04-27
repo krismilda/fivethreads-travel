@@ -2,6 +2,7 @@ package lt.fivethreads.controller;
 
 import lt.fivethreads.entities.request.ApartmentDTO;
 import lt.fivethreads.entities.request.ApartmentForm;
+import lt.fivethreads.entities.request.DateForm;
 import lt.fivethreads.services.ApartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -71,4 +72,21 @@ public class ApartmentController {
 
         return new ResponseEntity<>(createdApartment, HttpStatus.CREATED);
     }
+    @GetMapping("/apartments/unoccupied")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
+    public ResponseEntity getUnoccupiedAccommodationApartments(@Validated @RequestBody DateForm form){
+        return new ResponseEntity<>(apartmentService.getAllUnoccupiedAccommodationApartments(
+                form.getStartDate(), form.getFinishDate()), HttpStatus.OK);
+    }
+
+    @GetMapping("/apartments/unoccupied/{officeId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
+    public ResponseEntity getUnoccupiedApartmentsByOfficeId(@Validated @RequestBody DateForm form,
+                                                            @PathVariable("officeId") int officeId){
+        long id = officeId;
+
+        return new ResponseEntity<>(apartmentService.getAllUnoccupiedApartmentsByOfficeId(
+                form.getStartDate(), form.getFinishDate(), id), HttpStatus.OK);
+    }
+
 }

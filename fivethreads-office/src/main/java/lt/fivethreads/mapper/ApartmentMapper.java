@@ -16,7 +16,7 @@ public class ApartmentMapper {
         Apartment apartment = new Apartment();
         Office office;
 
-        office = officeRepository.getOne(apartmentForm.getOfficeId());
+        office = officeRepository.findById(apartmentForm.getOfficeId());
         apartment.setAddress(apartmentForm.getAddress());
         apartment.setOffice(office);
         return apartment;

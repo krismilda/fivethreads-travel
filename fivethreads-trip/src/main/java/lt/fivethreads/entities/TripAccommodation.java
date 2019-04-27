@@ -20,12 +20,7 @@ import java.util.List;
                 "WHERE ta.tripMember =:user_ID"),
         @NamedQuery(name = "TripAccommodation.FindByApartment", query = "select ta from TripAccommodation as ta " +
                 "JOIN FETCH ta.room as r " +
-                "WHERE r.apartment =: apartment_ID"),
-        @NamedQuery(name = "TripAccommodation.FindUnoccupiedAccommodation", query = "SELECT r FROM Room AS r " +
-                "WHERE r.id NOT IN " +
-                "(SELECT ta.room FROM TripAccommodation AS ta WHERE ta.room IS NOT NULL " +
-                "AND ta.accommodationStart <=: startDate  AND ta.accommodationFinish >=: finishDate)")
-
+                "WHERE r.apartment =: apartment_ID")
 })
 public class TripAccommodation {
     @Id

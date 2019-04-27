@@ -16,7 +16,7 @@ public class RoomMapper {
         Room room = new Room();
         Apartment apartment;
 
-        apartment = apartmentRepository.getOne(roomForm.getApartmentId());
+        apartment = apartmentRepository.findById(roomForm.getApartmentId());
         room.setNumber(roomForm.getNumber());
         room.setCapacity(roomForm.getCapacity());
         room.setApartment(apartment);
