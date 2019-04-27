@@ -29,6 +29,7 @@ public class TripMapper {
 
     @Autowired
     AddressMapper addressMapper;
+
     public Trip ConvertCreateTripFormToTrip(CreateTripForm form, String organizer_email) {
         User organizer = userService.getUserByEmail(organizer_email);
         Trip trip = new Trip();
@@ -49,14 +50,33 @@ public class TripMapper {
         return trip;
     }
 
-    public TripCancellation convertCancelledTripToObject(CancelledTrip cancelledTrip) {
+    public TripCancellation convertCancelledTripToObject(CancelledTrip cancelledTrip, String email) {
         TripCancellation tripCancellation = new TripCancellation();
-        TripMember tripMember = tripMemberRepository.getTripMemberByTripIDAndEmail(cancelledTrip.getTripID(), cancelledTrip.getEmail());
+        TripMember tripMember = tripMemberRepository.getTripMemberByTripIDAndEmail(cancelledTrip.getTripID(), email);
         tripCancellation.setTripMember(tripMember);
         tripCancellation.setReason(cancelledTrip.getReason());
         return tripCancellation;
     }
 
+    public  TripMember convertAcceptedTripToTripMember (AcceptedTrip acceptedTrip, String email){
+        User user = userService.getUserByEmail(email);
+        TripMember tripMember = new TripMember();
+        tripMember.setUser(user);
+        tripMember.setIsAccommodationNeeded(acceptedTrip.getIsAccommodationNeeded());
+        if (acceptedTrip.getIsAccommodationNeeded() && acceptedTrip.getAccommodationDTO() != null) {
+            TripAccommodation tripAccommodation = tripMemberMapper.convertAccommodationDTOToTripAccommodation(acceptedTrip.getAccommodationDTO());
+            tripAccommodation.setTripMember(tripMember);
+            tripMember.setTripAccommodation(tripAccommodation);
+        }
+        tripMember.setIsFlightTickedNeeded(acceptedTrip.getIsFlightTickedNeeded());
+        if (acceptedTrip.getIsCarNeeded() && acceptedTrip.getCarTicketDTO() != null) {
+            CarTicket carTicket = tripMemberMapper.convertCarTicketDtoToCarTicket(acceptedTrip.getCarTicketDTO());
+            carTicket.setTripMember(tripMember);
+            tripMember.setCarTicket(carTicket);
+        }
+        tripMember.setIsCarNeeded(acceptedTrip.getIsCarNeeded());
+        return tripMember;
+    }
     public TripDTO converTripToTripDTO(Trip trip) {
         TripDTO tripDTO = new TripDTO();
         tripDTO.setId(trip.getId());

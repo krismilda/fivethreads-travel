@@ -47,8 +47,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Autowired
     CreateNotificationService createNotificationService;
 
-    public TripMemberDTO tripAccepted(AcceptedTrip acceptedTrip) {
-        TripMember tripMember = tripMemberMapper.convertTripMemberDTOtoTripMember(acceptedTrip.getTripMemberDTO());
+    public TripMemberDTO tripAccepted(AcceptedTrip acceptedTrip, String email) {
+        TripMember tripMember = tripMapper.convertAcceptedTripToTripMember(acceptedTrip, email);
         Trip trip = tripRepository.findByID(acceptedTrip.getTripID());
         if (trip == null) {
             throw new WrongTripData("Trip ID does not exist.");
@@ -57,7 +57,7 @@ public class NotificationServiceImpl implements NotificationService {
         TripMember tripMemberOld = tripMember.getTrip()
                 .getTripMembers()
                 .stream()
-                .filter(t -> t.getUser().getEmail().equals(acceptedTrip.getTripMemberDTO().getEmail()))
+                .filter(t -> t.getUser().getEmail().equals(email))
                 .findFirst()
                 .orElseThrow(() -> new WrongTripData("User's email is wrong."));
         tripMember.setId(tripMemberOld.getId());
@@ -68,8 +68,8 @@ public class NotificationServiceImpl implements NotificationService {
         return tripMemberMapper.convertTripMemberToTripMemberDTO(tripMember);
     }
 
-    public TripMemberDTO tripCancelled(CancelledTrip cancelledTrip) {
-        TripCancellation tripCancellation = tripMapper.convertCancelledTripToObject(cancelledTrip);
+    public TripMemberDTO tripCancelled(CancelledTrip cancelledTrip, String email) {
+        TripCancellation tripCancellation = tripMapper.convertCancelledTripToObject(cancelledTrip, email);
         tripCancellation.getTripMember().setTripCancellation(tripCancellation);
         tripCancellation.getTripMember().setTripAcceptance(TripAcceptance.CANCELLED);
         tripMemberRepository.addCancellation(tripCancellation);

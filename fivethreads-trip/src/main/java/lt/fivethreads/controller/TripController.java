@@ -39,16 +39,14 @@ public class TripController {
     @PostMapping("/trip/accept")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<TripMemberDTO> acceptTrip(@Validated @RequestBody AcceptedTrip acceptedTrip) {
-        acceptedTrip.getTripMemberDTO().setEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        TripMemberDTO tripMemberDTO = notificationService.tripAccepted(acceptedTrip);
+        TripMemberDTO tripMemberDTO = notificationService.tripAccepted(acceptedTrip,SecurityContextHolder.getContext().getAuthentication().getName());
         return new ResponseEntity<TripMemberDTO>(tripMemberDTO, HttpStatus.OK);
     }
 
     @PostMapping("/trip/cancelled")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<TripMemberDTO> cancelledTrip(@Validated @RequestBody CancelledTrip cancelledTrip) {
-        cancelledTrip.setEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        TripMemberDTO tripMemberDTO = notificationService.tripCancelled(cancelledTrip);
+        TripMemberDTO tripMemberDTO = notificationService.tripCancelled(cancelledTrip, SecurityContextHolder.getContext().getAuthentication().getName());
         return new ResponseEntity<TripMemberDTO>(tripMemberDTO, HttpStatus.OK);
     }
 

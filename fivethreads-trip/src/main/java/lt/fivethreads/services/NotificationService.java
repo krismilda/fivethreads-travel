@@ -10,8 +10,8 @@ import lt.fivethreads.entities.request.TripMemberDTO;
 import java.util.List;
 
 public interface NotificationService {
-    TripMemberDTO tripAccepted(AcceptedTrip acceptedTrip);
-    TripMemberDTO tripCancelled(CancelledTrip cancelledTrip);
+    TripMemberDTO tripAccepted(AcceptedTrip acceptedTrip, String email);
+    TripMemberDTO tripCancelled(CancelledTrip cancelledTrip, String email);
     List<NotificationListDTO> getUserNotification(String email);
     List<NotificationListDTO> getOrganizerNotification(String email);
     NotificationListDTO deactivateNotification(Long id);

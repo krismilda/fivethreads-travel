@@ -11,10 +11,6 @@ import javax.validation.constraints.NotNull;
 public class CancelledTrip {
     @NotNull
     private long tripID;
-    @NotNull(message="Email cannot be null.")
-
-    @Email(message="Wrong email format.")
-    private String email;
 
     @NotNull
     private String reason;

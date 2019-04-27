@@ -13,5 +13,17 @@ public class AcceptedTrip {
     private long tripID;
 
     @NotNull
-    private TripMemberDTO tripMemberDTO;
+    private Boolean isFlightTickedNeeded;
+
+    @NotNull
+    private Boolean isAccommodationNeeded;
+
+    @NotNull
+    private Boolean isCarNeeded;
+
+    private FlightTicketDTO flightTicketDTO;
+
+    private CarTicketDTO carTicketDTO;
+
+    private AccommodationDTO accommodationDTO;
 }
