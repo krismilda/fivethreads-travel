@@ -10,4 +10,11 @@ public interface TripMemberRepository {
     Boolean checkIfExistByID(Long id);
     TripMember getTripMemberByTripIDAndEmail(Long tripID, String email);
     void addCancellation(TripCancellation tripCancellation);
+    void saveFlightTicket(TripMember tripMember);
+    void saveCarTicket(TripMember tripMember);
+    TripMember findByFlightFileID(Long fileID);
+    TripMember findByCarFileID(Long fileID);
+    TripMember findByAccommodationFileID(Long fileID);
+    void saveAccommodationTicket(TripMember tripMember);
+    void deleteTripMember(TripMember tripMember);
 }

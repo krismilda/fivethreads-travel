@@ -20,10 +20,14 @@ public class TripDTO {
     @NotNull(message="Finish date cannot be null.")
     private Date finishDate;
     @NotNull(message="Arrival cannot be null.")
-    private String arrival;
+    private ShortAddressDTO arrival;
     @NotNull(message="Departure cannot be null.")
-    private String departure;
+    private ShortAddressDTO departure;
     private List<TripMemberDTO> tripMembers;
     @NotNull(message="Organizer cannot be null.")
     private String organizer_email;
+    @NotNull(message = "Is flexible cannot be null.")
+    private Boolean isFlexible;
+    @NotNull(message = "IsCombined cannot be null")
+    private Boolean isCombined;
 }

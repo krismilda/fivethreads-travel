@@ -26,8 +26,6 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @NotNull (message = "Password cannot be null.")
-    @Size(min=6, message = "Password must be longer that 6 symbols.")
     @Column(name = "password")
     private String password;
 
@@ -56,5 +54,13 @@ public class User {
 
 
     public User(){
+    }
+
+    public User(String firstname, String lastName, String email, String password, String phone) {
+        this.firstname = firstname;
+        this.lastName=lastName;
+        this.email = email;
+        this.password = password;
+        this.phone=phone;
     }
 }

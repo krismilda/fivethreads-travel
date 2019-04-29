@@ -67,7 +67,9 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
                 tripAccommodationForm.getAccommodationFinish(), trip);
         TripAccommodation created = tripAccommodationMapper
                 .convertCreateTripAccommodationFormToTripAccommodation(tripAccommodationForm);
-        TripAccommodation tripAccommodation = tripAccommodationRepository.createTripAccommodation(created);
+        TripAccommodation tripAccommodation = tripAccommodationRepository.saveTripAccommodation(created);
+        tripMember.setTripAccommodation(created);
+        tripMemberRepository.updateTripMember(tripMember);
 
         TripAccommodationDTO tripAccommodationDTO =
                 tripAccommodationMapper

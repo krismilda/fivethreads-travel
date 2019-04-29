@@ -16,19 +16,34 @@ public class NotificationRepositoryImplementation implements NotificationReposit
     EntityManager em;
 
     public void saveNotification(Notification notification) {
+        em.persist(notification.getTripHistory().getArrival());
+        em.persist(notification.getTripHistory().getDeparture());
         em.persist(notification.getTripHistory());
         em.persist(notification);
         for (TripMemberHistory tripMemberHistory : notification.getTripHistory().getTripMembers()
         ) {
-
             em.merge(tripMemberHistory);
         }
-
     }
 
-    public List<Notification> getAllNotificationByEmail(String email) {
-        return em.createNamedQuery("Notification.FindAllByEmail", Notification.class)
+    public List<Notification> getAllUserNotificationByEmail(String email) {
+        return em.createNamedQuery("Notification.FindAllUserByEmail", Notification.class)
                 .setParameter("email", email)
                 .getResultList();
+    }
+
+    public Notification getNotificationByID(Long id) {
+        return em.createNamedQuery("Notification.FindByID", Notification.class)
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+
+    public List<Notification> getAllOrganizerNotificationByEmail(String email){
+        return em.createNamedQuery("Notification.FindAllOrganizerByEmail", Notification.class)
+                .setParameter("email", email)
+                .getResultList();
+    }
+    public void updateNotification(Notification notification) {
+        em.merge(notification);
     }
 }

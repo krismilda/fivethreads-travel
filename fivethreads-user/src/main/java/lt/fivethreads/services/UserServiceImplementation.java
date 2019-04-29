@@ -4,7 +4,7 @@ import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.User;
 import lt.fivethreads.entities.request.ChangePasswordForm;
 import lt.fivethreads.entities.request.RegistrationForm;
-import lt.fivethreads.entities.request.UserDTO;
+import lt.fivethreads.entities.request.ExtendedUserDTO;
 import lt.fivethreads.exception.file.EmailAlreadyExists;
 import lt.fivethreads.exception.file.EmailNotExists;
 import lt.fivethreads.exception.file.UserIDNotExists;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +38,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public List<UserDTO> getAllUser() {
+    public List<ExtendedUserDTO> getAllUser() {
         List<User> users = userRepository.findAll();
         return users.stream()
                 .map(e -> userMapper.getUserDTO(e))
@@ -51,14 +52,14 @@ public class UserServiceImplementation implements UserService {
         return user;
     }
 
-    public UserDTO getUserDTOByID(Long id) throws UserIDNotExists {
+    public ExtendedUserDTO getUserDTOByID(Long id) throws UserIDNotExists {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserIDNotExists());
         return userMapper.getUserDTO(user);
     }
 
     @Override
-    public UserDTO updateUser(UserDTO userDTO) {
+    public ExtendedUserDTO updateUser(ExtendedUserDTO userDTO) {
         User user = userRepository.findById(userDTO.getId())
                 .orElseThrow(() -> new UserIDNotExists());
         if (this.checkIfEmailExists(userDTO.getEmail()) && !userDTO.getEmail().equals(user.getEmail())) {
@@ -91,7 +92,18 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public UserDTO createUser(RegistrationForm user) {
+    public void createUsers(List<ExtendedUserDTO> users) {
+        List<User> userEntities = new ArrayList<>();
+        for (ExtendedUserDTO user: users) {
+            User userEntity = userMapper.getUser(user);
+            userEntities.add(userEntity);
+        }
+
+        userRepository.saveAll(userEntities);
+    }
+
+    @Override
+    public ExtendedUserDTO createUser(RegistrationForm user) {
         if (this.checkIfEmailExists(user.getEmail())) {
             throw new EmailAlreadyExists();
         }

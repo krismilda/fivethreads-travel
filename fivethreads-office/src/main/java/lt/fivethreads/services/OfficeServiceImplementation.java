@@ -56,13 +56,23 @@ public class OfficeServiceImplementation implements OfficeService {
         return officeMapper.getOfficeDTO(officeRepository.createOffice(office_to_save));
     }
 
-    @Override
     public boolean checkIfOfficeExists(String name, String address) {
 
         return officeRepository.existsByAddressAndName(address, name);
     }
 
-    @Override
+    public void createOffices(List<OfficeDTO> officeDTOS) {
+        List<Office> officeEntities = new ArrayList<>();
+        for (OfficeDTO officeDTO : officeDTOS) {
+            Office officeEntity = officeMapper.getOffice(officeDTO);
+            officeEntities.add(officeEntity);
+        }
+
+        for (Office office : officeEntities) {
+            officeRepository.createOffice(office);
+        }
+    }
+
     public List<OfficeDTO> getAllUnoccupiedAccommodationOffices(Date startDate, Date finishDate) {
         dateValidation.checkFinishStartDates(startDate,
                 finishDate, "Finish date is earlier than start date.");

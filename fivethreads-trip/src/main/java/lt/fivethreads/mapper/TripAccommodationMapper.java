@@ -56,6 +56,7 @@ public class TripAccommodationMapper {
         tripAccommodationDTO.setId(tripAccommodation.getId());
         tripAccommodationDTO.setAccommodationStart(tripAccommodation.getAccommodationStart());
         tripAccommodationDTO.setAccommodationFinish(tripAccommodation.getAccommodationFinish());
+
         tripAccommodationDTO.setTripMemberId(tripAccommodation.getTripMember().getId());
         tripAccommodationDTO.setAccommodationType(tripAccommodation.getAccommodationType());
         if(tripAccommodation.getRoom() != null) tripAccommodationDTO.setRoomId(tripAccommodation.getRoom().getId());

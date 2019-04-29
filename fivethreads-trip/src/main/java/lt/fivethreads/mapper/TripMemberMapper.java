@@ -1,11 +1,9 @@
 package lt.fivethreads.mapper;
 
-import lt.fivethreads.entities.CarTicket;
-import lt.fivethreads.entities.TripAccommodation;
-import lt.fivethreads.entities.TripMember;
-import lt.fivethreads.entities.User;
-import lt.fivethreads.entities.request.TripAccommodationDTO;
+import lt.fivethreads.entities.*;
+import lt.fivethreads.entities.request.AccommodationDTO;
 import lt.fivethreads.entities.request.CarTicketDTO;
+import lt.fivethreads.entities.request.FlightTicketDTO;
 import lt.fivethreads.entities.request.TripMemberDTO;
 import lt.fivethreads.repositories.TripMemberRepository;
 import lt.fivethreads.services.UserService;
@@ -20,34 +18,38 @@ public class TripMemberMapper {
     @Autowired
     TripMemberRepository tripMemberRepository;
 
-    public TripMemberDTO convertTripMemberToTripMemberDAO(TripMember tripMember) {
+    public TripMemberDTO convertTripMemberToTripMemberDTO(TripMember tripMember) {
         TripMemberDTO tripMemberDTO = new TripMemberDTO();
         tripMemberDTO.setEmail(tripMember.getUser().getEmail());
         tripMemberDTO.setIsAccommodationNeeded(tripMember.getIsAccommodationNeeded());
         tripMemberDTO.setIsCarNeeded(tripMember.getIsCarNeeded());
         tripMemberDTO.setIsFlightTickedNeeded(tripMember.getIsFlightTickedNeeded());
+        tripMemberDTO.setStatus(tripMember.getTripAcceptance());
         if (tripMember.getCarTicket() != null && tripMember.getIsCarNeeded() == true) {
-            tripMemberDTO.setCarTicketDTO(convertCarTicketToCarTicketDAO(tripMember.getCarTicket()));
+            tripMemberDTO.setCarTicketDTO(convertCarTicketToCarTicketDTO(tripMember.getCarTicket()));
         }
         if (tripMember.getTripAccommodation() != null && tripMember.getIsAccommodationNeeded() == true) {
-            tripMemberDTO.setAccommodationDTO(convertAccomodationToAccomodationDAO(tripMember.getTripAccommodation()));
+            tripMemberDTO.setAccommodationDTO(convertAccomodationToAccomodationDTO(tripMember.getTripAccommodation()));
+        }
+        if (tripMember.getFlightTicket() != null && tripMember.getIsFlightTickedNeeded() == true) {
+            tripMemberDTO.setFlightTicketDTO(convertFlightTicketToFlightTicketDAO(tripMember.getFlightTicket()));
         }
         return tripMemberDTO;
     }
 
-    public TripMember convertTripMemberDAOtoTripMember(TripMemberDTO tripMemberDTO) {
+    public TripMember convertTripMemberDTOtoTripMember(TripMemberDTO tripMemberDTO) {
         User user = userService.getUserByEmail(tripMemberDTO.getEmail());
         TripMember tripMember = new TripMember();
         tripMember.setUser(user);
         tripMember.setIsAccommodationNeeded(tripMemberDTO.getIsAccommodationNeeded());
         if (tripMemberDTO.getIsAccommodationNeeded() && tripMemberDTO.getAccommodationDTO() != null) {
-            TripAccommodation tripAccommodation = convertAccommodationDAOToTripAccommodation(tripMemberDTO.getAccommodationDTO());
+            TripAccommodation tripAccommodation = convertAccommodationDTOToTripAccommodation(tripMemberDTO.getAccommodationDTO());
             tripAccommodation.setTripMember(tripMember);
             tripMember.setTripAccommodation(tripAccommodation);
         }
         tripMember.setIsFlightTickedNeeded(tripMemberDTO.getIsFlightTickedNeeded());
         if (tripMemberDTO.getIsCarNeeded() && tripMemberDTO.getCarTicketDTO() != null) {
-            CarTicket carTicket = convertCarTicketDaoToCarTicket(tripMemberDTO.getCarTicketDTO());
+            CarTicket carTicket = convertCarTicketDtoToCarTicket(tripMemberDTO.getCarTicketDTO());
             carTicket.setTripMember(tripMember);
             tripMember.setCarTicket(carTicket);
         }
@@ -56,31 +58,59 @@ public class TripMemberMapper {
     }
 
 
-    public CarTicket convertCarTicketDaoToCarTicket(CarTicketDTO carTicketDTO) {
+    public CarTicket convertCarTicketDtoToCarTicket(CarTicketDTO carTicketDTO) {
         CarTicket carTicket = new CarTicket();
         carTicket.setCarRentStart(carTicketDTO.getCarRentStart());
         carTicket.setCarRentFinish(carTicketDTO.getCarRentFinish());
         return carTicket;
     }
 
-    public TripAccommodation convertAccommodationDAOToTripAccommodation(TripAccommodationDTO accommodationDTO){
+
+    public TripAccommodation convertAccommodationDTOToTripAccommodation(AccommodationDTO accommodationDTO) {
+
         TripAccommodation tripAccommodation = new TripAccommodation();
         tripAccommodation.setAccommodationStart(accommodationDTO.getAccommodationStart());
         tripAccommodation.setAccommodationFinish(accommodationDTO.getAccommodationFinish());
         return tripAccommodation;
     }
 
-    public CarTicketDTO convertCarTicketToCarTicketDAO(CarTicket carTicket) {
+    public CarTicketDTO convertCarTicketToCarTicketDTO(CarTicket carTicket) {
         CarTicketDTO carTicketDTO = new CarTicketDTO();
         carTicketDTO.setCarRentFinish(carTicket.getCarRentFinish());
         carTicketDTO.setCarRentStart(carTicket.getCarRentStart());
+        if(carTicket.getFile()!=null){
+            for (File file : carTicket.getFile()
+            ) {
+                carTicketDTO.getFileID().add(file.getId());
+            }
+        }
+
         return carTicketDTO;
     }
 
-    public TripAccommodationDTO convertAccomodationToAccomodationDAO(TripAccommodation tripAccommodation) {
-        TripAccommodationDTO accommodationDTO = new TripAccommodationDTO();
+
+    public AccommodationDTO convertAccomodationToAccomodationDTO(TripAccommodation tripAccommodation) {
+        AccommodationDTO accommodationDTO = new AccommodationDTO();
+
         accommodationDTO.setAccommodationStart(tripAccommodation.getAccommodationStart());
         accommodationDTO.setAccommodationFinish(tripAccommodation.getAccommodationFinish());
+        if(tripAccommodation.getFile()!=null){
+            for (File file : tripAccommodation.getFile()
+            ) {
+                accommodationDTO.getFileID().add(file.getId());
+            }
+        }
         return accommodationDTO;
+    }
+
+    public FlightTicketDTO convertFlightTicketToFlightTicketDAO(FlightTicket flightTicket) {
+        FlightTicketDTO flightTicketDTO = new FlightTicketDTO();
+        if(flightTicket.getFile()!=null){
+            for (File file : flightTicket.getFile()
+            ) {
+                flightTicketDTO.getFileID().add(file.getId());
+            }
+        }
+        return flightTicketDTO;
     }
 }

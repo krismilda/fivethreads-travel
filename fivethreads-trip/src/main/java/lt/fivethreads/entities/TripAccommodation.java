@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -22,11 +24,15 @@ import java.util.List;
                 "JOIN FETCH ta.room as r " +
                 "WHERE r.apartment =: apartment_ID")
 })
-public class TripAccommodation {
+public class TripAccommodation implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
+    @Column(name="unique_id")
+    private String uniqueID;
+
 
     @NotNull(message = "TripAccommodation Start cannot be null.")
     private Date accommodationStart;
@@ -49,13 +55,17 @@ public class TripAccommodation {
     @Column(name = "price")
     private Double price;
 
+    @OneToOne(mappedBy = "tripAccommodation")
     @NotNull(message = "TripMember cannot be null")
-    @OneToOne
     @JoinColumn(name="TRIPMEMBER_ID")
     private TripMember tripMember;
 
     @OneToMany
-    @JoinColumn(name="tickect_id")
-    private List<File> file;
+    @JoinColumns({
+            @JoinColumn(
+                    name = "tickect_id",
+                    referencedColumnName = "unique_id")
+    })
+    private List<File> file =  new ArrayList<>();
 
 }

@@ -6,6 +6,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,11 +15,15 @@ import java.util.List;
 @Table(name = "CAR_TICKET")
 @Getter
 @Setter
-public class CarTicket {
+public class CarTicket  implements Serializable
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
+    @Column(name="unique_id")
+    private String uniqueID;
 
     @DateTimeFormat
     @NotNull
@@ -29,10 +35,14 @@ public class CarTicket {
 
     private Double price;
 
-    @OneToOne(mappedBy = "flightTicket")
+    @OneToOne(mappedBy = "carTicket")
     private TripMember tripMember;
 
     @OneToMany
-    @JoinColumn(name="tickect_id")
-    private List<File> file;
+    @JoinColumns({
+            @JoinColumn(
+                    name = "tickect_id",
+                    referencedColumnName = "unique_id")
+    })
+    private List<File> file = new ArrayList<>();
 }

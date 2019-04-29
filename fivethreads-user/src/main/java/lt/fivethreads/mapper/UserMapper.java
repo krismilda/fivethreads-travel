@@ -5,7 +5,8 @@ import lt.fivethreads.entities.Role;
 import lt.fivethreads.entities.RoleName;
 import lt.fivethreads.entities.User;
 import lt.fivethreads.entities.request.RegistrationForm;
-import lt.fivethreads.entities.request.UserDTO;
+import lt.fivethreads.entities.request.ExtendedUserDTO;
+import lt.fivethreads.exception.office.OfficeNotFoundException;
 import lt.fivethreads.repositories.OfficeRepository;
 import lt.fivethreads.repositories.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,7 @@ public class UserMapper {
         Set<String> strRoles = registrationForm.getRole();
         user.setRoles(getRoles(strRoles));
 
-
-        if(!(registrationForm.getOfficeId() == null)){
+        if (registrationForm.getOfficeId() != null) {
             Office office;
             office = officeRepository.findById(registrationForm.getOfficeId());
             user.setOffice(office);
@@ -49,7 +49,7 @@ public class UserMapper {
         return user;
     }
 
-    public User getUser(UserDTO userDTO) {
+    public User getUser(ExtendedUserDTO userDTO) {
         User user = new User();
 
         user.setLastName(userDTO.getLastname());
@@ -60,16 +60,23 @@ public class UserMapper {
         Set<String> strRoles = userDTO.getRole();
         user.setRoles(getRoles(strRoles));
 
-        if(!(userDTO.getOfficeId() == null)){
+        if (userDTO.getOfficeId() != null) {
             Office office = officeRepository.findById(userDTO.getOfficeId());
+                    //.orElseThrow(OfficeNotFoundException::new);
+
+            user.setOffice(office);
+        } else if (userDTO.getOfficeName() != null) {
+            Office office = officeRepository.findByName(userDTO.getOfficeName());
+                    //.orElseThrow(OfficeNotFoundException::new);
+
             user.setOffice(office);
         }
 
         return user;
     }
 
-    public UserDTO getUserDTO(User user) {
-        UserDTO userDTO = new UserDTO();
+    public ExtendedUserDTO getUserDTO(User user) {
+        ExtendedUserDTO userDTO = new ExtendedUserDTO();
         userDTO.setEmail(user.getEmail());
         userDTO.setFirstname(user.getFirstname());
         userDTO.setLastname(user.getLastName());
@@ -82,9 +89,11 @@ public class UserMapper {
 
         Office usersOffice = user.getOffice();
 
-        if(!(usersOffice == null)){
+        if (!(usersOffice == null)) {
             userDTO.setOfficeId(user.getOffice().getId());
+            userDTO.setOfficeName(user.getOffice().getName());
         }
+
         return userDTO;
     }
 

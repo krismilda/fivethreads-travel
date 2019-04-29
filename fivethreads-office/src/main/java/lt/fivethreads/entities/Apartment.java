@@ -1,10 +1,10 @@
 package lt.fivethreads.entities;
 
-import com.sun.istack.internal.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,6 +39,7 @@ public class Apartment {
 
     @JoinColumn(name = "officeId")
     @ManyToOne(targetEntity = Office.class, fetch = FetchType.LAZY)
+
     @NotNull
     private Office office;
 

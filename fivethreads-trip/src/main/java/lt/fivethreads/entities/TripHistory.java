@@ -19,6 +19,8 @@ public class TripHistory {
     @Column(name = "id")
     private Long id;
 
+    private Long tripID;
+
     @NotNull(message="Start date cannot be null.")
     @Column(name="START_DATE")
     private Date startDate;
@@ -27,13 +29,15 @@ public class TripHistory {
     @Column(name="FINISH_DATE")
     private Date finishDate;
 
-    @NotNull(message="Arrival cannot be null.")
-    @Column(name="ARRIVAL")
-    private String arrival;
+    @NotNull(message = "Arrival cannot be null.")
+    @OneToOne
+    @JoinColumn(name="history_ARRIVAL")
+    private Address arrival;
 
-    @NotNull(message="Departure cannot be null.")
-    @Column(name="DEPARTURE")
-    private String departure;
+    @NotNull(message = "Departure cannot be null.")
+    @OneToOne
+    @JoinColumn(name="history_DEPARTURE")
+    private Address departure;
 
     @NotNull(message="Organizer cannot be null.")
     @OneToOne
@@ -58,6 +62,7 @@ public class TripHistory {
 
     @DateTimeFormat
     private Date accommodationFinish;
+
     private double carPrice;
 
     @DateTimeFormat

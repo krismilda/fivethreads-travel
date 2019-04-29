@@ -5,7 +5,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "TRIP")
@@ -26,32 +28,39 @@ public class Trip {
     @Column(name = "id")
     private Long id;
 
-    @NotNull(message="Start date cannot be null.")
-    @Column(name="START_DATE")
+    @NotNull(message = "Is flexible cannot be null.")
+    private Boolean isFlexible;
+
+    @NotNull(message = "IsCombined cannot be null")
+    private Boolean isCombined;
+
+    @NotNull(message = "Start date cannot be null.")
+    @Column(name = "START_DATE")
     private Date startDate;
 
-    @NotNull(message="Finish date cannot be null.")
-    @Column(name="FINISH_DATE")
+    @NotNull(message = "Finish date cannot be null.")
+    @Column(name = "FINISH_DATE")
     private Date finishDate;
 
-    @NotNull(message="Status cannot be null.")
-    @Column(name="STATUS")
+    @NotNull(message = "Status cannot be null.")
+    @Column(name = "STATUS")
     private TripStatus tripStatus;
 
-    @NotNull(message="Arrival cannot be null.")
-    @Column(name="ARRIVAL")
-    private String arrival;
+    @NotNull(message = "Arrival cannot be null.")
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="ARRIVAL")
+    private Address arrival;
 
-    @NotNull(message="Organizer cannot be null.")
+    @NotNull(message = "Organizer cannot be null.")
     @OneToOne
-    @JoinColumn(name="organizer_ID")
+    @JoinColumn(name = "organizer_ID")
     private User organizer;
 
-    @NotNull(message="Departure cannot be null.")
-    @Column(name="DEPARTURE")
-    private String departure;
+    @NotNull(message = "Departure cannot be null.")
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="DEPARTURE")
+    private Address departure;
 
     @OneToMany(mappedBy = "trip")
     private List<TripMember> tripMembers = new ArrayList<>();
-
 }

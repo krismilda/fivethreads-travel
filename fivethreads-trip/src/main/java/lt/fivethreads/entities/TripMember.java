@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "TRIP_MEMBER")
@@ -11,9 +12,21 @@ import javax.persistence.*;
 @Setter
 @NamedQueries({
         @NamedQuery(name = "TripMember.findByTripIDEmail", query = "SELECT e FROM TripMember e " +
-                "JOIN FETCH e.user " +
-                "JOIN FETCH e.trip " +
-                "WHERE e.trip.id LIKE :tripID AND e.user.id=:user_id")
+        "JOIN FETCH e.user " +
+        "JOIN FETCH e.trip " +
+        "WHERE e.trip.id LIKE :tripID AND e.user.id=:user_id"),
+        @NamedQuery(name = "TripMember.findByFlightFileID", query = "SELECT e FROM TripMember e " +
+                "JOIN FETCH e.flightTicket f " +
+                "JOIN FETCH f.file h " +
+                "WHERE h.id LIKE :fileID"),
+        @NamedQuery(name = "TripMember.findByAccommodationFileID", query = "SELECT e FROM TripMember e " +
+                "JOIN FETCH e.tripAccommodation f " +
+                "JOIN FETCH f.file h " +
+                "WHERE h.id LIKE :fileID"),
+        @NamedQuery(name = "TripMember.findByCarFileID", query = "SELECT e FROM TripMember e " +
+                "JOIN FETCH e.carTicket f " +
+                "JOIN FETCH f.file h " +
+                "WHERE h.id LIKE :fileID")
 
 })
 public class TripMember {

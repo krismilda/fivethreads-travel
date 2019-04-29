@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
@@ -45,6 +46,10 @@ public class OfficeRepositoryImpl implements  OfficeRepository {
                 .setParameter("address", address)
                 .setParameter("name", name)
                 .getResultList().size() == 1;
+    }
+
+    public Office findByName(String name) {
+        return em.find(Office.class, name);
     }
 
     public List<Office> getOfficesWithUnoccupiedRooms(Date startDate, Date finishDate) {

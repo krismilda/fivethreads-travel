@@ -13,6 +13,6 @@ public interface OfficeService {
     void deleteOffice(Long id);
     OfficeDTO createOffice(OfficeForm user);
     boolean checkIfOfficeExists(String name, String address);
+    void createOffices(List<OfficeDTO> officeDTOS);
     List <OfficeDTO> getAllUnoccupiedAccommodationOffices(Date startDate, Date finishDate);
-
 }

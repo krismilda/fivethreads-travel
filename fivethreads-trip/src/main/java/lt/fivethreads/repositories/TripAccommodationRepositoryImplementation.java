@@ -23,7 +23,7 @@ public class TripAccommodationRepositoryImplementation implements TripAccommodat
     public List<TripAccommodation> getAll() { return em.createNamedQuery("TripAccommodation.FindAll",
             TripAccommodation.class).getResultList(); }
 
-    public TripAccommodation createTripAccommodation(TripAccommodation tripAccommodation) {
+    public TripAccommodation saveTripAccommodation(TripAccommodation tripAccommodation) {
         em.persist(tripAccommodation);
         return tripAccommodation;
     }
