@@ -40,7 +40,9 @@ public class CreateNotificationServiceImplementation implements CreateNotificati
         if (tripHistory.getIsCarNeeded()) {
             tripHistory.setCarRentStart(tripMember.getCarTicket().getCarRentStart());
             tripHistory.setCarRentFinish(tripMember.getCarTicket().getCarRentFinish());
-            tripHistory.setCarPrice(tripMember.getCarTicket().getPrice());
+            if(tripMember.getCarTicket().getPrice()!=null){
+                tripHistory.setCarPrice(tripMember.getCarTicket().getPrice());
+            }
         }
         List<TripMemberHistory> tripMemberHistoryList = new ArrayList<>();
         for (TripMember tripOtherMember : tripMember.getTrip().getTripMembers()
