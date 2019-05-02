@@ -1,5 +1,6 @@
 package lt.fivethreads.entities.request.Notifications;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lt.fivethreads.entities.request.AccommodationDTO;
@@ -22,6 +23,8 @@ public class NotificationInformationChanged {
     private String name;
     @DateTimeFormat
     @NotNull (message = "Created Date cannot be null.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "CET")
+
     private Date created_date;
     @NotNull (message = "Trip ID cannot be null.")
     private Long trip_id;
@@ -30,8 +33,10 @@ public class NotificationInformationChanged {
     @NotNull (message = "Trip finish date cannot be null.")
     private Date finishDate;
     @NotNull (message = "Trip arrival cannot be null.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "CET")
     private String arrival;
     @NotNull (message = "Trip departure cannot be null.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "CET")
     private String departure;
     @NotNull (message = "Organizer cannot be null.")
     private NotificationUserDTO organizer;

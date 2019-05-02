@@ -49,6 +49,13 @@ public class NotificationServiceImpl implements NotificationService {
 
     public TripMemberDTO tripAccepted(AcceptedTrip acceptedTrip, String email) {
         TripMember tripMember = tripMapper.convertAcceptedTripToTripMember(acceptedTrip, email);
+        Notification notification = notificationRepository.getAllUserNotificationByEmail(email)
+                .stream()
+                .filter(e->e.getTripHistory().getTripID().equals(acceptedTrip.getTripID()))
+                .findFirst()
+                .orElseThrow(() -> new WrongTripData("Notification does not exist"));
+        notification.setIsAnswered(true);
+        notificationRepository.updateNotification(notification);
         Trip trip = tripRepository.findByID(acceptedTrip.getTripID());
         if (trip == null) {
             throw new WrongTripData("Trip ID does not exist.");
@@ -70,6 +77,13 @@ public class NotificationServiceImpl implements NotificationService {
 
     public TripMemberDTO tripCancelled(CancelledTrip cancelledTrip, String email) {
         TripCancellation tripCancellation = tripMapper.convertCancelledTripToObject(cancelledTrip, email);
+        Notification notification = notificationRepository.getAllUserNotificationByEmail(email)
+                .stream()
+                .filter(e->e.getTripHistory().getTripID().equals(cancelledTrip.getTripID()))
+                .findFirst()
+                .orElseThrow(() -> new WrongTripData("Notification does not exist"));
+        notification.setIsAnswered(true);
+        notificationRepository.updateNotification(notification);
         tripCancellation.getTripMember().setTripCancellation(tripCancellation);
         tripCancellation.getTripMember().setTripAcceptance(TripAcceptance.CANCELLED);
         tripMemberRepository.addCancellation(tripCancellation);
@@ -90,7 +104,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     public List<NotificationListDTO> getOrganizerNotification(String email) {
         List<Notification> notificationList = notificationRepository.getAllOrganizerNotificationByEmail(email);
-        List<NotificationListDTO> notificationListDTOS = new ArrayList<>();
+
+        List<NotificationListDTO> notificationListDTOS = getUserNotification(email);
         for (Notification notification :
                 notificationList
         ) {
