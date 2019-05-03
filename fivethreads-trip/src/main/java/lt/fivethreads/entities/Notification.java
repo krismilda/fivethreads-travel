@@ -31,6 +31,8 @@ public class Notification {
 
     private Boolean isActive;
 
+    private Boolean isAnswered;
+
     private String name;
 
     private Date created_date;

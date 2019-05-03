@@ -1,6 +1,7 @@
 package lt.fivethreads.entities.request;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lt.fivethreads.entities.AccommodationType;
@@ -22,10 +23,12 @@ public class AccommodationDTO {
 
     @DateTimeFormat
     @NotNull(message = "TripAccommodation Start cannot be null.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "CET")
     private Date accommodationStart;
 
     @DateTimeFormat
     @NotNull(message = "TripAccommodation Finish cannot be null.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "CET")
     private Date accommodationFinish;
 
     private double price;

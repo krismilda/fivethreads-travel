@@ -21,6 +21,7 @@ public class CreateNotificationServiceImplementation implements CreateNotificati
     public Notification createNotificationFullInfo(TripMember tripMember, String name) {
         Notification notification = new Notification();
         notification.setName(name);
+        notification.setIsAnswered(Boolean.FALSE);
         notification.setIsActive(Boolean.TRUE);
         notification.setCreated_date(new Date());
         TripHistory tripHistory = new TripHistory();
