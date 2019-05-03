@@ -29,6 +29,7 @@ public class NotificationMapper {
     public NotificationForApprovalDTO convertNotificationForApprovalToNotificationDTO(Notification notification) {
         NotificationForApprovalDTO notificationForApprovalDTO = new NotificationForApprovalDTO();
         notificationForApprovalDTO.setId(notification.getId());
+        notificationForApprovalDTO.setIsAnswered(notification.getIsAnswered());
         notificationForApprovalDTO.setIsActive(notification.getIsActive());
         notificationForApprovalDTO.setNotificationType(notification.getNotificationType().toString());
         notificationForApprovalDTO.setName(notification.getName());

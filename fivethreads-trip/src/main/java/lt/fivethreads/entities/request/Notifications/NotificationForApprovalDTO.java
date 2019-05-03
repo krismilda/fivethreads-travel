@@ -48,4 +48,5 @@ public class NotificationForApprovalDTO {
     private Boolean isCarNeeded;
     private CarTicketDTOWithoutFiles carTicketDTO;
     private List<NotificationUserDTO> otherTripMembers;
+    private Boolean isAnswered;
 }
