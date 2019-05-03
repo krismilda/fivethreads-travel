@@ -31,7 +31,7 @@ public class NotificationController {
         return null;
     }
 
-    @GetMapping("/notifications/approved/{notification_id}")
+    @GetMapping("/notifications/Approved/{notification_id}")
     @PreAuthorize("hasRole('ORGANIZER')")
     public NotificationApproved getNotificationByIDApproved(@PathVariable("notification_id") Long notification_id){
         return notificationService.getNotificationByIDForApproved(notification_id,SecurityContextHolder.getContext().getAuthentication().getName() );
