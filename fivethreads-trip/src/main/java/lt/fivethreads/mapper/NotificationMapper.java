@@ -11,6 +11,7 @@ import lt.fivethreads.services.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ public class NotificationMapper {
     public NotificationForApprovalDTO convertNotificationForApprovalToNotificationDTO(Notification notification) {
         NotificationForApprovalDTO notificationForApprovalDTO = new NotificationForApprovalDTO();
         notificationForApprovalDTO.setId(notification.getId());
+        notificationForApprovalDTO.setIsAnswered(notification.getIsAnswered());
         notificationForApprovalDTO.setIsActive(notification.getIsActive());
         notificationForApprovalDTO.setNotificationType(notification.getNotificationType().toString());
         notificationForApprovalDTO.setName(notification.getName());
@@ -244,6 +246,7 @@ public class NotificationMapper {
         notificationListDTO.setCreated_date(notification.getCreated_date());
         notificationListDTO.setIsActive(notification.getIsActive());
         notificationListDTO.setName(notification.getName());
+        notificationListDTO.setIsAnswered(notification.getIsAnswered());
         notificationListDTO.setNotificationType(notification.getNotificationType().toString());
         return  notificationListDTO;
     }

@@ -21,6 +21,7 @@ public class CreateNotificationServiceImplementation implements CreateNotificati
     public Notification createNotificationFullInfo(TripMember tripMember, String name) {
         Notification notification = new Notification();
         notification.setName(name);
+        notification.setIsAnswered(Boolean.FALSE);
         notification.setIsActive(Boolean.TRUE);
         notification.setCreated_date(new Date());
         TripHistory tripHistory = new TripHistory();
@@ -40,7 +41,9 @@ public class CreateNotificationServiceImplementation implements CreateNotificati
         if (tripHistory.getIsCarNeeded()) {
             tripHistory.setCarRentStart(tripMember.getCarTicket().getCarRentStart());
             tripHistory.setCarRentFinish(tripMember.getCarTicket().getCarRentFinish());
-            tripHistory.setCarPrice(tripMember.getCarTicket().getPrice());
+            if(tripMember.getCarTicket().getPrice()!=null){
+                tripHistory.setCarPrice(tripMember.getCarTicket().getPrice());
+            }
         }
         List<TripMemberHistory> tripMemberHistoryList = new ArrayList<>();
         for (TripMember tripOtherMember : tripMember.getTrip().getTripMembers()

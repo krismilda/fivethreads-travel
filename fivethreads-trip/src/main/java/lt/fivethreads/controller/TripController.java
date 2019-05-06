@@ -13,7 +13,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.ws.Response;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,14 +36,14 @@ public class TripController {
     }
 
     @PostMapping("/trip/accept")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ORGANIZER') or hasRole('ADMIN')")
     public ResponseEntity<TripMemberDTO> acceptTrip(@Validated @RequestBody AcceptedTrip acceptedTrip) {
-        TripMemberDTO tripMemberDTO = notificationService.tripAccepted(acceptedTrip,SecurityContextHolder.getContext().getAuthentication().getName());
+        TripMemberDTO tripMemberDTO = notificationService.tripAccepted(acceptedTrip, SecurityContextHolder.getContext().getAuthentication().getName());
         return new ResponseEntity<TripMemberDTO>(tripMemberDTO, HttpStatus.OK);
     }
 
     @PostMapping("/trip/cancelled")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ORGANIZER') or hasRole('ADMIN')")
     public ResponseEntity<TripMemberDTO> cancelledTrip(@Validated @RequestBody CancelledTrip cancelledTrip) {
         TripMemberDTO tripMemberDTO = notificationService.tripCancelled(cancelledTrip, SecurityContextHolder.getContext().getAuthentication().getName());
         return new ResponseEntity<TripMemberDTO>(tripMemberDTO, HttpStatus.OK);
@@ -58,18 +57,14 @@ public class TripController {
 
     @GetMapping("/myTrips/")
     @PreAuthorize("hasRole('ORGANIZER') or hasRole('ADMIN') or hasRole('USER') ")
-    public List<TripDTO> getAllOrganizerTrips() {
-        Collection authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-        if (authorities.stream().anyMatch(r -> r.toString().equals("ROLE_ADMIN"))) {
-            return tripService.getAllTrips();
-        }
-        if (authorities.stream().anyMatch(r -> r.toString().equals("ROLE_ORGANIZER"))) {
-            return tripService.getAllTripsByOrganizerEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        }
-        if (authorities.stream().anyMatch(r -> r.toString().equals("ROLE_USER"))) {
-            return tripService.getAllTripsByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        }
-        return null;
+    public List<TripDTO> getAllMyTrips() {
+        return tripService.getAllTripsByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
+
+    @GetMapping("/organizedTrips/")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public List<TripDTO> getOrganizerTrips() {
+        return tripService.getAllTripsByOrganizerEmail(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
     @PostMapping("/tripMember/flight/{trip_id}/{email}")
@@ -80,33 +75,33 @@ public class TripController {
 
     @PostMapping("/tripMember/car/{trip_id}/{email}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public FileDTO uploadCarTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file){
+    public FileDTO uploadCarTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file) {
         return tripFilesService.addCarTicket(tripID, email, file);
     }
 
     @PostMapping("/tripMember/accommodation/{trip_id}/{email}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public FileDTO uploadAccommodationTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file){
+    public FileDTO uploadAccommodationTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file) {
         return tripFilesService.addAccommodationTicket(tripID, email, file);
     }
 
     @DeleteMapping("/tripMember/flight/{file_id}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public ResponseEntity<TripMemberDTO> deleteFlightTicket(@PathVariable("file_id") Long fileID){
-        TripMemberDTO tripMemberDTO =tripFilesService.deleteFlightTicket(fileID);
+    public ResponseEntity<TripMemberDTO> deleteFlightTicket(@PathVariable("file_id") Long fileID) {
+        TripMemberDTO tripMemberDTO = tripFilesService.deleteFlightTicket(fileID);
         return new ResponseEntity<TripMemberDTO>(tripMemberDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/tripMember/car/{file_id}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public ResponseEntity<TripMemberDTO> deleteCarTicket(@PathVariable("file_id") Long fileID){
-        TripMemberDTO tripMemberDTO =tripFilesService.deleteCarTicket(fileID);
+    public ResponseEntity<TripMemberDTO> deleteCarTicket(@PathVariable("file_id") Long fileID) {
+        TripMemberDTO tripMemberDTO = tripFilesService.deleteCarTicket(fileID);
         return new ResponseEntity<TripMemberDTO>(tripMemberDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/tripMember/accommodation/{file_id}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public ResponseEntity<TripMemberDTO> deleteAccommodationTicket(@PathVariable("file_id") Long fileID){
+    public ResponseEntity<TripMemberDTO> deleteAccommodationTicket(@PathVariable("file_id") Long fileID) {
         TripMemberDTO tripMemberDTO = tripFilesService.deleteAccommodationTicket(fileID);
         return new ResponseEntity<TripMemberDTO>(tripMemberDTO, HttpStatus.OK);
     }
@@ -114,7 +109,7 @@ public class TripController {
     @PostMapping("/tripMember/{tripID}")
     @PreAuthorize("hasRole('ORGANIZER')")
     public ResponseEntity<TripMemberDTO> addNewTripMember(@Validated @RequestBody TripMemberDTO tripMemberDTO, @PathVariable("tripID") Long tripID) {
-        TripMemberDTO tripMemberDTO1 = tripService.addNewTripMember(tripMemberDTO, tripID,SecurityContextHolder.getContext().getAuthentication().getName());
+        TripMemberDTO tripMemberDTO1 = tripService.addNewTripMember(tripMemberDTO, tripID, SecurityContextHolder.getContext().getAuthentication().getName());
         return new ResponseEntity<TripMemberDTO>(tripMemberDTO1, HttpStatus.OK);
     }
 
@@ -129,7 +124,7 @@ public class TripController {
     @PutMapping("/editTrip")
     @PreAuthorize("hasRole('ORGANIZER')")
     public ResponseEntity<TripDTO> editTripInformation(@Validated @RequestBody EditTripInformation editTripInformation) {
-        TripDTO tripDTO = tripService.editTripInformation(editTripInformation,SecurityContextHolder.getContext().getAuthentication().getName());
+        TripDTO tripDTO = tripService.editTripInformation(editTripInformation, SecurityContextHolder.getContext().getAuthentication().getName());
         return new ResponseEntity<TripDTO>(tripDTO, HttpStatus.OK);
     }
 
