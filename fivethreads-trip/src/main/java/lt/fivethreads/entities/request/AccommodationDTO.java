@@ -33,5 +33,7 @@ public class AccommodationDTO {
 
     private double price;
 
+    private AccommodationType accommodationType;
+
     private List<Long> fileID = new ArrayList<>();
 }

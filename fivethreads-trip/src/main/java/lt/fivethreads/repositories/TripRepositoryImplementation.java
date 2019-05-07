@@ -1,10 +1,7 @@
 package lt.fivethreads.repositories;
 
-import lt.fivethreads.entities.Address;
 import lt.fivethreads.entities.Trip;
 import lt.fivethreads.entities.TripMember;
-import lt.fivethreads.repository.AddressRepository;
-import lt.fivethreads.services.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -25,9 +22,6 @@ public class TripRepositoryImplementation implements TripRepository {
 
     @Autowired
     private CarTicketRepository carTicketRepository;
-
-    @Autowired
-    private TripAccommodationRepository tripAccommodationRepository;
 
     public Trip findByID(long id) {
         return em.find(Trip.class, id);

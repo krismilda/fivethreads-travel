@@ -61,5 +61,13 @@ public class RoomRepositoryImpl implements RoomRepository {
                 .setParameter("apartment_ID", apartmentId)
                 .getResultList();
     }
+    public List<Room> getUnoccupiedRoomByCity(Date startDate, Date finishDate, String city) {
+
+        return em.createNamedQuery("Room.FindUnoccupiedRoomsByCity", Room.class)
+                .setParameter("startDate", startDate)
+                .setParameter("finishDate", finishDate)
+                .setParameter("city", city)
+                .getResultList();
+    }
 
 }

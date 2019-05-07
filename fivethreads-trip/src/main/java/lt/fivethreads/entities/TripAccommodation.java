@@ -49,8 +49,11 @@ public class TripAccommodation implements Serializable {
 
     @Column(name = "hotelName")
     private String hotelName;
-    @Column(name = "hotelAddress")
-    private String hotelAddress;
+
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="hotelAddress")
+    private Address hotelAddress;
 
     @Column(name = "price")
     private Double price;

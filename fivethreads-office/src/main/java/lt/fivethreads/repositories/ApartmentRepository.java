@@ -15,7 +15,7 @@ public interface ApartmentRepository {
     void deleteApartment(long id);
     Apartment updateApartment(Apartment apartment);
     Apartment createApartment(Apartment apartment);
-    boolean existsByAddressAndOfficeId(String address, Long officeId);
+    boolean existsByAddressAndOfficeId(double latitude, double longitude , Long officeId);
     List<Apartment> getApartmentsWithUnoccupiedRooms(Date startDate, Date finishDate);
     List <Apartment> getUnoccupiedApartmentsByOffice(Date startDate, Date finishDate, Long officeId);
 }

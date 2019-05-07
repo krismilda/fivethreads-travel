@@ -1,11 +1,14 @@
 package lt.fivethreads.services;
 
+import lt.fivethreads.Mapper.AddressMapper;
+import lt.fivethreads.entities.Address;
 import lt.fivethreads.entities.Apartment;
 import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.request.ApartmentDTO;
 import lt.fivethreads.entities.request.ApartmentForm;
 import lt.fivethreads.mapper.ApartmentMapper;
 import lt.fivethreads.repositories.ApartmentRepository;
+import lt.fivethreads.repository.AddressRepository;
 import lt.fivethreads.validation.DateValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,6 +30,11 @@ public class ApartmentServiceImplementation implements ApartmentService {
     @Autowired
     DateValidation dateValidation;
 
+    @Autowired
+    AddressMapper addressMapper;
+
+    @Autowired
+    AddressService addressService;
 
     public List<ApartmentDTO> getAllApartments() {
         List<Apartment> apartments = apartmentRepository.getAll();
@@ -42,7 +50,16 @@ public class ApartmentServiceImplementation implements ApartmentService {
 
     public ApartmentDTO updateApartment(ApartmentDTO apartmentDTO) {
         Apartment apartment = apartmentRepository.findById(apartmentDTO.getId());
-        apartment.setAddress(apartmentDTO.getAddress());
+        Address address = apartment.getAddress();
+        address.setCity(apartmentDTO.getAddress().getCity());
+        address.setCountry(apartmentDTO.getAddress().getCountry());
+        address.setHouseNumber(apartmentDTO.getAddress().getHouseNumber());
+        address.setFlatNumber(apartmentDTO.getAddress().getFlatNumber());
+        address.setLatitude(apartmentDTO.getAddress().getLatitude());
+        address.setLongitude(apartmentDTO.getAddress().getLongitude());
+        address.setStreet(apartmentDTO.getAddress().getStreet());
+
+        apartment.setAddress(address);
         Office office = new Office();
         office.setId(apartmentDTO.getOfficeId());
         apartment.setOffice(office);
@@ -60,8 +77,8 @@ public class ApartmentServiceImplementation implements ApartmentService {
         return apartmentMapper.getApartmentDTO(apartmentRepository.createApartment(apartment_to_save));
     }
 
-    public boolean checkIfApartmentExists(String address, Long officeId) {
-        return apartmentRepository.existsByAddressAndOfficeId(address, officeId);
+    public boolean checkIfApartmentExists(double latitude, double longitude, Long officeId) {
+        return apartmentRepository.existsByAddressAndOfficeId(latitude, longitude, officeId);
     }
 
     public List<ApartmentDTO> getAllUnoccupiedAccommodationApartments(Date startDate, Date finishDate) {

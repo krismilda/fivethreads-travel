@@ -9,6 +9,7 @@ import lt.fivethreads.mapper.TripMapper;
 import lt.fivethreads.mapper.TripMemberMapper;
 import lt.fivethreads.repositories.TripMemberRepository;
 import lt.fivethreads.repositories.TripRepository;
+import lt.fivethreads.validation.TripAccommodationValidation;
 import lt.fivethreads.validation.TripValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,12 +43,18 @@ public class TripServiceImplementation implements TripService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    TripAccommodationValidation tripAccommodationValidation;
+
     public TripDTO createTrip(CreateTripForm form, String organizer_email) throws WrongTripData {
         tripValidation.checkFnishStartDates(form.getStartDate(), form.getFinishDate(), "Finish date is earlier than start date.");
         tripValidation.checkStartDateToday(form.getStartDate());
         Trip trip = tripMapper.ConvertCreateTripFormToTrip(form, organizer_email);
         for (TripMember tripMember : trip.getTripMembers()) {
             tripValidation.validateTripMember(tripMember);
+            tripAccommodationValidation.checkFinishStartDates(tripMember.getTripAccommodation().getAccommodationStart(),
+                    tripMember.getTripAccommodation().getAccommodationFinish(), "Finish date is earlier than start date.");
+            tripAccommodationValidation.checkStartDateToday(tripMember.getTripAccommodation().getAccommodationStart());
             tripMember.setTripAcceptance(TripAcceptance.PENDING);
         }
         trip.setTripStatus(TripStatus.PLANNED);

@@ -12,7 +12,7 @@ public interface OfficeService {
     OfficeDTO updateOffice(OfficeDTO office);
     void deleteOffice(Long id);
     OfficeDTO createOffice(OfficeForm user);
-    boolean checkIfOfficeExists(String name, String address);
+    boolean checkIfOfficeExists(double latitude, double longitude, String name);
     void createOffices(List<OfficeDTO> officeDTOS);
     List <OfficeDTO> getAllUnoccupiedAccommodationOffices(Date startDate, Date finishDate);
 }

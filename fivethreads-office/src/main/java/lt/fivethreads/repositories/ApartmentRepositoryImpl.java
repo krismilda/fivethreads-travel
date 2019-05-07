@@ -1,5 +1,6 @@
 package lt.fivethreads.repositories;
 
+import lt.fivethreads.entities.Address;
 import lt.fivethreads.entities.Apartment;
 import org.springframework.stereotype.Repository;
 
@@ -40,9 +41,10 @@ public class ApartmentRepositoryImpl implements ApartmentRepository {
         return apartment;
     }
 
-    public boolean existsByAddressAndOfficeId(String address, Long officeId) {
+    public boolean existsByAddressAndOfficeId(double latitude, double longitude, Long officeId) {
         return em.createNamedQuery("Apartment.ExistsByAddressAndOfficeId")
-                .setParameter("address", address)
+                .setParameter("latitude", latitude)
+                .setParameter("longitude", longitude)
                 .setParameter("office_ID", officeId)
                 .getResultList().size() == 1;
     }

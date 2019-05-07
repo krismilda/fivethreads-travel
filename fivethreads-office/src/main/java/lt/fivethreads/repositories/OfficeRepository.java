@@ -15,7 +15,7 @@ public interface OfficeRepository{
     void deleteOffice(long id);
     Office updateOffice(Office office);
     Office createOffice(Office office);
-    Boolean existsByAddressAndName(String address, String name);
+    Boolean existsByAddressAndName(double latitude, double longitude, String name);
     Office findByName(String name);
     List<Office> getOfficesWithUnoccupiedRooms (Date startDate, Date finishDate);
 }

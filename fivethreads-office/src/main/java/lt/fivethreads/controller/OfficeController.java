@@ -54,8 +54,8 @@ public class OfficeController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        if (officeService.checkIfOfficeExists(registrationForm.getName(),
-                registrationForm.getAddress())) {
+        if (officeService.checkIfOfficeExists(registrationForm.getAddress().getLatitude(),
+                registrationForm.getAddress().getLongitude(), registrationForm.getName())) {
             return new ResponseEntity<>("Fail -> Office is already created!",
                     HttpStatus.BAD_REQUEST);
         }

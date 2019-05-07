@@ -8,5 +8,5 @@ import lombok.Setter;
 public class OfficeDTO {
     private Long id;
     private String name;
-    private String address;
+    private FullAddressDTO address;
 }

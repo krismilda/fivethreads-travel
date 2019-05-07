@@ -54,7 +54,7 @@ public class TripAccommodationRepositoryImplementation implements TripAccommodat
         return em.createNamedQuery("TripAccommodation.FindUnoccupiedAccommodation", Room.class)
                 .setParameter("startDate", startDate)
                 .setParameter("finishDate", finishDate)
-                .getResultList();//copied
+                .getResultList();
     }
 
     public List<Apartment> getUnoccupiedRoomApartments(Date startDate, Date finishDate){
@@ -62,29 +62,28 @@ public class TripAccommodationRepositoryImplementation implements TripAccommodat
                 .setParameter("startDate", startDate)
                 .setParameter("finishDate", finishDate)
                 .getResultList();
-    }//copied
+    }
 
     public List<Office> getUnoccupiedRoomOffices(Date startDate, Date finishDate){
         return em.createNamedQuery("TripAccommodation.FindUnoccupiedAccommodationOffices", Office.class)
                 .setParameter("startDate", startDate)
                 .setParameter("finishDate", finishDate)
                 .getResultList();
-    }//copied
+    }
     public List <Room> getUnoccupiedRoomsByApartment(Date startDate, Date finishDate, Long apartmentId){
         return em.createNamedQuery("TripAccommodation.FindUnoccupiedRoomsByApartmentId", Room.class)
                 .setParameter("startDate", startDate)
                 .setParameter("finishDate", finishDate)
                 .setParameter("apartment_ID", apartmentId)
-                .getResultList();//copied
+                .getResultList();
     }
     public List <Apartment> getUnoccupiedApartmentsByOffice(Date startDate, Date finishDate, Long officeId){
         return em.createNamedQuery("TripAccommodation.FindUnoccupiedApartmentsByOfficeId", Apartment.class)
                 .setParameter("startDate", startDate)
                 .setParameter("finishDate", finishDate)
                 .setParameter("office_ID", officeId)
-                .getResultList();//copied
+                .getResultList();
     }
-
 
 
 }

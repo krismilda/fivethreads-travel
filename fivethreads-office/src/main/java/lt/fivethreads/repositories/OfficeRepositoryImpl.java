@@ -41,9 +41,10 @@ public class OfficeRepositoryImpl implements  OfficeRepository {
         return office;
     }
 
-    public Boolean existsByAddressAndName(String address, String name) {
+    public Boolean existsByAddressAndName(double latitude, double longitude, String name) {
         return em.createNamedQuery("Office.ExistsByAddressAndName")
-                .setParameter("address", address)
+                .setParameter("latitude", latitude)
+                .setParameter("longitude", longitude)
                 .setParameter("name", name)
                 .getResultList().size() == 1;
     }

@@ -1,5 +1,7 @@
 package lt.fivethreads.services;
 
+import lt.fivethreads.Mapper.AddressMapper;
+import lt.fivethreads.entities.Address;
 import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.request.OfficeDTO;
 import lt.fivethreads.entities.request.OfficeForm;
@@ -26,6 +28,9 @@ public class OfficeServiceImplementation implements OfficeService {
     @Autowired
     DateValidation dateValidation;
 
+    @Autowired
+    AddressMapper addressMapper;
+
     public List<OfficeDTO> getAllOffices() {
         List<Office> offices = officeRepository.getAll();
         return offices.stream()
@@ -41,7 +46,18 @@ public class OfficeServiceImplementation implements OfficeService {
     public OfficeDTO updateOffice(OfficeDTO officeDTO) {
 
         Office office = officeRepository.findById(officeDTO.getId());
-        office.setAddress(officeDTO.getAddress());
+
+        Address address = office.getAddress();
+        address.setCity(officeDTO.getAddress().getCity());
+        address.setCountry(officeDTO.getAddress().getCountry());
+        address.setHouseNumber(officeDTO.getAddress().getHouseNumber());
+        address.setFlatNumber(officeDTO.getAddress().getFlatNumber());
+        address.setLatitude(officeDTO.getAddress().getLatitude());
+        address.setLongitude(officeDTO.getAddress().getLongitude());
+        address.setStreet(officeDTO.getAddress().getStreet());
+
+        office.setAddress(address);
+
         office.setName(officeDTO.getName());
         office.setId(officeDTO.getId());
         return officeMapper.getOfficeDTO(officeRepository.updateOffice(office));
@@ -56,9 +72,9 @@ public class OfficeServiceImplementation implements OfficeService {
         return officeMapper.getOfficeDTO(officeRepository.createOffice(office_to_save));
     }
 
-    public boolean checkIfOfficeExists(String name, String address) {
+    public boolean checkIfOfficeExists(double latitude, double longitude, String name) {
 
-        return officeRepository.existsByAddressAndName(address, name);
+        return officeRepository.existsByAddressAndName(latitude, longitude, name);
     }
 
     public void createOffices(List<OfficeDTO> officeDTOS) {

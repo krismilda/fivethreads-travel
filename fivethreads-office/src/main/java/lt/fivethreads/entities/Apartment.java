@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 @NamedQueries({
         @NamedQuery(name = "Apartment.FindAll", query = "SELECT  a FROM  Apartment as a"),
         @NamedQuery(name = "Apartment.ExistsByAddressAndOfficeId",
-                query = "SELECT a FROM Apartment as a WHERE  a.address =: address " +
+                query = "SELECT a FROM Apartment as a WHERE  a.address.latitude =: latitude AND a.address.longitude =: longitude " +
                         "AND a.office.id =: office_ID"),
         @NamedQuery(name = "Apartment.FindUnoccupiedAccommodationApartments", query = "" +
                 "SELECT a FROM Apartment as a WHERE a.id NOT IN ( " +
@@ -34,8 +34,9 @@ public class Apartment {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "address")
-    private String address;
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="address")
+    private Address address;
 
     @JoinColumn(name = "officeId")
     @ManyToOne(targetEntity = Office.class, fetch = FetchType.LAZY)
@@ -47,7 +48,7 @@ public class Apartment {
     private Set<Room> rooms;
 
     public Apartment(){}
-    public Apartment(String address, Room... rooms) {
+    public Apartment(Address address, Room... rooms) {
         this.address = address;
         this.rooms = Stream.of(rooms).collect(Collectors.toSet());
         this.rooms.forEach(x -> x.setApartment(this));

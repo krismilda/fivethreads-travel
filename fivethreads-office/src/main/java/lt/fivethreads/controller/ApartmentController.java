@@ -62,7 +62,8 @@ public class ApartmentController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        if (apartmentService.checkIfApartmentExists(apartmentForm.getAddress(),
+        if (apartmentService.checkIfApartmentExists(apartmentForm.getAddress().getLatitude(),
+                apartmentForm.getAddress().getLongitude(),
                 apartmentForm.getOfficeId())) {
             return new ResponseEntity<>("Fail -> Apartment is already created!",
                     HttpStatus.BAD_REQUEST);

@@ -71,6 +71,7 @@ public class TripMemberMapper {
         TripAccommodation tripAccommodation = new TripAccommodation();
         tripAccommodation.setAccommodationStart(accommodationDTO.getAccommodationStart());
         tripAccommodation.setAccommodationFinish(accommodationDTO.getAccommodationFinish());
+        if (accommodationDTO.getAccommodationType() != null)tripAccommodation.setAccommodationType(accommodationDTO.getAccommodationType());
         return tripAccommodation;
     }
 
@@ -100,6 +101,8 @@ public class TripMemberMapper {
                 accommodationDTO.getFileID().add(file.getId());
             }
         }
+        if(tripAccommodation.getAccommodationType() != null)
+            accommodationDTO.setAccommodationType(tripAccommodation.getAccommodationType());
         return accommodationDTO;
     }
 

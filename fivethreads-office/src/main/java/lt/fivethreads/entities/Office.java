@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 @NamedQueries({
         @NamedQuery(name = "Office.FindAll", query = "SELECT  o FROM  Office as o"),
         @NamedQuery(name = "Office.ExistsByAddressAndName",
-                query = "SELECT o FROM Office as o WHERE  o.address =: address " +
+                query = "SELECT o FROM Office as o WHERE  o.address.latitude =: latitude AND o.address.longitude =: longitude " +
                         "AND o.name =: name"),
         @NamedQuery(name = "Office.FindUnoccupiedAccommodationOffices",
                 query = "SELECT DISTINCT (o) FROM Office as o JOIN Apartment as a ON o.id = a.office " +
@@ -32,14 +32,15 @@ public class Office {
     @Column(name ="name")
     private String name;
 
-    @Column(name = "address")
-    private String address;
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="address")
+    private Address address;
 
     @OneToMany(mappedBy = "office")
     private Set<Apartment> apartments;
 
     public Office (){}
-    public Office(String name, String address, Apartment... apartments) {
+    public Office(String name, Address address, Apartment... apartments) {
         this.name = name;
         this.address = address;
         this.apartments = Stream.of(apartments).collect(Collectors.toSet());

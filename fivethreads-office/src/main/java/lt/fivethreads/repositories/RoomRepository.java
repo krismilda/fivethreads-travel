@@ -17,4 +17,5 @@ public interface RoomRepository {
     boolean existsByNumberAndId(Long number, Long id);
     List <Room> getUnoccupiedRooms(Date startDate, Date finishDate);
     List <Room> getUnoccupiedRoomsByApartment(Date startDate, Date finishDate, Long apartmentId);
+    List<Room> getUnoccupiedRoomByCity(Date startDate, Date finishDate, String city);
 }

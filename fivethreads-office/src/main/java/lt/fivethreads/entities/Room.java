@@ -22,6 +22,11 @@ import javax.validation.constraints.NotNull;
                 "SELECT r FROM Room as r WHERE r.apartment.id =: apartment_ID AND r.id NOT IN " +
                         "(SELECT ta.room from TripAccommodation as ta WHERE ta.room IS NOT NULL " +
                         "AND ta.accommodationStart <=: startDate  AND ta.accommodationFinish >=: finishDate)"),
+        @NamedQuery(name = "Room.FindUnoccupiedRoomsByCity", query = "SELECT " +
+                "r FROM Room as r WHERE  r.id NOT IN " +
+                "(SELECT ta.room FROM TripAccommodation AS ta WHERE ta.room IS NOT NULL " +
+                "                AND ta.accommodationStart <=: startDate  AND ta.accommodationFinish >=: finishDate " +
+                "                AND ta.hotelAddress.city =: city )")
 
 })
 public class Room {
