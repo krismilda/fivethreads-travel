@@ -6,6 +6,7 @@ import lt.fivethreads.entities.request.CarTicketDTO;
 import lt.fivethreads.entities.request.FlightTicketDTO;
 import lt.fivethreads.entities.request.TripMemberDTO;
 import lt.fivethreads.repositories.TripMemberRepository;
+import lt.fivethreads.services.FileService;
 import lt.fivethreads.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,9 @@ public class TripMemberMapper {
 
     @Autowired
     TripMemberRepository tripMemberRepository;
+
+    @Autowired
+    FileService fileService;
 
     public TripMemberDTO convertTripMemberToTripMemberDTO(TripMember tripMember) {
         TripMemberDTO tripMemberDTO = new TripMemberDTO();
@@ -79,7 +83,8 @@ public class TripMemberMapper {
         if(carTicket.getFile()!=null){
             for (File file : carTicket.getFile()
             ) {
-                carTicketDTO.getFileID().add(file.getId());
+                carTicketDTO.getFiles().add(fileService.getFileById(file.getId()));
+                carTicketDTO.setPrice(carTicket.getPrice());
             }
         }
 
@@ -93,7 +98,8 @@ public class TripMemberMapper {
         if(tripAccommodation.getFile()!=null){
             for (File file : tripAccommodation.getFile()
             ) {
-                accommodationDTO.getFileID().add(file.getId());
+                accommodationDTO.getFiles().add(fileService.getFileById(file.getId()));
+                accommodationDTO.setPrice(tripAccommodation.getPrice());
             }
         }
         return accommodationDTO;
@@ -104,7 +110,8 @@ public class TripMemberMapper {
         if(flightTicket.getFile()!=null){
             for (File file : flightTicket.getFile()
             ) {
-                flightTicketDTO.getFileID().add(file.getId());
+                flightTicketDTO.getFiles().add(fileService.getFileById(file.getId()));
+                flightTicketDTO.setPrice(flightTicket.getPrice());
             }
         }
         return flightTicketDTO;

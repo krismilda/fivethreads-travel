@@ -12,5 +12,5 @@ public class FlightTicketDTO {
 
     private double price;
 
-    private List<Long> fileID = new ArrayList<>();
+    private List<FileDTO> files = new ArrayList<>();
 }

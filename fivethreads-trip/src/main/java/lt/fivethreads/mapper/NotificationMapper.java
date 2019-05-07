@@ -8,10 +8,10 @@ import lt.fivethreads.entities.request.*;
 import lt.fivethreads.entities.request.Notifications.*;
 import lt.fivethreads.repositories.TripMemberRepository;
 import lt.fivethreads.services.AddressService;
+import lt.fivethreads.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +26,8 @@ public class NotificationMapper {
     AddressService addressService;
     @Autowired
     AddressMapper addressMapper;
+    @Autowired
+    FileService fileService;
     public NotificationForApprovalDTO convertNotificationForApprovalToNotificationDTO(Notification notification) {
         NotificationForApprovalDTO notificationForApprovalDTO = new NotificationForApprovalDTO();
         notificationForApprovalDTO.setId(notification.getId());
@@ -108,10 +110,10 @@ public class NotificationMapper {
             accommodationDTO.setAccommodationFinish(notification.getTripHistory().getAccommodationFinish());
             accommodationDTO.setPrice(notification.getTripHistory().getAccommodationPrice());
             if (tripMember.getTripAccommodation().getFile() != null) {
-                accommodationDTO.setFileID(tripMember.getTripAccommodation()
+                accommodationDTO.setFiles(tripMember.getTripAccommodation()
                         .getFile()
                         .stream()
-                        .map(e -> e.getId())
+                        .map(e -> fileService.getFileById(e.getId()))
                         .collect(Collectors.toList()));
             }
             notificationInformationChanged.setAccommodationDTO(accommodationDTO);
@@ -122,10 +124,10 @@ public class NotificationMapper {
             carTicketDTO.setCarRentFinish(notification.getTripHistory().getCarRentFinish());
             carTicketDTO.setPrice(notification.getTripHistory().getCarPrice());
             if (tripMember.getCarTicket().getFile() != null) {
-                carTicketDTO.setFileID(tripMember.getCarTicket()
+                carTicketDTO.setFiles(tripMember.getCarTicket()
                         .getFile()
                         .stream()
-                        .map(e -> e.getId())
+                        .map(e -> fileService.getFileById(e.getId()))
                         .collect(Collectors.toList()));
             }
             notificationInformationChanged.setCarTicketDTO(carTicketDTO);
@@ -134,10 +136,10 @@ public class NotificationMapper {
             FlightTicketDTO flightTicketDTO = new FlightTicketDTO();
             flightTicketDTO.setPrice(notification.getTripHistory().getFlightPrice());
             if(tripMember.getFlightTicket().getFile()!=null) {
-                flightTicketDTO.setFileID(tripMember.getFlightTicket()
+                flightTicketDTO.setFiles(tripMember.getFlightTicket()
                         .getFile()
                         .stream()
-                        .map(e -> e.getId())
+                        .map(e -> fileService.getFileById(e.getId()))
                         .collect(Collectors.toList()));
             }
             notificationInformationChanged.setFlightTicketDTO(flightTicketDTO);
