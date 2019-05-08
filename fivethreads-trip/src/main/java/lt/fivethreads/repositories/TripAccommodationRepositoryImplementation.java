@@ -1,6 +1,7 @@
 package lt.fivethreads.repositories;
 
 import lt.fivethreads.entities.*;
+import lt.fivethreads.entities.request.TripAccommodationForm;
 import lt.fivethreads.exception.WrongTripData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -24,6 +25,7 @@ public class TripAccommodationRepositoryImplementation implements TripAccommodat
             TripAccommodation.class).getResultList(); }
 
     public TripAccommodation saveTripAccommodation(TripAccommodation tripAccommodation) {
+        //TO DO check if user already belongs to that trip?
         em.persist(tripAccommodation);
         return tripAccommodation;
     }

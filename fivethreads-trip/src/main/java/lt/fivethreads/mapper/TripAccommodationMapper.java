@@ -62,7 +62,7 @@ public class TripAccommodationMapper {
         tripAccommodationDTO.setTripMemberId(tripAccommodation.getTripMember().getId());
         tripAccommodationDTO.setAccommodationType(tripAccommodation.getAccommodationType());
         if(tripAccommodation.getRoom() != null) tripAccommodationDTO.setRoomId(tripAccommodation.getRoom().getId());
-        tripAccommodationDTO.setHotelAddress(addressMapper.convertAddressToFullAddress(tripAccommodation.getHotelAddress()));
+        if (tripAccommodation.getHotelAddress() != null) tripAccommodationDTO.setHotelAddress(addressMapper.convertAddressToFullAddress(tripAccommodation.getHotelAddress()));
         tripAccommodationDTO.setHotelName(tripAccommodation.getHotelName());
         tripAccommodationDTO.setPrice(tripAccommodation.getPrice());
 
