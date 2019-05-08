@@ -52,39 +52,12 @@ public class TripAccommodationRepositoryImplementation implements TripAccommodat
                 .getResultList();
     }
 
-    public List <Room> getUnoccupiedRooms(Date startDate, Date finishDate){
-        return em.createNamedQuery("TripAccommodation.FindUnoccupiedAccommodation", Room.class)
-                .setParameter("startDate", startDate)
-                .setParameter("finishDate", finishDate)
-                .getResultList();
-    }
-
-    public List<Apartment> getUnoccupiedRoomApartments(Date startDate, Date finishDate){
-        return em.createNamedQuery("TripAccommodation.FindUnoccupiedAccommodationApartments", Apartment.class)
-                .setParameter("startDate", startDate)
-                .setParameter("finishDate", finishDate)
-                .getResultList();
-    }
-
-    public List<Office> getUnoccupiedRoomOffices(Date startDate, Date finishDate){
-        return em.createNamedQuery("TripAccommodation.FindUnoccupiedAccommodationOffices", Office.class)
-                .setParameter("startDate", startDate)
-                .setParameter("finishDate", finishDate)
-                .getResultList();
-    }
-    public List <Room> getUnoccupiedRoomsByApartment(Date startDate, Date finishDate, Long apartmentId){
-        return em.createNamedQuery("TripAccommodation.FindUnoccupiedRoomsByApartmentId", Room.class)
-                .setParameter("startDate", startDate)
-                .setParameter("finishDate", finishDate)
-                .setParameter("apartment_ID", apartmentId)
-                .getResultList();
-    }
-    public List <Apartment> getUnoccupiedApartmentsByOffice(Date startDate, Date finishDate, Long officeId){
-        return em.createNamedQuery("TripAccommodation.FindUnoccupiedApartmentsByOfficeId", Apartment.class)
-                .setParameter("startDate", startDate)
-                .setParameter("finishDate", finishDate)
-                .setParameter("office_ID", officeId)
-                .getResultList();
+    @Override
+    public void deleteTripAccommodation(Long id) {
+        TripAccommodation  accommodation_to_delete = em.find(TripAccommodation.class, id);
+        if(accommodation_to_delete.getAccommodationType() == AccommodationType.DEVRIDGE_APARTAMENTS)
+            accommodation_to_delete.setHotelAddress(null);
+        em.remove(accommodation_to_delete );
     }
 
 

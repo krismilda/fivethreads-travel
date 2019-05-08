@@ -1,5 +1,6 @@
 package lt.fivethreads.services;
 
+import lt.fivethreads.Mapper.AddressMapper;
 import lt.fivethreads.entities.*;
 import lt.fivethreads.entities.request.*;
 import lt.fivethreads.exception.WrongTripData;
@@ -40,8 +41,13 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
     RoomMapper roomMapper;
 
     @Autowired
+    RoomRepository roomRepository;
+
+    @Autowired
     OfficeMapper officeMapper;
 
+    @Autowired
+    AddressMapper addressMapper;
 
     public TripAccommodationDTO getTripAccommodation(long tripAccommodationId){
         TripAccommodation tripAccommodation = tripAccommodationRepository.findByID(tripAccommodationId);
@@ -76,6 +82,45 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
                         .getTripAccommodationDTO(tripAccommodation);
 
         return tripAccommodationDTO;
+    }
+
+    public TripAccommodationDTO updateTripAccommodation(TripAccommodationDTO tripAccommodationDTO) {
+        tripAccommodationValidation.checkFinishStartDates(tripAccommodationDTO.getAccommodationStart(),
+                tripAccommodationDTO.getAccommodationFinish(), "Finish date is earlier than start date.");
+        tripAccommodationValidation.checkStartDateToday(tripAccommodationDTO.getAccommodationStart());
+
+        TripMember tripMember = tripMemberRepository.findById(tripAccommodationDTO.getTripMemberId());
+        Trip trip = tripMember.getTrip();
+
+        tripAccommodationValidation.checkTripAccommodationDatesAgainstTripDates(tripAccommodationDTO.getAccommodationStart(),
+                tripAccommodationDTO.getAccommodationFinish(), trip);
+
+        TripAccommodation accommodation_to_update = tripAccommodationRepository.findByID(tripAccommodationDTO.getId());
+       if(tripAccommodationDTO.getAccommodationType() == AccommodationType.HOTEL) {
+
+            tripAccommodationValidation.hotelRequiredFields(tripAccommodationDTO.getHotelName(),
+                    tripAccommodationDTO.getHotelAddress(), tripAccommodationDTO.getPrice());
+            Address address = addressMapper.convertFullAddressToAddress(tripAccommodationDTO.getHotelAddress());
+            if (accommodation_to_update.getHotelAddress() != null
+            && accommodation_to_update.getAccommodationType() == AccommodationType.HOTEL) address.setId(accommodation_to_update.getHotelAddress().getId());
+            accommodation_to_update.setHotelAddress(address);
+            accommodation_to_update.setHotelName(tripAccommodationDTO.getHotelName());
+            accommodation_to_update.setPrice(tripAccommodationDTO.getPrice());
+        }else{
+
+            Room room = roomRepository.findById(tripAccommodationDTO.getRoomId());
+            accommodation_to_update.setRoom(room);
+            accommodation_to_update.setHotelName(room.getApartment().getOffice().getName());
+            accommodation_to_update.setHotelAddress(room.getApartment().getAddress());
+            accommodation_to_update.setPrice(null);
+        }
+        accommodation_to_update.setAccommodationType(tripAccommodationDTO.getAccommodationType());
+        accommodation_to_update.setAccommodationFinish(tripAccommodationDTO.getAccommodationFinish());
+        accommodation_to_update.setAccommodationStart(tripAccommodationDTO.getAccommodationStart());
+
+        tripAccommodationRepository.updateTripAccommodation(accommodation_to_update);
+
+        return tripAccommodationMapper.getTripAccommodationDTO(tripAccommodationRepository.updateTripAccommodation(accommodation_to_update));
     }
 
     public List<TripAccommodationDTO> getAllTripAccommodations() {
@@ -114,4 +159,8 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
         }
         return tripAccommodationDTOList;
     }
+
+    public void deleteTripAccommodation(Long id) {
+        tripAccommodationRepository.deleteTripAccommodation(id); }
+
 }

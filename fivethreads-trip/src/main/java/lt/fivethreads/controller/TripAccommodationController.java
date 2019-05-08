@@ -32,4 +32,21 @@ public class TripAccommodationController {
                 .createTripAccommodation(tripAccommodationForm);
         return new ResponseEntity<>(createdTripAccommodation, HttpStatus.CREATED);
     }
+
+    @PutMapping("/trip/accommodations/accommodation/")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<?> updateTripAccommodation(@Validated @RequestBody TripAccommodationDTO tripAccommodationDTO){
+        TripAccommodationDTO updatedAccommodation = tripAccommodationService.updateTripAccommodation(tripAccommodationDTO);
+        return new ResponseEntity<>(updatedAccommodation, HttpStatus.OK);
+    }
+
+    @DeleteMapping("trip/accommodations/{accommodationId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
+    public ResponseEntity<?> deketeTripAccommodation(@PathVariable("accommodationId") int accommodationId) {
+        long id = accommodationId;
+        tripAccommodationService.deleteTripAccommodation(id);
+        return new ResponseEntity<>("Trip accommodation deleted successfully!", HttpStatus.OK);
+    }
+
+
 }

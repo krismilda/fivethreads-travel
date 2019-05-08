@@ -14,9 +14,5 @@ public interface TripAccommodationRepository {
     List<TripAccommodation> getAllByTrip(long tripId);
     List<TripAccommodation> getAllByUser(long userId);
     List<TripAccommodation> getAllByApartment(long apartmentId);
-    List <Room> getUnoccupiedRooms(Date startDate, Date finishDate);
-    List<Apartment> getUnoccupiedRoomApartments(Date startDate, Date finishDate);
-    List<Office> getUnoccupiedRoomOffices(Date startDate, Date finishDate);
-    List <Room> getUnoccupiedRoomsByApartment(Date startDate, Date finishDate, Long apartmentId);
-    List <Apartment> getUnoccupiedApartmentsByOffice(Date startDate, Date finishDate, Long officeId);
+    void deleteTripAccommodation(Long id);
 }
