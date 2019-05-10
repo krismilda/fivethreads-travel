@@ -23,7 +23,7 @@ public class NotificationCancelled {
     @NotNull(message = "Reason cannot be null.")
     private String reason;
     @NotNull (message = "Organizer cannot be null.")
-    private NotificationUserDTO tripMember;
+    private UserInformationDTO tripMember;
     @NotNull (message = "Trip ID cannot be null.")
     private Long trip_id;
     @NotNull (message = "Trip start date cannot be null.")

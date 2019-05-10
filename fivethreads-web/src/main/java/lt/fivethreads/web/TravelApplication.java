@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.annotation.Resource;
 
@@ -20,6 +21,7 @@ import javax.annotation.Resource;
 })
 @EnableJpaRepositories("lt.fivethreads")
 @EnableAspectJAutoProxy
+@EnableScheduling
 public class TravelApplication implements CommandLineRunner {
 
     @Resource

@@ -39,7 +39,7 @@ public class NotificationInformationChanged {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "CET")
     private String departure;
     @NotNull (message = "Organizer cannot be null.")
-    private NotificationUserDTO organizer;
+    private UserInformationDTO organizer;
     @NotNull (message = "IsFlightTickedNeeded cannot be null.")
     private Boolean isFlightTickedNeeded;
     private FlightTicketDTO flightTicketDTO;
@@ -49,5 +49,5 @@ public class NotificationInformationChanged {
     @NotNull (message = "IsCarNeeded cannot be null.")
     private Boolean isCarNeeded;
     private CarTicketDTO carTicketDTO;
-    private List<NotificationUserDTO> otherTripMembers;
+    private List<UserInformationDTO> otherTripMembers;
 }

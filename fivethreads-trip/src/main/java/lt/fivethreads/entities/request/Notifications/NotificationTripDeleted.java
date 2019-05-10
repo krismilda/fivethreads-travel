@@ -21,7 +21,7 @@ public class NotificationTripDeleted {
     @NotNull (message = "Name cannot be null.")
     private String name;
     @NotNull (message = "Organizer cannot be null.")
-    private NotificationUserDTO organizer;
+    private UserInformationDTO organizer;
     @NotNull (message = "Trip ID cannot be null.")
     private Long trip_id;
     @NotNull (message = "Trip start date cannot be null.")

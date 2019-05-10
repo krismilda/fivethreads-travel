@@ -3,15 +3,19 @@ package lt.fivethreads.entities.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
+import lt.fivethreads.entities.TripAcceptance;
+import lt.fivethreads.entities.User;
+import lt.fivethreads.entities.request.Notifications.UserInformationDTO;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
-public class TripDTO {
+public class UserTripDTO {
     @NotNull(message = "ID cannot be null.")
     private Long id;
     @NotNull(message="Start date cannot be null.")
@@ -33,5 +37,6 @@ public class TripDTO {
     private Boolean isFlexible;
     @NotNull(message = "IsCombined cannot be null")
     private Boolean isCombined;
-    private String tripStatus;
+    private TripMemberDTO tripMemberDTO;
+    private List<UserInformationDTO> otherTripMembers = new ArrayList<>();
 }

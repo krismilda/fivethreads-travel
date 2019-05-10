@@ -69,20 +69,20 @@ public class TripController {
 
     @PostMapping("/tripMember/flight/{trip_id}/{email}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public FileDTO uploadFlightTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file) throws Exception {
-        return tripFilesService.addFlightTicket(tripID, email, file);
+    public FileDTO uploadFlightTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file, @RequestParam(value="price", defaultValue = "0") double price) throws Exception {
+        return tripFilesService.addFlightTicket(tripID, email, file, price);
     }
 
     @PostMapping("/tripMember/car/{trip_id}/{email}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public FileDTO uploadCarTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file) {
-        return tripFilesService.addCarTicket(tripID, email, file);
+    public FileDTO uploadCarTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file, @RequestParam(value="price", defaultValue = "0") double price) {
+        return tripFilesService.addCarTicket(tripID, email, file, price);
     }
 
     @PostMapping("/tripMember/accommodation/{trip_id}/{email}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public FileDTO uploadAccommodationTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file) {
-        return tripFilesService.addAccommodationTicket(tripID, email, file);
+    public FileDTO uploadAccommodationTicket(@PathVariable("trip_id") Long tripID, @PathVariable("email") String email, @RequestParam("file") MultipartFile file, @RequestParam(value="price", defaultValue = "0") double price) {
+        return tripFilesService.addAccommodationTicket(tripID, email, file, price);
     }
 
     @DeleteMapping("/tripMember/flight/{file_id}")
@@ -133,5 +133,11 @@ public class TripController {
     public ResponseEntity<TripDTO> changeOrganizer(@Validated @RequestBody ChangeOrganizer changeOrganizer) {
         TripDTO tripDTO = tripService.changeOrganizer(changeOrganizer);
         return new ResponseEntity<TripDTO>(tripDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/myTrips/{tripID}")
+    @PreAuthorize("hasRole('USER') or hasRole('ORGANIZER') or hasRole('ADMIN')")
+    public UserTripDTO getUserTripByID(@PathVariable("tripID") Long tripID) {
+        return tripService.getUserTripById(SecurityContextHolder.getContext().getAuthentication().getName(), tripID);
     }
 }

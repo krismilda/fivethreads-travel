@@ -92,6 +92,7 @@ public class TripMapper {
         tripDTO.setFinishDate(trip.getFinishDate());
         tripDTO.setIsCombined(trip.getIsCombined());
         tripDTO.setIsFlexible(trip.getIsFlexible());
+        tripDTO.setTripStatus(trip.getTripStatus().toString());
         tripDTO.setOrganizer_email(trip.getOrganizer().getEmail());
         return tripDTO;
     }
