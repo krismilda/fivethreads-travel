@@ -27,5 +27,5 @@ public class CarTicketDTO {
 
     private double price;
 
-    private List<Long> fileID = new ArrayList<>();
+    private List<FileDTO> files = new ArrayList<>();
 }

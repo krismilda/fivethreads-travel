@@ -37,7 +37,7 @@ public class NotificationApproved {
     @NotNull (message = "Trip departure cannot be null.")
     private String departure;
     @NotNull (message = "Organizer cannot be null.")
-    private NotificationUserDTO tripMember;
+    private UserInformationDTO tripMember;
     @NotNull (message = "IsFlightTickedNeeded cannot be null.")
     private Boolean isFlightTickedNeeded;
     @NotNull (message = "IsAccommodationNeeded cannot be null.")

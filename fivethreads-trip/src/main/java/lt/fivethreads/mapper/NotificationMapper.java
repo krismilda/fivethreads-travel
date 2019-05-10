@@ -8,10 +8,10 @@ import lt.fivethreads.entities.request.*;
 import lt.fivethreads.entities.request.Notifications.*;
 import lt.fivethreads.repositories.TripMemberRepository;
 import lt.fivethreads.services.AddressService;
+import lt.fivethreads.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +26,8 @@ public class NotificationMapper {
     AddressService addressService;
     @Autowired
     AddressMapper addressMapper;
+    @Autowired
+    FileService fileService;
     public NotificationForApprovalDTO convertNotificationForApprovalToNotificationDTO(Notification notification) {
         NotificationForApprovalDTO notificationForApprovalDTO = new NotificationForApprovalDTO();
         notificationForApprovalDTO.setId(notification.getId());
@@ -41,12 +43,12 @@ public class NotificationMapper {
         String departure = addressService.getCombinedAddress(notification.getTripHistory().getDeparture());
         notificationForApprovalDTO.setArrival(arrival);
         notificationForApprovalDTO.setDeparture(departure);
-        NotificationUserDTO notificationUserDTO = new NotificationUserDTO();
-        notificationUserDTO.setEmail(notification.getTripHistory().getOrganizer().getEmail());
-        notificationUserDTO.setFirstName(notification.getTripHistory().getOrganizer().getFirstname());
-        notificationUserDTO.setLastName(notification.getTripHistory().getOrganizer().getLastName());
-        notificationUserDTO.setPhone(notification.getTripHistory().getOrganizer().getPhone());
-        notificationForApprovalDTO.setOrganizer(notificationUserDTO);
+        UserInformationDTO userInformationDTO = new UserInformationDTO();
+        userInformationDTO.setEmail(notification.getTripHistory().getOrganizer().getEmail());
+        userInformationDTO.setFirstName(notification.getTripHistory().getOrganizer().getFirstname());
+        userInformationDTO.setLastName(notification.getTripHistory().getOrganizer().getLastName());
+        userInformationDTO.setPhone(notification.getTripHistory().getOrganizer().getPhone());
+        notificationForApprovalDTO.setOrganizer(userInformationDTO);
         notificationForApprovalDTO.setIsAccommodationNeeded(notification.getTripHistory().getIsAccommodationNeeded());
         notificationForApprovalDTO.setIsCarNeeded(notification.getTripHistory().getIsCarNeeded());
         notificationForApprovalDTO.setIsFlightTickedNeeded(notification.getTripHistory().getIsFlightTickedNeeded());
@@ -63,15 +65,15 @@ public class NotificationMapper {
             notificationForApprovalDTO.setCarTicketDTO(carTicketDTO);
         }
         notificationForApprovalDTO.setNotificationType(notification.getNotificationType().toString());
-        List<NotificationUserDTO> otherTripMembers = new ArrayList<>();
+        List<UserInformationDTO> otherTripMembers = new ArrayList<>();
         for (TripMemberHistory tripMemberHistory : notification.getTripHistory().getTripMembers()
         ) {
-            NotificationUserDTO notificationUserDTO1 = new NotificationUserDTO();
-            notificationUserDTO1.setEmail(tripMemberHistory.getEmail());
-            notificationUserDTO1.setFirstName(tripMemberHistory.getFirstname());
-            notificationUserDTO1.setLastName(tripMemberHistory.getLastName());
-            notificationUserDTO1.setPhone(tripMemberHistory.getPhone());
-            otherTripMembers.add(notificationUserDTO1);
+            UserInformationDTO userInformationDTO1 = new UserInformationDTO();
+            userInformationDTO1.setEmail(tripMemberHistory.getEmail());
+            userInformationDTO1.setFirstName(tripMemberHistory.getFirstname());
+            userInformationDTO1.setLastName(tripMemberHistory.getLastName());
+            userInformationDTO1.setPhone(tripMemberHistory.getPhone());
+            otherTripMembers.add(userInformationDTO1);
         }
         notificationForApprovalDTO.setOtherTripMembers(otherTripMembers);
         return notificationForApprovalDTO;
@@ -91,12 +93,12 @@ public class NotificationMapper {
         String departure = addressService.getCombinedAddress(notification.getTripHistory().getDeparture());
         notificationInformationChanged.setArrival(arrival);
         notificationInformationChanged.setDeparture(departure);
-        NotificationUserDTO notificationUserDTO = new NotificationUserDTO();
-        notificationUserDTO.setEmail(notification.getTripHistory().getOrganizer().getEmail());
-        notificationUserDTO.setFirstName(notification.getTripHistory().getOrganizer().getFirstname());
-        notificationUserDTO.setLastName(notification.getTripHistory().getOrganizer().getLastName());
-        notificationUserDTO.setPhone(notification.getTripHistory().getOrganizer().getPhone());
-        notificationInformationChanged.setOrganizer(notificationUserDTO);
+        UserInformationDTO userInformationDTO = new UserInformationDTO();
+        userInformationDTO.setEmail(notification.getTripHistory().getOrganizer().getEmail());
+        userInformationDTO.setFirstName(notification.getTripHistory().getOrganizer().getFirstname());
+        userInformationDTO.setLastName(notification.getTripHistory().getOrganizer().getLastName());
+        userInformationDTO.setPhone(notification.getTripHistory().getOrganizer().getPhone());
+        notificationInformationChanged.setOrganizer(userInformationDTO);
         notificationInformationChanged.setIsAccommodationNeeded(notification.getTripHistory().getIsAccommodationNeeded());
         notificationInformationChanged.setIsCarNeeded(notification.getTripHistory().getIsCarNeeded());
         notificationInformationChanged.setIsFlightTickedNeeded(notification.getTripHistory().getIsFlightTickedNeeded());
@@ -108,10 +110,10 @@ public class NotificationMapper {
             accommodationDTO.setAccommodationFinish(notification.getTripHistory().getAccommodationFinish());
             accommodationDTO.setPrice(notification.getTripHistory().getAccommodationPrice());
             if (tripMember.getTripAccommodation().getFile() != null) {
-                accommodationDTO.setFileID(tripMember.getTripAccommodation()
+                accommodationDTO.setFiles(tripMember.getTripAccommodation()
                         .getFile()
                         .stream()
-                        .map(e -> e.getId())
+                        .map(e -> fileService.getFileById(e.getId()))
                         .collect(Collectors.toList()));
             }
             notificationInformationChanged.setAccommodationDTO(accommodationDTO);
@@ -122,10 +124,10 @@ public class NotificationMapper {
             carTicketDTO.setCarRentFinish(notification.getTripHistory().getCarRentFinish());
             carTicketDTO.setPrice(notification.getTripHistory().getCarPrice());
             if (tripMember.getCarTicket().getFile() != null) {
-                carTicketDTO.setFileID(tripMember.getCarTicket()
+                carTicketDTO.setFiles(tripMember.getCarTicket()
                         .getFile()
                         .stream()
-                        .map(e -> e.getId())
+                        .map(e -> fileService.getFileById(e.getId()))
                         .collect(Collectors.toList()));
             }
             notificationInformationChanged.setCarTicketDTO(carTicketDTO);
@@ -134,28 +136,29 @@ public class NotificationMapper {
             FlightTicketDTO flightTicketDTO = new FlightTicketDTO();
             flightTicketDTO.setPrice(notification.getTripHistory().getFlightPrice());
             if(tripMember.getFlightTicket().getFile()!=null) {
-                flightTicketDTO.setFileID(tripMember.getFlightTicket()
+                flightTicketDTO.setFiles(tripMember.getFlightTicket()
                         .getFile()
                         .stream()
-                        .map(e -> e.getId())
+                        .map(e -> fileService.getFileById(e.getId()))
                         .collect(Collectors.toList()));
             }
             notificationInformationChanged.setFlightTicketDTO(flightTicketDTO);
         }
         notificationInformationChanged.setNotificationType(notification.getNotificationType().toString());
-        List<NotificationUserDTO> otherTripMembers = new ArrayList<>();
+        List<UserInformationDTO> otherTripMembers = new ArrayList<>();
         for (TripMemberHistory tripMemberHistory : notification.getTripHistory().getTripMembers()
         ) {
-            NotificationUserDTO notificationUserDTO1 = new NotificationUserDTO();
-            notificationUserDTO1.setEmail(tripMemberHistory.getEmail());
-            notificationUserDTO1.setFirstName(tripMemberHistory.getFirstname());
-            notificationUserDTO1.setLastName(tripMemberHistory.getLastName());
-            notificationUserDTO1.setPhone(tripMemberHistory.getPhone());
-            otherTripMembers.add(notificationUserDTO1);
+            UserInformationDTO userInformationDTO1 = new UserInformationDTO();
+            userInformationDTO1.setEmail(tripMemberHistory.getEmail());
+            userInformationDTO1.setFirstName(tripMemberHistory.getFirstname());
+            userInformationDTO1.setLastName(tripMemberHistory.getLastName());
+            userInformationDTO1.setPhone(tripMemberHistory.getPhone());
+            otherTripMembers.add(userInformationDTO1);
         }
         notificationInformationChanged.setOtherTripMembers(otherTripMembers);
         return notificationInformationChanged;
     }
+
 
     public NotificationApproved convertNotificationToNotificationApprovedDTO(Notification notification) {
         NotificationApproved notificationApproved = new NotificationApproved();
@@ -171,12 +174,12 @@ public class NotificationMapper {
         String departure = addressService.getCombinedAddress(notification.getTripHistory().getDeparture());
         notificationApproved.setArrival(arrival);
         notificationApproved.setDeparture(departure);
-        NotificationUserDTO notificationUserDTO = new NotificationUserDTO();
-        notificationUserDTO.setEmail(notification.getUser().getEmail());
-        notificationUserDTO.setFirstName(notification.getUser().getFirstname());
-        notificationUserDTO.setLastName(notification.getUser().getLastName());
-        notificationUserDTO.setPhone(notification.getUser().getPhone());
-        notificationApproved.setTripMember(notificationUserDTO);
+        UserInformationDTO userInformationDTO = new UserInformationDTO();
+        userInformationDTO.setEmail(notification.getUser().getEmail());
+        userInformationDTO.setFirstName(notification.getUser().getFirstname());
+        userInformationDTO.setLastName(notification.getUser().getLastName());
+        userInformationDTO.setPhone(notification.getUser().getPhone());
+        notificationApproved.setTripMember(userInformationDTO);
         notificationApproved.setIsAccommodationNeeded(notification.getTripHistory().getIsAccommodationNeeded());
         notificationApproved.setIsCarNeeded(notification.getTripHistory().getIsCarNeeded());
         notificationApproved.setIsFlightTickedNeeded(notification.getTripHistory().getIsFlightTickedNeeded());
@@ -203,12 +206,12 @@ public class NotificationMapper {
         notificationCancelled.setIsActive(notification.getIsActive());
         notificationCancelled.setName(notification.getName());
         notificationCancelled.setReason(notification.getReason());
-        NotificationUserDTO notificationUserDTO = new NotificationUserDTO();
-        notificationUserDTO.setEmail(notification.getUser().getEmail());
-        notificationUserDTO.setFirstName(notification.getUser().getFirstname());
-        notificationUserDTO.setLastName(notification.getUser().getLastName());
-        notificationUserDTO.setPhone(notification.getUser().getPhone());
-        notificationCancelled.setTripMember(notificationUserDTO);
+        UserInformationDTO userInformationDTO = new UserInformationDTO();
+        userInformationDTO.setEmail(notification.getUser().getEmail());
+        userInformationDTO.setFirstName(notification.getUser().getFirstname());
+        userInformationDTO.setLastName(notification.getUser().getLastName());
+        userInformationDTO.setPhone(notification.getUser().getPhone());
+        notificationCancelled.setTripMember(userInformationDTO);
         notificationCancelled.setTrip_id(notification.getTripHistory().getTripID());
         notificationCancelled.setStartDate(notification.getTripHistory().getStartDate());
         notificationCancelled.setFinishDate(notification.getTripHistory().getFinishDate());
@@ -225,12 +228,12 @@ public class NotificationMapper {
         notificationTripDeleted.setNotificationType(notification.getNotificationType().toString());
         notificationTripDeleted.setIsActive(notification.getIsActive());
         notificationTripDeleted.setName(notification.getName());
-        NotificationUserDTO notificationUserDTO = new NotificationUserDTO();
-        notificationUserDTO.setEmail(notification.getTripHistory().getOrganizer().getEmail());
-        notificationUserDTO.setFirstName(notification.getTripHistory().getOrganizer().getFirstname());
-        notificationUserDTO.setLastName(notification.getTripHistory().getOrganizer().getLastName());
-        notificationUserDTO.setPhone(notification.getTripHistory().getOrganizer().getPhone());
-        notificationTripDeleted.setOrganizer(notificationUserDTO);
+        UserInformationDTO userInformationDTO = new UserInformationDTO();
+        userInformationDTO.setEmail(notification.getTripHistory().getOrganizer().getEmail());
+        userInformationDTO.setFirstName(notification.getTripHistory().getOrganizer().getFirstname());
+        userInformationDTO.setLastName(notification.getTripHistory().getOrganizer().getLastName());
+        userInformationDTO.setPhone(notification.getTripHistory().getOrganizer().getPhone());
+        notificationTripDeleted.setOrganizer(userInformationDTO);
         notificationTripDeleted.setTrip_id(notification.getTripHistory().getTripID());
         notificationTripDeleted.setStartDate(notification.getTripHistory().getStartDate());
         notificationTripDeleted.setFinishDate(notification.getTripHistory().getFinishDate());

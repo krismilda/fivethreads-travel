@@ -38,7 +38,7 @@ public class NotificationForApprovalDTO {
     @NotNull (message = "Trip departure cannot be null.")
     private String departure;
     @NotNull (message = "Organizer cannot be null.")
-    private NotificationUserDTO organizer;
+    private UserInformationDTO organizer;
     @NotNull (message = "IsFlightTickedNeeded cannot be null.")
     private Boolean isFlightTickedNeeded;
     @NotNull (message = "IsAccommodationNeeded cannot be null.")
@@ -47,6 +47,6 @@ public class NotificationForApprovalDTO {
     @NotNull (message = "IsCarNeeded cannot be null.")
     private Boolean isCarNeeded;
     private CarTicketDTOWithoutFiles carTicketDTO;
-    private List<NotificationUserDTO> otherTripMembers;
+    private List<UserInformationDTO> otherTripMembers;
     private Boolean isAnswered;
 }
