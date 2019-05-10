@@ -11,6 +11,7 @@ import java.util.List;
 public interface TripService {
     TripDTO createTrip(CreateTripForm form, String organizer_email);
     List<TripDTO> getAllTrips();
+    TripDTO getById(long id);
     List<TripDTO> getAllTripsByOrganizerEmail(String email);
     List<TripDTO> getAllTripsByUserEmail(String email);
     TripMemberDTO addNewTripMember(TripMemberDTO tripMemberDTO, Long tripID, String organizer_email) throws AccessRightProblem, TripIsNotEditable;

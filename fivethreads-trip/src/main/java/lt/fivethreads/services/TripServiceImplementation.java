@@ -66,6 +66,11 @@ public class TripServiceImplementation implements TripService {
         return tripDTO;
     }
 
+    public TripDTO getById(long id) {
+        Trip trip = tripRepository.findByID(id);
+        return (trip != null) ? tripMapper.converTripToTripDTO(trip) : null;
+    }
+
     public List<TripDTO> getAllTripsByOrganizerEmail(String email) {
         List<Trip> tripList = tripRepository.getAllByOrganizerEmail(email);
         List<TripDTO> tripDTO = new ArrayList<>();

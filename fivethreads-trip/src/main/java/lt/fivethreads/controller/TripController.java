@@ -55,6 +55,12 @@ public class TripController {
         return tripService.getAllTrips();
     }
 
+    @GetMapping("/trip/{tripID}")
+    @PreAuthorize("hasRole('ORGANIZER') or hasRole('ADMIN')")
+    public TripDTO getTripById(@PathVariable("tripID") long tripID) {
+        return tripService.getById(tripID);
+    }
+
     @GetMapping("/myTrips/")
     @PreAuthorize("hasRole('ORGANIZER') or hasRole('ADMIN') or hasRole('USER') ")
     public List<TripDTO> getAllMyTrips() {
