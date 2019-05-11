@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
@@ -13,8 +14,17 @@ import java.util.List;
 @Table(name = "TripAccommodation")
 @Getter
 @Setter
-public class TripAccommodation implements Serializable
-{
+@NamedQueries({
+        @NamedQuery(name ="TripAccommodation.FindAll", query = "select ta from TripAccommodation as ta"),
+        @NamedQuery(name ="TripAccommodation.FindByTrip", query = "select ta from TripAccommodation as ta " +
+                "JOIN FETCH ta.tripMember as tm WHERE tm.trip =:trip_ID"),
+        @NamedQuery(name ="TripAccommodation.FindByUser", query = "select ta from TripAccommodation as ta " +
+                "WHERE ta.tripMember =:user_ID"),
+        @NamedQuery(name = "TripAccommodation.FindByApartment", query = "select ta from TripAccommodation as ta " +
+                "JOIN FETCH ta.room as r " +
+                "WHERE r.apartment =: apartment_ID")
+})
+public class TripAccommodation implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -23,23 +33,34 @@ public class TripAccommodation implements Serializable
     @Column(name="unique_id")
     private String uniqueID;
 
+
+    @NotNull(message = "TripAccommodation Start cannot be null.")
     private Date accommodationStart;
 
+    @NotNull(message = "TripAccommodation Finish cannot be null.")
     private Date accommodationFinish;
 
     @OneToOne
-    @JoinColumn(name="APARTMENT_ID")
-    private Apartment apartment;
+    @JoinColumn(name="ROOM_ID")
+    private Room room;
 
+    @NotNull(message = "AccommodationType cannot be null.")
     private AccommodationType accommodationType;
 
+    @Column(name = "hotelName")
     private String hotelName;
 
-    private String hotelAddress;
 
-    private double price;
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="hotelAddress")
+    private Address hotelAddress;
+
+    @Column(name = "price")
+    private Double price;
 
     @OneToOne(mappedBy = "tripAccommodation")
+    @NotNull(message = "TripMember cannot be null")
+    @JoinColumn(name="TRIPMEMBER_ID")
     private TripMember tripMember;
 
     @OneToMany

@@ -3,3 +3,6 @@ fivethreads-user/target/
 fivethreads-web/target/
 fivethreads-office/target/
 fivethreads-files/target/
+fivethreads-trip/target/
+fivethreads-location/target/
+upload-dir/

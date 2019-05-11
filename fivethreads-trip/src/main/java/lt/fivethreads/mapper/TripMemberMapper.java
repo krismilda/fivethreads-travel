@@ -79,10 +79,13 @@ public class TripMemberMapper {
         return carTicket;
     }
 
+
     public TripAccommodation convertAccommodationDTOToTripAccommodation(AccommodationDTO accommodationDTO) {
+
         TripAccommodation tripAccommodation = new TripAccommodation();
         tripAccommodation.setAccommodationStart(accommodationDTO.getAccommodationStart());
         tripAccommodation.setAccommodationFinish(accommodationDTO.getAccommodationFinish());
+        if (accommodationDTO.getAccommodationType() != null)tripAccommodation.setAccommodationType(accommodationDTO.getAccommodationType());
         return tripAccommodation;
     }
 
@@ -101,8 +104,10 @@ public class TripMemberMapper {
         return carTicketDTO;
     }
 
+
     public AccommodationDTO convertAccomodationToAccomodationDTO(TripAccommodation tripAccommodation) {
         AccommodationDTO accommodationDTO = new AccommodationDTO();
+
         accommodationDTO.setAccommodationStart(tripAccommodation.getAccommodationStart());
         accommodationDTO.setAccommodationFinish(tripAccommodation.getAccommodationFinish());
         if(tripAccommodation.getFile()!=null){
@@ -112,6 +117,8 @@ public class TripMemberMapper {
                 accommodationDTO.setPrice(tripAccommodation.getPrice());
             }
         }
+        if(tripAccommodation.getAccommodationType() != null)
+            accommodationDTO.setAccommodationType(tripAccommodation.getAccommodationType());
         return accommodationDTO;
     }
 

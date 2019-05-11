@@ -1,14 +1,20 @@
 package lt.fivethreads.services;
 
+import lt.fivethreads.Mapper.AddressMapper;
+import lt.fivethreads.entities.Address;
 import lt.fivethreads.entities.Apartment;
 import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.request.ApartmentDTO;
 import lt.fivethreads.entities.request.ApartmentForm;
 import lt.fivethreads.mapper.ApartmentMapper;
 import lt.fivethreads.repositories.ApartmentRepository;
+import lt.fivethreads.repository.AddressRepository;
+import lt.fivethreads.validation.DateValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,48 +27,81 @@ public class ApartmentServiceImplementation implements ApartmentService {
     @Autowired
     ApartmentMapper apartmentMapper;
 
+    @Autowired
+    DateValidation dateValidation;
 
-    @Override
+    @Autowired
+    AddressMapper addressMapper;
+
+    @Autowired
+    AddressService addressService;
+
     public List<ApartmentDTO> getAllApartments() {
-
-        List<Apartment> apartments = apartmentRepository.findAll();
+        List<Apartment> apartments = apartmentRepository.getAll();
         return apartments.stream()
                 .map(e -> apartmentMapper.getApartmentDTO(e))
                 .collect(Collectors.toList());
     }
 
-    @Override
     public ApartmentDTO getApartmentById(Long id) {
-        Apartment apartment = apartmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Fail! -> Cause: Wrong apartmentId"));
+        Apartment apartment = apartmentRepository.findById(id);
         return apartmentMapper.getApartmentDTO(apartment);
     }
 
-    @Override
     public ApartmentDTO updateApartment(ApartmentDTO apartmentDTO) {
+        Apartment apartment = apartmentRepository.findById(apartmentDTO.getId());
+        Address address = apartment.getAddress();
+        address.setCity(apartmentDTO.getAddress().getCity());
+        address.setCountry(apartmentDTO.getAddress().getCountry());
+        address.setHouseNumber(apartmentDTO.getAddress().getHouseNumber());
+        address.setFlatNumber(apartmentDTO.getAddress().getFlatNumber());
+        address.setLatitude(apartmentDTO.getAddress().getLatitude());
+        address.setLongitude(apartmentDTO.getAddress().getLongitude());
+        address.setStreet(apartmentDTO.getAddress().getStreet());
 
-        Apartment apartment = apartmentRepository.findById(apartmentDTO.getId())
-                .orElseThrow(() -> new RuntimeException("Fail! -> Cause: Wrong apartmentId"));
-        apartment.setAddress(apartmentDTO.getAddress());
+        apartment.setAddress(address);
         Office office = new Office();
         office.setId(apartmentDTO.getOfficeId());
         apartment.setOffice(office);
-        return apartmentMapper.getApartmentDTO(apartmentRepository.save(apartment));
+        return apartmentMapper.getApartmentDTO(apartmentRepository.updateApartment(apartment));
     }
 
 
     public void deleteApartment(Long id) {
-        apartmentRepository.deleteById(id);
+        apartmentRepository.deleteApartment(id);
     }
 
 
     public ApartmentDTO createApartment(ApartmentForm apartmentForm) {
         Apartment apartment_to_save = apartmentMapper.convertRegisteredOfficeToOffice(apartmentForm);
-        return apartmentMapper.getApartmentDTO(apartmentRepository.save(apartment_to_save));
+        return apartmentMapper.getApartmentDTO(apartmentRepository.createApartment(apartment_to_save));
     }
 
-    @Override
-    public boolean checkIfApartmentExists(String address, Long officeId) {
-        return apartmentRepository.existsByAddressAndOfficeId(address, officeId);
+    public boolean checkIfApartmentExists(double latitude, double longitude, Long officeId) {
+        return apartmentRepository.existsByAddressAndOfficeId(latitude, longitude, officeId);
+    }
+
+    public List<ApartmentDTO> getAllUnoccupiedAccommodationApartments(Date startDate, Date finishDate) {
+        dateValidation.checkFinishStartDates(startDate,
+                finishDate, "Finish date is earlier than start date.");
+        dateValidation.checkStartDateToday(startDate);
+        List<Apartment> apartmentList = apartmentRepository.getApartmentsWithUnoccupiedRooms(startDate, finishDate);
+        List<ApartmentDTO> apartmentDTOList = new ArrayList<>();
+        for(Apartment apartment: apartmentList){
+            apartmentDTOList.add(apartmentMapper.getApartmentDTO(apartment));
+        }
+        return apartmentDTOList;
+    }
+
+    public List<ApartmentDTO> getAllUnoccupiedApartmentsByOfficeId(Date startDate, Date finishDate, Long officeId) {
+        dateValidation.checkFinishStartDates(startDate,
+                finishDate, "Finish date is earlier than start date.");
+        dateValidation.checkStartDateToday(startDate);
+        List<Apartment> apartmentList = apartmentRepository.getUnoccupiedApartmentsByOffice(startDate, finishDate, officeId);
+        List<ApartmentDTO> apartmentDTOList= new ArrayList<>();
+        for(Apartment apartment: apartmentList){
+            apartmentDTOList.add(apartmentMapper.getApartmentDTO(apartment));
+        }
+        return apartmentDTOList;
     }
 }

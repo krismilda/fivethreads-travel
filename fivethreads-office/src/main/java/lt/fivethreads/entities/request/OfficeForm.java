@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class OfficeForm {
     private String name;
-    private String address;
+    private FullAddressDTO address;
 }

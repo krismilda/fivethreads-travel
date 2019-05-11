@@ -1,5 +1,6 @@
 package lt.fivethreads.controller;
 
+import lt.fivethreads.entities.request.DateForm;
 import lt.fivethreads.entities.request.OfficeDTO;
 import lt.fivethreads.entities.request.OfficeForm;
 import lt.fivethreads.services.OfficeService;
@@ -53,12 +54,18 @@ public class OfficeController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        if (officeService.checkIfOfficeExists(registrationForm.getName(),
-                registrationForm.getAddress())) {
+        if (officeService.checkIfOfficeExists(registrationForm.getAddress().getLatitude(),
+                registrationForm.getAddress().getLongitude(), registrationForm.getName())) {
             return new ResponseEntity<>("Fail -> Office is already created!",
                     HttpStatus.BAD_REQUEST);
         }
         OfficeDTO createdOffice = officeService.createOffice(registrationForm);
         return new ResponseEntity<>(createdOffice, HttpStatus.CREATED);
+    }
+    @GetMapping("/offices/unoccupied")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
+    public ResponseEntity getUnoccupiedAccommodationOffices(@Validated @RequestBody DateForm form){
+        return new ResponseEntity<>(officeService.getAllUnoccupiedAccommodationOffices(
+                form.getStartDate(), form.getFinishDate()), HttpStatus.OK);
     }
 }

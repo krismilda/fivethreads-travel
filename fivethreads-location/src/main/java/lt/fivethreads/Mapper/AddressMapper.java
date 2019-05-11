@@ -33,6 +33,19 @@ public class AddressMapper {
         return  shortAddress;
     }
 
+    public FullAddressDTO convertAddressToFullAddress(Address address){
+        FullAddressDTO fullAddressDTO= new FullAddressDTO();
+        fullAddressDTO.setCity(address.getCity());
+        fullAddressDTO.setCountry(address.getCountry());
+        fullAddressDTO.setHouseNumber(address.getHouseNumber());
+        fullAddressDTO.setFlatNumber(address.getFlatNumber());
+        fullAddressDTO.setLatitude(address.getLatitude());
+        fullAddressDTO.setLongitude(address.getLongitude());
+        fullAddressDTO.setStreet(address.getStreet());
+
+        return fullAddressDTO;
+    }
+
     public Address copyInstance(Address address){
         Address newAddres = new Address();
         newAddres.setStreet(address.getStreet());

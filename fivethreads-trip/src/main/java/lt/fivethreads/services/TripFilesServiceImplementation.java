@@ -112,7 +112,7 @@ public class TripFilesServiceImplementation implements TripFilesService {
         tripMember.getTripAccommodation().setUniqueID(newID);
         tripMember.getTripAccommodation().getFile().add(uploadedFile);
         tripMember.getTripAccommodation().setPrice(price);
-        tripMemberRepository.saveCarTicket(tripMember);
+        tripMemberRepository.saveAccommodationTicket(tripMember);
         createNotificationService.createNotificationInformationChanged(tripMember, "Information was changed.");
         return fileDTO;
     }

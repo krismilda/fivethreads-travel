@@ -36,6 +36,7 @@ public class CreateNotificationServiceImplementation implements CreateNotificati
         if (tripHistory.getIsAccommodationNeeded()) {
             tripHistory.setAccommodationStart(tripMember.getTripAccommodation().getAccommodationStart());
             tripHistory.setAccommodationFinish(tripMember.getTripAccommodation().getAccommodationFinish());
+            if(tripMember.getTripAccommodation().getPrice() != null)
             tripHistory.setAccommodationPrice(tripMember.getTripAccommodation().getPrice());
         }
         if (tripHistory.getIsCarNeeded()) {

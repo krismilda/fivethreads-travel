@@ -42,7 +42,7 @@ public class UserMapper {
 
         if (registrationForm.getOfficeId() != null) {
             Office office;
-            office = officeRepository.getOne(registrationForm.getOfficeId());
+            office = officeRepository.findById(registrationForm.getOfficeId());
             user.setOffice(office);
         }
 
@@ -61,13 +61,13 @@ public class UserMapper {
         user.setRoles(getRoles(strRoles));
 
         if (userDTO.getOfficeId() != null) {
-            Office office = officeRepository.findById(userDTO.getOfficeId())
-                    .orElseThrow(OfficeNotFoundException::new);
+            Office office = officeRepository.findById(userDTO.getOfficeId());
+                    //.orElseThrow(OfficeNotFoundException::new);
 
             user.setOffice(office);
         } else if (userDTO.getOfficeName() != null) {
-            Office office = officeRepository.findByName(userDTO.getOfficeName())
-                    .orElseThrow(OfficeNotFoundException::new);
+            Office office = officeRepository.findByName(userDTO.getOfficeName());
+                    //.orElseThrow(OfficeNotFoundException::new);
 
             user.setOffice(office);
         }

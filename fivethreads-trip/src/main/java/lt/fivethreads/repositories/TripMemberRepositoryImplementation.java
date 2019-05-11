@@ -1,8 +1,6 @@
 package lt.fivethreads.repositories;
 
-import lt.fivethreads.entities.TripCancellation;
-import lt.fivethreads.entities.TripMember;
-import lt.fivethreads.entities.User;
+import lt.fivethreads.entities.*;
 import lt.fivethreads.exception.WrongTripData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -10,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Repository
 @Transactional
@@ -17,6 +16,9 @@ public class TripMemberRepositoryImplementation implements TripMemberRepository 
 
     @PersistenceContext
     EntityManager em;
+
+    @Autowired
+    RoomRepository roomRepository;
 
     @Autowired
     CarTicketRepository carTicketRepository;
@@ -33,7 +35,18 @@ public class TripMemberRepositoryImplementation implements TripMemberRepository 
             carTicketRepository.saveCarTicket(tripMember.getCarTicket());
         }
         if(tripMember.getTripAccommodation() != null){
-            tripAccommodationRepository.saveTripAccommodation(tripMember.getTripAccommodation());
+            if(tripMember.getTripAccommodation().getAccommodationType() == AccommodationType.DEVRIDGE_APARTAMENTS) {
+
+                List<Room> room = roomRepository.getUnoccupiedRoomByCity(tripMember.getTripAccommodation().getAccommodationStart(),
+                        tripMember.getTripAccommodation().getAccommodationFinish(), tripMember.getTrip().getArrival().getCity());
+                if (room.size() == 0)
+                    throw new WrongTripData("Failed to accommodate user. No more free DevBridge rooms in " +
+                            tripMember.getTrip().getArrival().getCity());
+                tripMember.getTripAccommodation().setRoom(room.get(0));
+                tripMember.getTripAccommodation().setHotelAddress(room.get(0).getApartment().getAddress());
+            }
+                tripAccommodationRepository.saveTripAccommodation(tripMember.getTripAccommodation());
+
         }
         em.persist(tripMember);
     }

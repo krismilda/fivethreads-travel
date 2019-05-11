@@ -1,6 +1,7 @@
 package lt.fivethreads.controller;
 
 
+import lt.fivethreads.entities.request.DateForm;
 import lt.fivethreads.entities.request.RoomDTO;
 import lt.fivethreads.entities.request.RoomForm;
 
@@ -65,5 +66,20 @@ public class RoomController {
 
         RoomDTO createdRoom = roomService.createRoom(roomForm);
         return new ResponseEntity<>(createdRoom, HttpStatus.OK);
+    }
+    @GetMapping("/rooms/unoccupied")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
+    public ResponseEntity getUnoccupiedAccommodations(@Validated @RequestBody DateForm form){
+
+        return new ResponseEntity<>(roomService.getAllUnoccupiedAccommodations(form.getStartDate(), form.getFinishDate()), HttpStatus.OK);
+    }
+    @GetMapping("/rooms/unoccupied/{apartmentId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
+    public ResponseEntity getUnoccupiedAccommodationsByApartmentId(@Validated @RequestBody DateForm form,
+                                                                   @PathVariable("apartmentId") int apartmentId){
+        long id = apartmentId;
+
+        return new ResponseEntity<>(roomService.getAllUnoccupiedAccommodationsByApartmentId(
+                form.getStartDate(), form.getFinishDate(), id), HttpStatus.OK);
     }
 }

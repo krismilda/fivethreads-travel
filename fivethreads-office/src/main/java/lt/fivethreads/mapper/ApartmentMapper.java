@@ -1,5 +1,7 @@
 package lt.fivethreads.mapper;
 
+import lt.fivethreads.Mapper.AddressMapper;
+import lt.fivethreads.entities.Address;
 import lt.fivethreads.entities.Apartment;
 import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.request.ApartmentDTO;
@@ -12,12 +14,18 @@ import org.springframework.stereotype.Component;
 public class ApartmentMapper {
     @Autowired
     OfficeRepository officeRepository;
+
+    @Autowired
+    AddressMapper addressMapper;
+
     public Apartment convertRegisteredOfficeToOffice(ApartmentForm apartmentForm){
         Apartment apartment = new Apartment();
         Office office;
 
-        office = officeRepository.getOne(apartmentForm.getOfficeId());
-        apartment.setAddress(apartmentForm.getAddress());
+        Address address = addressMapper.convertFullAddressToAddress(apartmentForm.getAddress());
+
+        office = officeRepository.findById(apartmentForm.getOfficeId());
+        apartment.setAddress(address);
         apartment.setOffice(office);
         return apartment;
     }
@@ -25,7 +33,7 @@ public class ApartmentMapper {
     public ApartmentDTO getApartmentDTO (Apartment apartment){
         ApartmentDTO apartmentDTO = new ApartmentDTO ();
 
-        apartmentDTO.setAddress(apartment.getAddress());
+        apartmentDTO.setAddress(addressMapper.convertAddressToFullAddress(apartment.getAddress()));
         apartmentDTO.setId(apartment.getId());
         apartmentDTO.setOfficeId(apartment.getOffice().getId());
 

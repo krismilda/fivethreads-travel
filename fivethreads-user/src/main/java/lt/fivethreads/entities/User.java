@@ -1,6 +1,5 @@
 package lt.fivethreads.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -51,7 +50,6 @@ public class User {
 
     @JoinColumn(name = "officeId")
     @ManyToOne(targetEntity = Office.class, fetch = FetchType.LAZY)
-    @JsonIgnore
     private Office office;
 
 
