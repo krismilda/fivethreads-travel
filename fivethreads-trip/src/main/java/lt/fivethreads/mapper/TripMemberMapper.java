@@ -1,14 +1,19 @@
 package lt.fivethreads.mapper;
 
+import lt.fivethreads.Mapper.AddressMapper;
 import lt.fivethreads.entities.*;
-import lt.fivethreads.entities.request.AccommodationDTO;
-import lt.fivethreads.entities.request.CarTicketDTO;
-import lt.fivethreads.entities.request.FlightTicketDTO;
-import lt.fivethreads.entities.request.TripMemberDTO;
+import lt.fivethreads.entities.request.*;
+import lt.fivethreads.entities.request.Notifications.UserInformationDTO;
+import lt.fivethreads.exception.WrongTripData;
 import lt.fivethreads.repositories.TripMemberRepository;
+import lt.fivethreads.services.AddressService;
+import lt.fivethreads.services.FileService;
 import lt.fivethreads.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class TripMemberMapper {
@@ -17,6 +22,15 @@ public class TripMemberMapper {
 
     @Autowired
     TripMemberRepository tripMemberRepository;
+
+    @Autowired
+    FileService fileService;
+
+    @Autowired
+    AddressService addressService;
+
+    @Autowired
+    AddressMapper addressMapper;
 
     public TripMemberDTO convertTripMemberToTripMemberDTO(TripMember tripMember) {
         TripMemberDTO tripMemberDTO = new TripMemberDTO();
@@ -82,7 +96,8 @@ public class TripMemberMapper {
         if(carTicket.getFile()!=null){
             for (File file : carTicket.getFile()
             ) {
-                carTicketDTO.getFileID().add(file.getId());
+                carTicketDTO.getFiles().add(fileService.getFileById(file.getId()));
+                carTicketDTO.setPrice(carTicket.getPrice());
             }
         }
 
@@ -98,7 +113,8 @@ public class TripMemberMapper {
         if(tripAccommodation.getFile()!=null){
             for (File file : tripAccommodation.getFile()
             ) {
-                accommodationDTO.getFileID().add(file.getId());
+                accommodationDTO.getFiles().add(fileService.getFileById(file.getId()));
+                accommodationDTO.setPrice(tripAccommodation.getPrice());
             }
         }
         if(tripAccommodation.getAccommodationType() != null)
@@ -111,9 +127,48 @@ public class TripMemberMapper {
         if(flightTicket.getFile()!=null){
             for (File file : flightTicket.getFile()
             ) {
-                flightTicketDTO.getFileID().add(file.getId());
+                flightTicketDTO.getFiles().add(fileService.getFileById(file.getId()));
+                flightTicketDTO.setPrice(flightTicket.getPrice());
             }
         }
         return flightTicketDTO;
+    }
+
+    public UserTripDTO convertTripToUserTripDTO(Trip trip, String email){
+        UserTripDTO userTripDTO = new UserTripDTO();
+        userTripDTO.setId(trip.getId());
+        List<UserInformationDTO> otherTripMembers = getotherTripMembers(trip, email);
+        userTripDTO.setOtherTripMembers(otherTripMembers);
+        userTripDTO.setArrival(addressMapper.convertAddressToShortAddress(trip.getArrival()));
+        userTripDTO.setDeparture(addressMapper.convertAddressToShortAddress(trip.getDeparture()));
+        userTripDTO.setStartDate(trip.getStartDate());
+        userTripDTO.setFinishDate(trip.getFinishDate());
+        userTripDTO.setIsCombined(trip.getIsCombined());
+        userTripDTO.setIsFlexible(trip.getIsFlexible());
+        userTripDTO.setOrganizer_email(trip.getOrganizer().getEmail());
+        TripMember tripMember = trip.getTripMembers()
+                .stream()
+                .filter(e -> e.getUser().getEmail().equals(email))
+                .findFirst()
+                .orElseThrow(() -> new WrongTripData("User does not exists."));
+        TripMemberDTO tripMemberDTO = convertTripMemberToTripMemberDTO(tripMember);
+        userTripDTO.setTripMemberDTO(tripMemberDTO);
+        return userTripDTO;
+    }
+
+    public List<UserInformationDTO> getotherTripMembers(Trip trip, String email){
+        List<UserInformationDTO> otherTripMembers = new ArrayList<>();
+        for (TripMember tripMemberInTrip : trip.getTripMembers()
+        ) {
+            if(!tripMemberInTrip.getUser().getEmail().equals(email)){
+                UserInformationDTO userInformationDTO1 = new UserInformationDTO();
+                userInformationDTO1.setEmail(tripMemberInTrip.getUser().getEmail());
+                userInformationDTO1.setFirstName(tripMemberInTrip.getUser().getFirstname());
+                userInformationDTO1.setLastName(tripMemberInTrip.getUser().getLastName());
+                userInformationDTO1.setPhone(tripMemberInTrip.getUser().getPhone());
+                otherTripMembers.add(userInformationDTO1);
+            }
+        }
+        return otherTripMembers;
     }
 }

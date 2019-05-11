@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("files")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class FileController {
 
     @Autowired

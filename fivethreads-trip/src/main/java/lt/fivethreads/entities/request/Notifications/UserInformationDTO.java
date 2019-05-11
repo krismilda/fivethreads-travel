@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-public class NotificationUserDTO {
+public class UserInformationDTO {
     @NotNull(message = "Email cannot be null.")
     @Email
     private String email;

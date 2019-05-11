@@ -183,4 +183,15 @@ public class TripServiceImplementation implements TripService {
         tripRepository.updateTrip(trip);
         return tripMapper.converTripToTripDTO(trip);
     }
+
+    public UserTripDTO getUserTripById (String email, Long tripID){
+        Trip trip = tripRepository.findByID(tripID);
+        if(!trip.getTripMembers()
+                .stream()
+                .anyMatch(e->e.getUser().getEmail().equals(email)))
+        {
+            throw new AccessRightProblem("User is not the tripMember.");
+        }
+        return tripMemberMapper.convertTripToUserTripDTO(trip, email);
+    }
 }

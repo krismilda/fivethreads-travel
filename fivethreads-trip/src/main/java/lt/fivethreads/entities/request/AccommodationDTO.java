@@ -35,5 +35,6 @@ public class AccommodationDTO {
 
     private AccommodationType accommodationType;
 
-    private List<Long> fileID = new ArrayList<>();
+    private List<FileDTO> files = new ArrayList<>();
 }
+
