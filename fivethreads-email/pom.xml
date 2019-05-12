@@ -9,20 +9,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>fivethreads-office</artifactId>
+    <artifactId>fivethreads-email</artifactId>
     <dependencies>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.9.8</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>lt.fivethreads</groupId>
-            <artifactId>fivethreads-location</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+            <version>2.0.1.RELEASE</version>
         </dependency>
     </dependencies>
-
 
 </project>

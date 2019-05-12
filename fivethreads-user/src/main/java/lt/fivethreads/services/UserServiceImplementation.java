@@ -29,6 +29,12 @@ public class UserServiceImplementation implements UserService {
     @Autowired
     PasswordEncoder encoder;
 
+    @Autowired
+    MailService mailService;
+
+    @Autowired
+    UserCreationService userCreationService;
+
     @Override
     public User getUserByEmail(String email) throws UserIDNotExists
     {
@@ -93,22 +99,21 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public void createUsers(List<ExtendedUserDTO> users) {
-        List<User> userEntities = new ArrayList<>();
+        //List<User> userEntities = new ArrayList<>();
         for (ExtendedUserDTO user: users) {
             User userEntity = userMapper.getUser(user);
-            userEntities.add(userEntity);
+            User user_to_create = userCreationService.createNewUser(userEntity);
+          //  userEntities.add(userEntity);
         }
 
-        userRepository.saveAll(userEntities);
+     //   userRepository.saveAll(userEntities);
     }
 
     @Override
     public ExtendedUserDTO createUser(RegistrationForm user) {
-        if (this.checkIfEmailExists(user.getEmail())) {
-            throw new EmailAlreadyExists();
-        }
         User user_to_create = userMapper.convertRegistrationUserToUser(user);
-        return userMapper.getUserDTO(userRepository.save(user_to_create));
+        User created_user = userCreationService.createNewUser(user_to_create);
+        return userMapper.getUserDTO(created_user);
     }
 
     @Override
