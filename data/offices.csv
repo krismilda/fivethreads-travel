@@ -1,6 +1,6 @@
-name,address
-Devbridge Kaunas,11d. Juozapaviciaus pr.
-Devbridge Vilnius,135 Zalgirio g.
-Devbridge Chicago,343 W. Erie St. Suite 600
-Devbridge Toronto,36 Toronto Street Suite 260
-Devbridge London,1 Mark Square
+name,country,city,street,houseNumber,latitude,longitude
+Devbridge Kaunas,Lithuania,Kaunas,Juozapaviciaus pr.,11,54.931860,23.847390
+Devbridge Vilnius,Lithuania,Vilnius,Zalgirio g.,135,54.704860,25.272210
+Devbridge Chicago,United States,Chicago,W. Erie St.,343,41.893710,-87.637740
+Devbridge Toronto,United States,Toronto,Toronto Street,36,43.6506853,-79.3769778
+Devbridge London,United Kingdom,London,Mark Square,1,51.5244246,-0.0844841
