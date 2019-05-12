@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 @Transactional
-public class OfficeRepositoryImpl implements  OfficeRepository {
+public class OfficeRepositoryImpl implements OfficeRepository {
 
     @PersistenceContext
     EntityManager em;
@@ -50,7 +50,9 @@ public class OfficeRepositoryImpl implements  OfficeRepository {
     }
 
     public Office findByName(String name) {
-        return em.find(Office.class, name);
+        return (Office) em.createNamedQuery("Office.FindByName")
+                .setParameter("name", name)
+                .getSingleResult();
     }
 
     public List<Office> getOfficesWithUnoccupiedRooms(Date startDate, Date finishDate) {

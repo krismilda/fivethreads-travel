@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 @Setter
 @NamedQueries({
         @NamedQuery(name = "Office.FindAll", query = "SELECT  o FROM  Office as o"),
+        @NamedQuery(name = "Office.FindByName", query = "SELECT o FROM Office as o WHERE o.name = :name"),
         @NamedQuery(name = "Office.ExistsByAddressAndName",
                 query = "SELECT o FROM Office as o WHERE  o.address.latitude =: latitude AND o.address.longitude =: longitude " +
                         "AND o.name =: name"),
