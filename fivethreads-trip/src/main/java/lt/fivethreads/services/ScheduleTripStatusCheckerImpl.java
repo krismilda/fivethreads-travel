@@ -22,7 +22,7 @@ public class ScheduleTripStatusCheckerImpl {
 
 
     //@Scheduled(cron = "0 0 12 * * ?")
-    @Scheduled(cron = "* 0/2 * * * ?")
+    @Scheduled(cron = "* 0/40 * * * ?")
     @Transactional
     public void create() {
         System.out.println("Statusu procesas");
