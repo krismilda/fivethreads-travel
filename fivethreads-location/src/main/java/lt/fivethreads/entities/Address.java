@@ -25,7 +25,6 @@ public class Address {
     @NotNull(message = "Street cannot be null.")
     private String street;
 
-    @NotNull(message = "House number cannot be null.")
     private String houseNumber;
 
     private String flatNumber;
