@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+
 @Component
 public class TripFilesServiceImplementation implements TripFilesService {
     @Autowired
@@ -33,6 +36,7 @@ public class TripFilesServiceImplementation implements TripFilesService {
     @Autowired
     TripMemberMapper tripMemberMapper;
 
+    @Transactional
     public FileDTO addFlightTicket(Long tripID, String memberEmail, MultipartFile file, double price) {
         Trip trip = tripRepository.findByID(tripID);
         TripMember tripMember = tripMemberRepository.getTripMemberByTripIDAndEmail(tripID, memberEmail);
@@ -51,9 +55,13 @@ public class TripFilesServiceImplementation implements TripFilesService {
             flightTicket.setTripMember(tripMember);
             tripMember.setFlightTicket(flightTicket);
         }
-        String newID = trip.getId().toString() + tripMember.getId().toString() + "F";
-        tripMember.getFlightTicket().setUniqueID(newID);
         tripMember.getFlightTicket().setPrice(price);
+        tripMemberRepository.saveFlightTicket(tripMember);
+        String newID = trip.getId().toString() + tripMember.getId().toString() + "F" + tripMember.getFlightTicket().getId().toString();
+        tripMember.getFlightTicket().setUniqueID(newID);
+        if(tripMember.getFlightTicket().getFile()==null){
+            tripMember.getFlightTicket().setFile(new ArrayList<>());
+        }
         tripMember.getFlightTicket().getFile().add(uploadedFile);
         tripMemberRepository.saveFlightTicket(tripMember);
         createNotificationService.createNotificationInformationChanged(tripMember, "Information was changed.");
@@ -61,6 +69,7 @@ public class TripFilesServiceImplementation implements TripFilesService {
     }
 
 
+    @Transactional
     public FileDTO addCarTicket(Long tripID, String memberEmail, MultipartFile file,double price) {
         Trip trip = tripRepository.findByID(tripID);
         TripMember tripMember = tripMemberRepository.getTripMemberByTripIDAndEmail(tripID, memberEmail);
@@ -80,15 +89,21 @@ public class TripFilesServiceImplementation implements TripFilesService {
             carTicket.setTripMember(tripMember);
             tripMember.setCarTicket(carTicket);
         }
-        String newID = trip.getId().toString() + tripMember.getId().toString() + "C";
-        tripMember.getCarTicket().setUniqueID(newID);
+
         tripMember.getCarTicket().setPrice(price);
+        tripMemberRepository.saveCarTicket(tripMember);
+        String newID = trip.getId().toString() + tripMember.getId().toString() + "C" + tripMember.getCarTicket().getId().toString();
+        tripMember.getCarTicket().setUniqueID(newID);
+        if(tripMember.getCarTicket().getFile()==null){
+            tripMember.getCarTicket().setFile(new ArrayList<>());
+        }
         tripMember.getCarTicket().getFile().add(uploadedFile);
         tripMemberRepository.saveCarTicket(tripMember);
         createNotificationService.createNotificationInformationChanged(tripMember, "Information was changed.");
         return fileDTO;
     }
 
+    @Transactional
     public FileDTO addAccommodationTicket(Long tripID, String memberEmail, MultipartFile file,double price) {
         Trip trip = tripRepository.findByID(tripID);
         TripMember tripMember = tripMemberRepository.getTripMemberByTripIDAndEmail(tripID, memberEmail);
@@ -108,8 +123,13 @@ public class TripFilesServiceImplementation implements TripFilesService {
             tripAccommodation.setTripMember(tripMember);
             tripMember.setTripAccommodation(tripAccommodation);
         }
-        String newID = trip.getId().toString() + tripMember.getId().toString() + "A";
+        tripMember.getTripAccommodation().setPrice(price);
+        tripMemberRepository.saveAccommodationTicket(tripMember);
+        String newID = trip.getId().toString() + tripMember.getId().toString() + "A" + tripMember.getTripAccommodation().getId().toString();
         tripMember.getTripAccommodation().setUniqueID(newID);
+        if(tripMember.getTripAccommodation().getFile()==null){
+            tripMember.getTripAccommodation().setFile(new ArrayList<>());
+        }
         tripMember.getTripAccommodation().getFile().add(uploadedFile);
         tripMember.getTripAccommodation().setPrice(price);
         tripMemberRepository.saveAccommodationTicket(tripMember);
@@ -117,6 +137,7 @@ public class TripFilesServiceImplementation implements TripFilesService {
         return fileDTO;
     }
 
+    @Transactional
     public TripMemberDTO deleteFlightTicket(Long fileID) {
         TripMember tripMember = tripMemberRepository.findByFlightFileID(fileID);
         File file = fileRepository.findById(fileID)
@@ -129,6 +150,7 @@ public class TripFilesServiceImplementation implements TripFilesService {
         return tripMemberMapper.convertTripMemberToTripMemberDTO(tripMember);
     }
 
+    @Transactional
     public TripMemberDTO deleteCarTicket(Long fileID) {
         TripMember tripMember = tripMemberRepository.findByCarFileID(fileID);
         File file = fileRepository.findById(fileID)
@@ -141,6 +163,7 @@ public class TripFilesServiceImplementation implements TripFilesService {
         return tripMemberMapper.convertTripMemberToTripMemberDTO(tripMember);
     }
 
+    @Transactional
     public TripMemberDTO deleteAccommodationTicket(Long fileID) {
         TripMember tripMember = tripMemberRepository.findByAccommodationFileID(fileID);
         File file = fileRepository.findById(fileID)

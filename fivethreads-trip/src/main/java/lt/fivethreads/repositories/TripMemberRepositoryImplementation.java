@@ -98,21 +98,21 @@ public class TripMemberRepositoryImplementation implements TripMemberRepository 
 
     public void saveFlightTicket(TripMember tripMember) {
         if (tripMember.getFlightTicket() != null) {
-            em.persist(tripMember.getFlightTicket());
+            em.merge(tripMember.getFlightTicket());
             em.merge(tripMember);
         }
     }
 
     public void saveCarTicket(TripMember tripMember) {
         if (tripMember.getCarTicket() != null) {
-            em.persist(tripMember.getCarTicket());
+            em.merge(tripMember.getCarTicket());
             em.merge(tripMember);
         }
     }
 
     public void saveAccommodationTicket(TripMember tripMember) {
         if (tripMember.getTripAccommodation() != null) {
-            em.persist(tripMember.getTripAccommodation());
+            em.merge(tripMember.getTripAccommodation());
             em.merge(tripMember);
         }
     }
