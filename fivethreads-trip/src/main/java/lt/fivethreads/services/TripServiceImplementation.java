@@ -14,6 +14,7 @@ import lt.fivethreads.validation.TripValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +47,7 @@ public class TripServiceImplementation implements TripService {
     @Autowired
     TripAccommodationValidation tripAccommodationValidation;
 
+    @Transactional
     public TripDTO createTrip(CreateTripForm form, String organizer_email) throws WrongTripData {
         tripValidation.checkFnishStartDates(form.getStartDate(), form.getFinishDate(), "Finish date is earlier than start date.");
         tripValidation.checkStartDateToday(form.getStartDate());
@@ -128,7 +130,7 @@ public class TripServiceImplementation implements TripService {
         tripRepository.deleteTrip(trip);
     }
 
-
+    @Transactional
     public TripDTO editTripInformation(EditTripInformation editTripInformation, String organizer_email) throws AccessRightProblem, TripIsNotEditable {
         if (tripFilesService.checkIfDocumentsExist(editTripInformation.getId())) {
             throw new TripIsNotEditable("Trip cannot be deleted because financial documents exist.");
