@@ -42,7 +42,7 @@ public class TripAccommodationController {
 
     @DeleteMapping("trip/accommodations/{accommodationId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
-    public ResponseEntity<?> deketeTripAccommodation(@PathVariable("accommodationId") int accommodationId) {
+    public ResponseEntity<?> deleteTripAccommodation(@PathVariable("accommodationId") int accommodationId) {
         long id = accommodationId;
         tripAccommodationService.deleteTripAccommodation(id);
         return new ResponseEntity<>("Trip accommodation deleted successfully!", HttpStatus.OK);

@@ -52,9 +52,6 @@ public class TripServiceImplementation implements TripService {
         Trip trip = tripMapper.ConvertCreateTripFormToTrip(form, organizer_email);
         for (TripMember tripMember : trip.getTripMembers()) {
             tripValidation.validateTripMember(tripMember);
-            tripAccommodationValidation.checkFinishStartDates(tripMember.getTripAccommodation().getAccommodationStart(),
-                    tripMember.getTripAccommodation().getAccommodationFinish(), "Finish date is earlier than start date.");
-            tripAccommodationValidation.checkStartDateToday(tripMember.getTripAccommodation().getAccommodationStart());
             tripMember.setTripAcceptance(TripAcceptance.PENDING);
         }
         trip.setTripStatus(TripStatus.PLANNED);
