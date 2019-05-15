@@ -12,6 +12,7 @@
         <module>fivethreads-location</module>
         <module>fivethreads-logging</module>
         <module>fivethreads-email</module>
+        <module>fivethreads-statistics</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
