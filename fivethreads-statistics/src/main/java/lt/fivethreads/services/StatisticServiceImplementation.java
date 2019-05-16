@@ -3,7 +3,6 @@ package lt.fivethreads.services;
 import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.User;
 import lt.fivethreads.entities.request.ExtendedUserDTO;
-import lt.fivethreads.entities.request.OfficeDTO;
 import lt.fivethreads.entities.request.TripDTO;
 import lt.fivethreads.entities.rest.DateRangeDTO;
 import lt.fivethreads.entities.rest.TripCount;

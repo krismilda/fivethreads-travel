@@ -1,6 +1,7 @@
 package lt.fivethreads.services;
 
 import lt.fivethreads.entities.Apartment;
+import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.Room;
 import lt.fivethreads.entities.request.RoomDTO;
 import lt.fivethreads.entities.request.RoomForm;
@@ -37,12 +38,12 @@ public class RoomServiceImplementation implements RoomService {
                 .collect(Collectors.toList());
     }
 
-    public RoomDTO getRoomById(Long id) {
+    public Room getRoomById(Long id) {
         Room room = roomRepository.findById(id);
-        return roomMapper.getRoomDTO(room);
+        return room;
     }
 
-    public RoomDTO updateRoom (RoomDTO roomDTO) {
+    public Room updateRoom (RoomDTO roomDTO) {
 
         Room room = roomRepository.findById(roomDTO.getId());
         room.setNumber(roomDTO.getNumber());
@@ -50,15 +51,15 @@ public class RoomServiceImplementation implements RoomService {
         Apartment apartment= new Apartment();
         apartment.setId(roomDTO.getApartmentId());
         room.setApartment(apartment);
-        return roomMapper.getRoomDTO(roomRepository.updateRoom(room));
+        return roomRepository.updateRoom(room);
     }
 
     public void deleteRoom(Long id) {
         roomRepository.deleteRoom(id); }
 
-    public RoomDTO createRoom (RoomForm roomForm) {
+    public Room createRoom (RoomForm roomForm) {
         Room room_to_save = roomMapper.convertRegisteredRoomToRoom(roomForm);
-        return roomMapper.getRoomDTO(roomRepository.createRoom(room_to_save));
+        return roomRepository.createRoom(room_to_save);
     }
 
     public boolean checkIfRoomExists(Long number, Long apartmentId) {
@@ -87,5 +88,12 @@ public class RoomServiceImplementation implements RoomService {
             roomDTOList.add(roomMapper.getRoomDTO(room));
         }
         return roomDTOList;
+    }
+
+
+    public Boolean checkIfModified(Long roomID, String version){
+        Room room = roomRepository.findById(roomID);
+        String current_version = room.getVersion().toString();
+        return !version.equals(current_version);
     }
 }

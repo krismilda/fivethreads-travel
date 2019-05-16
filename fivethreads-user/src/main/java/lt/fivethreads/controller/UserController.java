@@ -1,8 +1,10 @@
 package lt.fivethreads.controller;
 
+import lt.fivethreads.entities.User;
 import lt.fivethreads.entities.request.ChangePasswordForm;
 import lt.fivethreads.entities.request.RegistrationForm;
 import lt.fivethreads.entities.request.ExtendedUserDTO;
+import lt.fivethreads.mapper.UserMapper;
 import lt.fivethreads.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -17,6 +20,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    UserMapper userMapper;
 
     @GetMapping("/admin/user")
     @PreAuthorize("hasRole('ADMIN')")
@@ -26,9 +32,13 @@ public class UserController {
 
     @GetMapping("/admin/user/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getUserByID(@PathVariable("userId") int userId) {
+    public ResponseEntity<ExtendedUserDTO> getUserByID(@PathVariable("userId") int userId) {
         long id = userId;
-        return new ResponseEntity<>(userService.getUserByID(id), HttpStatus.OK);
+        User user = userService.getUserByID(id);
+        return ResponseEntity
+                .ok()
+                .eTag("\"" + user.getVersion() + "\"")
+                .body(userMapper.getUserDTO(user));
     }
 
     @DeleteMapping("/admin/user/{userID}")
@@ -41,22 +51,36 @@ public class UserController {
 
     @PutMapping("/admin/user")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateUser(@Validated @RequestBody ExtendedUserDTO user) {
-
-        ExtendedUserDTO updatedUser = userService.updateUser(user);
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    public ResponseEntity<?> updateUser(@Validated @RequestBody ExtendedUserDTO user, WebRequest request) {
+        String version = request.getHeader("If-Match");
+        if(userService.checkIfModified(user.getId(), version)){
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+        }
+        User updatedUserDTO = userService.updateUser(user);
+        return ResponseEntity
+                .ok()
+                .eTag("\"" + updatedUserDTO.getVersion() + "\"")
+                .body(userMapper.getUserDTO(updatedUserDTO));
     }
 
     @PostMapping("/admin/user/create")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerUser(@Validated @RequestBody RegistrationForm registrationForm) {
-        ExtendedUserDTO createdUser = userService.createUser(registrationForm);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        User createdUser = userService.createUser(registrationForm);
+        return ResponseEntity
+                .ok()
+                .eTag("\"" + createdUser.getVersion() + "\"")
+                .body(userMapper.getUserDTO(createdUser));
     }
 
     @PutMapping("/admin/user/changePassword")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> changePassword(@RequestBody @Validated ChangePasswordForm changePasswordForm) {
+    public ResponseEntity<?> changePassword(@RequestBody @Validated ChangePasswordForm changePasswordForm, WebRequest request) {
+        String version = request.getHeader("If-Match");
+        User user = userService.getUserByEmail(changePasswordForm.getEmail());
+        if(userService.checkIfModified(user.getId(), version)){
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+        }
         userService.changePassword(changePasswordForm);
         return new ResponseEntity<>("Password changed successfully!", HttpStatus.OK);
     }

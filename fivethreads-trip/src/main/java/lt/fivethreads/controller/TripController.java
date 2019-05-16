@@ -1,6 +1,9 @@
 package lt.fivethreads.controller;
 
+import lt.fivethreads.entities.Trip;
 import lt.fivethreads.entities.request.*;
+import lt.fivethreads.exception.TripWasModified;
+import lt.fivethreads.mapper.TripMapper;
 import lt.fivethreads.services.NotificationService;
 import lt.fivethreads.services.TripFilesService;
 import lt.fivethreads.services.TripService;
@@ -11,8 +14,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.ws.Response;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,11 +33,17 @@ public class TripController {
     @Autowired
     TripFilesService tripFilesService;
 
+    @Autowired
+    TripMapper tripMapper;
+
     @PostMapping("/trip/create")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     public ResponseEntity<TripDTO> createTrip(@Validated @RequestBody CreateTripForm form) {
-        TripDTO tripDTO = tripService.createTrip(form, SecurityContextHolder.getContext().getAuthentication().getName());
-        return new ResponseEntity<TripDTO>(tripDTO, HttpStatus.CREATED);
+        Trip trip = tripService.createTrip(form, SecurityContextHolder.getContext().getAuthentication().getName());
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .eTag("\"" + trip.getVersion() + "\"")
+                .body(tripMapper.converTripToTripDTO(trip));
     }
 
     @PostMapping("/trip/accept")
@@ -57,8 +68,14 @@ public class TripController {
 
     @GetMapping("/trip/{tripID}")
     @PreAuthorize("hasRole('ORGANIZER') or hasRole('ADMIN')")
-    public TripDTO getTripById(@PathVariable("tripID") long tripID) {
-        return tripService.getById(tripID);
+    public ResponseEntity<TripDTO> getTripById(@PathVariable("tripID") long tripID) {
+        Trip trip =  tripService.getById(tripID);
+        TripDTO tripDTO =  (trip != null) ? tripMapper.converTripToTripDTO(trip) : null;
+        String version = trip.getVersion().toString();
+        return ResponseEntity
+                .ok()
+                .eTag(version)
+                .body(tripDTO);
     }
 
     @GetMapping("/myTrips/")
@@ -129,9 +146,16 @@ public class TripController {
 
     @PutMapping("/editTrip")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public ResponseEntity<TripDTO> editTripInformation(@Validated @RequestBody EditTripInformation editTripInformation) {
-        TripDTO tripDTO = tripService.editTripInformation(editTripInformation, SecurityContextHolder.getContext().getAuthentication().getName());
-        return new ResponseEntity<TripDTO>(tripDTO, HttpStatus.OK);
+    public ResponseEntity<TripDTO> editTripInformation(@Validated @RequestBody EditTripInformation editTripInformation, WebRequest request) {
+        String version = request.getHeader("If-Match");
+        if(tripService.checkIfModified(editTripInformation.getId(), version)){
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+        }
+        Trip tripDTO = tripService.editTripInformation(editTripInformation, SecurityContextHolder.getContext().getAuthentication().getName());
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .eTag("\"" + tripDTO.getVersion() + "\"")
+                .body(tripMapper.converTripToTripDTO(tripDTO));
     }
 
     @PutMapping("/changeOrganizer")
@@ -146,4 +170,6 @@ public class TripController {
     public UserTripDTO getUserTripByID(@PathVariable("tripID") Long tripID) {
         return tripService.getUserTripById(SecurityContextHolder.getContext().getAuthentication().getName(), tripID);
     }
+
+
 }

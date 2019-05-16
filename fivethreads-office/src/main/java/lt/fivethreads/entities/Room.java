@@ -46,6 +46,9 @@ public class Room {
     @NotNull
     private Apartment apartment;
 
+    @Version
+    private Long version;
+
     public Room(){}
     public Room(Long number, Long capacity) {
         this.number = number;

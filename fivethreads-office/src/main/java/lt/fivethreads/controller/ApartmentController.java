@@ -1,8 +1,10 @@
 package lt.fivethreads.controller;
 
+import lt.fivethreads.entities.Apartment;
 import lt.fivethreads.entities.request.ApartmentDTO;
 import lt.fivethreads.entities.request.ApartmentForm;
 import lt.fivethreads.entities.request.DateForm;
+import lt.fivethreads.mapper.ApartmentMapper;
 import lt.fivethreads.services.ApartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.context.request.WebRequest;
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -19,6 +21,9 @@ public class ApartmentController {
 
     @Autowired
     ApartmentService apartmentService;
+
+    @Autowired
+    ApartmentMapper apartmentMapper;
 
     @GetMapping("/apartments")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
@@ -31,9 +36,11 @@ public class ApartmentController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
     public ResponseEntity<?> getApartmentById(@PathVariable("apartmentId") int apartmentId) {
         long id = apartmentId;
-
-        return new ResponseEntity<>(apartmentService.getApartmentById(id),
-                HttpStatus.OK);
+        Apartment apartment = apartmentService.getApartmentById(id);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .eTag("\"" + apartment.getVersion() + "\"")
+                .body(apartmentMapper.getApartmentDTO(apartment));
     }
 
     @DeleteMapping("/admin/apartments/{apartmentId}")
@@ -48,10 +55,16 @@ public class ApartmentController {
 
     @PutMapping("/apartments/apartment")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
-    public ResponseEntity<?> updateApartment(@Validated @RequestBody ApartmentDTO apartmentDTO) {
-        ApartmentDTO updatedApartment = apartmentService.updateApartment(apartmentDTO);
-
-        return new ResponseEntity<>(updatedApartment, HttpStatus.OK);
+    public ResponseEntity<?> updateApartment(@Validated @RequestBody ApartmentDTO apartmentDTO, WebRequest request) {
+        String version = request.getHeader("If-Match");
+        if(apartmentService.checkIfModified(apartmentDTO.getId(), version)){
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+        }
+        Apartment updatedApartment = apartmentService.updateApartment(apartmentDTO);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .eTag("\"" + updatedApartment.getVersion() + "\"")
+                .body(apartmentMapper.getApartmentDTO(updatedApartment));
     }
 
     @PostMapping("/admin/apartments/create")
@@ -69,13 +82,17 @@ public class ApartmentController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        ApartmentDTO createdApartment = apartmentService.createApartment(apartmentForm);
+        Apartment createdApartment = apartmentService.createApartment(apartmentForm);
 
-        return new ResponseEntity<>(createdApartment, HttpStatus.CREATED);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .eTag("\"" + createdApartment.getVersion() + "\"")
+                .body(apartmentMapper.getApartmentDTO(createdApartment));
     }
+
     @GetMapping("/apartments/unoccupied")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
-    public ResponseEntity getUnoccupiedAccommodationApartments(@Validated @RequestBody DateForm form){
+    public ResponseEntity getUnoccupiedAccommodationApartments(@Validated @RequestBody DateForm form) {
         return new ResponseEntity<>(apartmentService.getAllUnoccupiedAccommodationApartments(
                 form.getStartDate(), form.getFinishDate()), HttpStatus.OK);
     }
@@ -83,7 +100,7 @@ public class ApartmentController {
     @GetMapping("/apartments/unoccupied/{officeId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     public ResponseEntity getUnoccupiedApartmentsByOfficeId(@Validated @RequestBody DateForm form,
-                                                            @PathVariable("officeId") int officeId){
+                                                            @PathVariable("officeId") int officeId) {
         long id = officeId;
 
         return new ResponseEntity<>(apartmentService.getAllUnoccupiedApartmentsByOfficeId(

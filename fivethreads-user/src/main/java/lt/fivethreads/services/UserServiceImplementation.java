@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -65,7 +66,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public ExtendedUserDTO updateUser(ExtendedUserDTO userDTO) {
+    public User updateUser(ExtendedUserDTO userDTO) {
         User user = userRepository.findById(userDTO.getId())
                 .orElseThrow(() -> new UserIDNotExists());
         if (this.checkIfEmailExists(userDTO.getEmail()) && !userDTO.getEmail().equals(user.getEmail())) {
@@ -84,7 +85,7 @@ public class UserServiceImplementation implements UserService {
             user.setOffice(office);
         }
 
-        return userMapper.getUserDTO(userRepository.save(user));
+        return userRepository.save(user);
     }
 
     @Override
@@ -99,21 +100,17 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public void createUsers(List<ExtendedUserDTO> users) {
-        //List<User> userEntities = new ArrayList<>();
         for (ExtendedUserDTO user: users) {
             User userEntity = userMapper.getUser(user);
-            User user_to_create = userCreationService.createNewUser(userEntity);
-          //  userEntities.add(userEntity);
+            userCreationService.createNewUser(userEntity);
         }
-
-     //   userRepository.saveAll(userEntities);
     }
 
     @Override
-    public ExtendedUserDTO createUser(RegistrationForm user) {
+    public User createUser(RegistrationForm user) {
         User user_to_create = userMapper.convertRegistrationUserToUser(user);
         User created_user = userCreationService.createNewUser(user_to_create);
-        return userMapper.getUserDTO(created_user);
+        return created_user;
     }
 
     @Override
@@ -121,6 +118,14 @@ public class UserServiceImplementation implements UserService {
         User user = userRepository.findByEmail(changePasswordForm.getEmail())
                 .orElseThrow(() -> new EmailNotExists());
         user.setPassword(encoder.encode(changePasswordForm.getPassword()));
+    }
+
+    @Override
+    public Boolean checkIfModified(Long userID, String version){
+        User user = userRepository.findById(userID)
+                .orElseThrow(() -> new UserIDNotExists());
+        String current_version = user.getVersion().toString();
+        return !version.equals(current_version);
     }
 
 }
