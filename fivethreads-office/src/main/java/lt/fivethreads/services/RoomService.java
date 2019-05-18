@@ -12,7 +12,7 @@ public interface RoomService {
     RoomDTO updateRoom (RoomDTO room);
     void deleteRoom(Long id);
     RoomDTO createRoom (RoomForm room);
-    boolean checkIfRoomExists(Long number, Long apartmentId);
+    boolean checkIfRoomExists(String name, Long apartmentId);
     List <RoomDTO> getAllUnoccupiedAccommodations(Date startDate, Date finishDate);
     List <RoomDTO> getAllUnoccupiedAccommodationsByApartmentId (Date startDate, Date finishDate, Long apartmentId);
 }

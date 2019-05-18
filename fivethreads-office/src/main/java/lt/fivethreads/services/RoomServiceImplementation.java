@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,7 +46,7 @@ public class RoomServiceImplementation implements RoomService {
     public RoomDTO updateRoom (RoomDTO roomDTO) {
 
         Room room = roomRepository.findById(roomDTO.getId());
-        room.setNumber(roomDTO.getNumber());
+        room.setName(roomDTO.getName());
         room.setCapacity(roomDTO.getCapacity());
         Apartment apartment= new Apartment();
         apartment.setId(roomDTO.getApartmentId());
@@ -57,12 +58,31 @@ public class RoomServiceImplementation implements RoomService {
         roomRepository.deleteRoom(id); }
 
     public RoomDTO createRoom (RoomForm roomForm) {
+
+        if (roomForm.getName() == null){
+            try {
+
+                String defaultName = roomRepository.findLastDefaultName(roomForm.getApartmentId());
+
+                String a = defaultName.substring(0, defaultName.indexOf(".")+1);
+                Integer b = Integer.parseInt(defaultName.substring(defaultName.indexOf(".") + 1))+1;
+
+                defaultName = defaultName.substring(0, defaultName.indexOf(".")+1)
+                        + (Integer.parseInt(defaultName.substring(defaultName.indexOf(".") + 1))+1);
+                roomForm.setName(defaultName);
+            }catch(NoResultException ex){{
+                roomForm.setName("Kambarys Nr.1");
+            }}
+        }
+
         Room room_to_save = roomMapper.convertRegisteredRoomToRoom(roomForm);
+
+
         return roomMapper.getRoomDTO(roomRepository.createRoom(room_to_save));
     }
 
-    public boolean checkIfRoomExists(Long number, Long apartmentId) {
-        return roomRepository.existsByNumberAndId(number, apartmentId);
+    public boolean checkIfRoomExists(String name, Long apartmentId) {
+        return roomRepository.existsByNameAndId(name, apartmentId);
     }
 
     public List<RoomDTO> getAllUnoccupiedAccommodations(Date startDate, Date finishDate) {

@@ -6,5 +6,6 @@ fivethreads-files/target/
 fivethreads-trip/target/
 fivethreads-location/target/
 fivethreads-email/target/
+fivethreads-statistics/target/
 upload-dir/
 logs/

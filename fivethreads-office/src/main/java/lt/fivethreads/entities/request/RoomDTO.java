@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class RoomDTO {
     private Long id;
-    private Long number;
     private Long capacity;
     private Long apartmentId;
+    private String name;
 }

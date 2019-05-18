@@ -11,9 +11,9 @@ import javax.validation.constraints.NotNull;
 @Setter
 @NamedQueries({
         @NamedQuery(name = "Room.FindAll", query = "SELECT  r FROM  Room as r"),
-        @NamedQuery(name = "Room.ExistsByNumberAndApartmentId",
+        @NamedQuery(name = "Room.ExistsByNameAndApartmentId",
         query = "SELECT r FROM Room as r WHERE  r.apartment.id =: apartment_ID " +
-                "AND r.number =: number"),
+                "AND r.name =: name"),
         @NamedQuery(name = "Room.FindAllUnoccupiedRooms", query = "SELECT r FROM Room AS r " +
                 "WHERE r.id NOT IN " +
                 "(SELECT ta.room FROM TripAccommodation AS ta WHERE ta.room IS NOT NULL " +
@@ -27,6 +27,10 @@ import javax.validation.constraints.NotNull;
                 "(SELECT ta.room FROM TripAccommodation AS ta WHERE ta.room IS NOT NULL " +
                 "                AND ta.accommodationStart <=: startDate  AND ta.accommodationFinish >=: finishDate " +
                 "                AND ta.hotelAddress.city =: city )")
+       /* @NamedQuery(name = "Room.FindLastDefaultName", query = " SELECT " +
+                " r.name FROM Room as r WHERE r.apartment.id =: apartment_ID AND r.name LIKE :name order by " +
+                " (SUBSTRING(r.Name, 13)) AS INT")*/
+
 
 })
 public class Room {
@@ -45,6 +49,10 @@ public class Room {
     @ManyToOne(targetEntity = Apartment.class, fetch = FetchType.LAZY)
     @NotNull
     private Apartment apartment;
+
+    @Column(name = "name")
+    @NotNull
+    private String name;
 
     public Room(){}
     public Room(Long number, Long capacity) {

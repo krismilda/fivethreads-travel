@@ -17,19 +17,19 @@ public class RoomMapper {
         Apartment apartment;
 
         apartment = apartmentRepository.findById(roomForm.getApartmentId());
-        room.setNumber(roomForm.getNumber());
         room.setCapacity(roomForm.getCapacity());
         room.setApartment(apartment);
+        room.setName(roomForm.getName());
         return room;
     }
 
     public RoomDTO getRoomDTO (Room room){
         RoomDTO roomDTO= new RoomDTO();
 
-        roomDTO.setNumber(room.getNumber());
         roomDTO.setId(room.getId());
         roomDTO.setCapacity(room.getCapacity());
         roomDTO.setApartmentId(room.getApartment().getId());
+        roomDTO.setName(room.getName());
 
         return roomDTO;
     }
