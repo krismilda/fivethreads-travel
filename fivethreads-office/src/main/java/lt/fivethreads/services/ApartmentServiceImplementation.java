@@ -43,12 +43,12 @@ public class ApartmentServiceImplementation implements ApartmentService {
                 .collect(Collectors.toList());
     }
 
-    public ApartmentDTO getApartmentById(Long id) {
+    public Apartment getApartmentById(Long id) {
         Apartment apartment = apartmentRepository.findById(id);
-        return apartmentMapper.getApartmentDTO(apartment);
+        return apartment;
     }
 
-    public ApartmentDTO updateApartment(ApartmentDTO apartmentDTO) {
+    public Apartment updateApartment(ApartmentDTO apartmentDTO) {
         Apartment apartment = apartmentRepository.findById(apartmentDTO.getId());
         Address address = apartment.getAddress();
         address.setCity(apartmentDTO.getAddress().getCity());
@@ -63,7 +63,7 @@ public class ApartmentServiceImplementation implements ApartmentService {
         Office office = new Office();
         office.setId(apartmentDTO.getOfficeId());
         apartment.setOffice(office);
-        return apartmentMapper.getApartmentDTO(apartmentRepository.updateApartment(apartment));
+        return apartmentRepository.updateApartment(apartment);
     }
 
 
@@ -72,9 +72,9 @@ public class ApartmentServiceImplementation implements ApartmentService {
     }
 
 
-    public ApartmentDTO createApartment(ApartmentForm apartmentForm) {
+    public Apartment createApartment(ApartmentForm apartmentForm) {
         Apartment apartment_to_save = apartmentMapper.convertRegisteredOfficeToOffice(apartmentForm);
-        return apartmentMapper.getApartmentDTO(apartmentRepository.createApartment(apartment_to_save));
+        return apartmentRepository.createApartment(apartment_to_save);
     }
 
     public boolean checkIfApartmentExists(double latitude, double longitude, Long officeId) {
@@ -103,5 +103,11 @@ public class ApartmentServiceImplementation implements ApartmentService {
             apartmentDTOList.add(apartmentMapper.getApartmentDTO(apartment));
         }
         return apartmentDTOList;
+    }
+
+    public Boolean checkIfModified(Long apartmentID, String version){
+        Apartment apartment = apartmentRepository.findById(apartmentID);
+        String current_version = apartment.getVersion().toString();
+        return !version.equals(current_version);
     }
 }

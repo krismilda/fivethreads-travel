@@ -1,8 +1,10 @@
 package lt.fivethreads.controller;
 
+import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.request.DateForm;
 import lt.fivethreads.entities.request.OfficeDTO;
 import lt.fivethreads.entities.request.OfficeForm;
+import lt.fivethreads.mapper.OfficeMapper;
 import lt.fivethreads.services.OfficeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -17,6 +20,9 @@ public class OfficeController {
 
     @Autowired
     OfficeService officeService;
+
+    @Autowired
+    OfficeMapper officeMapper;
 
     @GetMapping("/offices")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
@@ -28,7 +34,11 @@ public class OfficeController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
     public ResponseEntity<?> getOfficeById(@PathVariable("officeId") int officeId) {
         long id = officeId;
-        return new ResponseEntity<>(officeService.getOfficeById(id), HttpStatus.OK);
+        Office office = officeService.getOfficeById(id);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .eTag("\"" + office.getVersion() + "\"")
+                .body(officeMapper.getOfficeDTO(office));
     }
 
     @DeleteMapping("/admin/offices/{officeId}")
@@ -41,9 +51,16 @@ public class OfficeController {
 
     @PutMapping("/offices/office")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
-    public ResponseEntity<?> updateOffice(@Validated @RequestBody OfficeDTO officeDTO) {
-        OfficeDTO updatedOffice = officeService.updateOffice(officeDTO);
-        return new ResponseEntity<>(updatedOffice, HttpStatus.OK);
+    public ResponseEntity<?> updateOffice(@Validated @RequestBody OfficeDTO officeDTO, WebRequest request) {
+        String version = request.getHeader("If-Match");
+        if(officeService.checkIfModified(officeDTO.getId(), version)){
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+        }
+        Office office = officeService.updateOffice(officeDTO);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .eTag("\"" + office.getVersion() + "\"")
+                .body(officeMapper.getOfficeDTO(office));
     }
 
     @PostMapping("/admin/offices/create")
@@ -59,8 +76,11 @@ public class OfficeController {
             return new ResponseEntity<>("Fail -> Office is already created!",
                     HttpStatus.BAD_REQUEST);
         }
-        OfficeDTO createdOffice = officeService.createOffice(registrationForm);
-        return new ResponseEntity<>(createdOffice, HttpStatus.CREATED);
+        Office createdOffice = officeService.createOffice(registrationForm);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .eTag("\"" + createdOffice.getVersion() + "\"")
+                .body(officeMapper.getOfficeDTO(createdOffice));
     }
     @GetMapping("/offices/unoccupied")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")

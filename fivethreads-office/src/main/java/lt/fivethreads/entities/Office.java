@@ -40,6 +40,9 @@ public class Office {
     @OneToMany(mappedBy = "office")
     private Set<Apartment> apartments;
 
+    @Version
+    private Long version;
+
     public Office (){}
     public Office(String name, Address address, Apartment... apartments) {
         this.name = name;
