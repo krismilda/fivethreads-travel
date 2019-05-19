@@ -15,8 +15,6 @@ public class UserDTO {
     @NotNull(message="Email cannot be null.")
     @Email(message="Wrong email format.")
     private String email;
-    @NotNull (message = "Password cannot be null.")
-    @Size(min=6, message = "Password must be longer that 6 symbols.")
     private String password;
     @NotNull(message = "FirstName cannot be null.")
     private String firstname;

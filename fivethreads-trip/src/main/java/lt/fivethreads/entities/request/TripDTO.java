@@ -19,9 +19,9 @@ public class TripDTO {
     @NotNull(message="Finish date cannot be null.")
     private Date finishDate;
     @NotNull(message="Arrival cannot be null.")
-    private ShortAddressDTO arrival;
+    private FullAddressDTO arrival;
     @NotNull(message="Departure cannot be null.")
-    private ShortAddressDTO departure;
+    private FullAddressDTO departure;
     private List<TripMemberDTO> tripMembers;
     @NotNull(message="Organizer cannot be null.")
     private String organizer_email;
