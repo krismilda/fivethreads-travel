@@ -11,5 +11,5 @@ public interface StatisticService {
     //List<UserTripCountDTO> countTripByUser(IDList IDList);
     List<TripsByPrice> getTripsByPrice(String role, String email);
     List<TripByDuration> getTripByDuration(String role, String email);
-    List<TripCountByOfficeDTO> getTripCountByOffice(String role, String email);
+    List<TripCountByOfficeDTO> getTripCountByOffice(String role, String email, IDList offices);
 }

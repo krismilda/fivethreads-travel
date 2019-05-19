@@ -10,6 +10,7 @@ import lt.fivethreads.exception.file.EmailNotExists;
 import lt.fivethreads.exception.file.UserIDNotExists;
 import lt.fivethreads.mapper.UserMapper;
 import lt.fivethreads.repositories.UserRepository;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -35,6 +36,9 @@ public class UserServiceImplementation implements UserService {
 
     @Autowired
     UserCreationService userCreationService;
+
+    @Autowired
+    OfficeService officeService;
 
     @Override
     public User getUserByEmail(String email) throws UserIDNotExists
@@ -78,14 +82,11 @@ public class UserServiceImplementation implements UserService {
         user.setId(userDTO.getId());
         user.setPhone(userDTO.getPhone());
         user.setRoles(userMapper.getRoles(userDTO.getRole()));
-
         if(!(userDTO.getOfficeId() == null)){
-            Office office = new Office();
-            office.setId(userDTO.getOfficeId());
-            user.setOffice(office);
+            user.setOffice(officeService.getOfficeById(userDTO.getOfficeId()));
         }
 
-        return userRepository.save(user);
+        return userRepository.saveAndFlush(user);
     }
 
     @Override
@@ -114,10 +115,11 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public void changePassword(ChangePasswordForm changePasswordForm) throws EmailNotExists {
-        User user = userRepository.findByEmail(changePasswordForm.getEmail())
+    public void changePassword(ChangePasswordForm changePasswordForm, String email) throws EmailNotExists {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EmailNotExists());
         user.setPassword(encoder.encode(changePasswordForm.getPassword()));
+        userRepository.save(user);
     }
 
     @Override

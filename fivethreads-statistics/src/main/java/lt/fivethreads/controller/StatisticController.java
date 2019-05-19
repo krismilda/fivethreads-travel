@@ -60,8 +60,8 @@ public class StatisticController {
 
     @GetMapping("/TripsByOffice")
     @PreAuthorize("hasRole('ORGANIZER') or hasRole('ADMIN') or hasRole('USER') ")
-    public List<TripCountByOfficeDTO> tripsByOffice() {
-        return statisticServiceImplementation.getTripCountByOffice(this.getRole(SecurityContextHolder.getContext().getAuthentication().getAuthorities()), SecurityContextHolder.getContext().getAuthentication().getName());
+    public List<TripCountByOfficeDTO> tripsByOffice(@Validated @RequestBody IDList offices) {
+        return statisticServiceImplementation.getTripCountByOffice(this.getRole(SecurityContextHolder.getContext().getAuthentication().getAuthorities()), SecurityContextHolder.getContext().getAuthentication().getName(), offices);
     }
 
     public String getRole(Collection authorities){

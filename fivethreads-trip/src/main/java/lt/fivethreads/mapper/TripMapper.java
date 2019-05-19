@@ -86,8 +86,8 @@ public class TripMapper {
             tripMemberDTOList.add(tripMemberMapper.convertTripMemberToTripMemberDTO(tripMember));
         }
         tripDTO.setTripMembers(tripMemberDTOList);
-        tripDTO.setArrival(addressMapper.convertAddressToShortAddress(trip.getArrival()));
-        tripDTO.setDeparture(addressMapper.convertAddressToShortAddress(trip.getDeparture()));
+        tripDTO.setArrival(addressMapper.convertAddressToFullAddress(trip.getArrival()));
+        tripDTO.setDeparture(addressMapper.convertAddressToFullAddress(trip.getDeparture()));
         tripDTO.setStartDate(trip.getStartDate());
         tripDTO.setFinishDate(trip.getFinishDate());
         tripDTO.setIsCombined(trip.getIsCombined());

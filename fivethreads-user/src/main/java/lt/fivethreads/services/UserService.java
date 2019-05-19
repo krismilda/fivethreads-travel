@@ -25,7 +25,7 @@ public interface UserService {
 
     User getUserByEmail(String email) throws UserIDNotExists;
 
-    void changePassword(ChangePasswordForm changePasswordForm) throws EmailNotExists;
+    void changePassword(ChangePasswordForm changePasswordForm, String email) throws EmailNotExists;
 
     void createUsers(List<ExtendedUserDTO> users);
 
