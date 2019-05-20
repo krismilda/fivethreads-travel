@@ -12,8 +12,8 @@ public interface RoomService {
     Room getRoomById(Long id);
     Room updateRoom (RoomDTO room);
     void deleteRoom(Long id);
+    boolean checkIfRoomExists(String name, Long apartmentId);
     Room createRoom (RoomForm room);
-    boolean checkIfRoomExists(Long number, Long apartmentId);
     List <RoomDTO> getAllUnoccupiedAccommodations(Date startDate, Date finishDate);
     List <RoomDTO> getAllUnoccupiedAccommodationsByApartmentId (Date startDate, Date finishDate, Long apartmentId);
     Boolean checkIfModified(Long roomID, String version);

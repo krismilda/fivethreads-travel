@@ -8,6 +8,7 @@ import lt.fivethreads.entities.request.ApartmentDTO;
 import lt.fivethreads.entities.request.ApartmentForm;
 import lt.fivethreads.mapper.ApartmentMapper;
 import lt.fivethreads.repositories.ApartmentRepository;
+import lt.fivethreads.repositories.OfficeRepository;
 import lt.fivethreads.repository.AddressRepository;
 import lt.fivethreads.validation.DateValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class ApartmentServiceImplementation implements ApartmentService {
     @Autowired
     AddressService addressService;
 
+    @Autowired
+    OfficeRepository officeRepository;
+
     public List<ApartmentDTO> getAllApartments() {
         List<Apartment> apartments = apartmentRepository.getAll();
         return apartments.stream()
@@ -60,9 +64,8 @@ public class ApartmentServiceImplementation implements ApartmentService {
         address.setStreet(apartmentDTO.getAddress().getStreet());
 
         apartment.setAddress(address);
-        Office office = new Office();
-        office.setId(apartmentDTO.getOfficeId());
-        apartment.setOffice(office);
+
+        apartment.setOffice(officeRepository.findById(apartmentDTO.getOfficeId()));
         return apartmentRepository.updateApartment(apartment);
     }
 

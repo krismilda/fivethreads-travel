@@ -6,12 +6,14 @@ import lt.fivethreads.entities.Room;
 import lt.fivethreads.entities.request.RoomDTO;
 import lt.fivethreads.entities.request.RoomForm;
 import lt.fivethreads.mapper.RoomMapper;
+import lt.fivethreads.repositories.ApartmentRepository;
 import lt.fivethreads.repositories.RoomRepository;
 import lt.fivethreads.validation.DateValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,6 +32,9 @@ public class RoomServiceImplementation implements RoomService {
     @Autowired
     DateValidation dateValidation;
 
+    @Autowired
+    ApartmentRepository apartmentRepository;
+
     public List<RoomDTO> getAllRooms() {
 
         List<Room> rooms= roomRepository.getAll();
@@ -46,11 +51,9 @@ public class RoomServiceImplementation implements RoomService {
     public Room updateRoom (RoomDTO roomDTO) {
 
         Room room = roomRepository.findById(roomDTO.getId());
-        room.setNumber(roomDTO.getNumber());
+        room.setName(roomDTO.getName());
         room.setCapacity(roomDTO.getCapacity());
-        Apartment apartment= new Apartment();
-        apartment.setId(roomDTO.getApartmentId());
-        room.setApartment(apartment);
+        room.setApartment(apartmentRepository.findById(roomDTO.getApartmentId()));
         return roomRepository.updateRoom(room);
     }
 
@@ -58,12 +61,27 @@ public class RoomServiceImplementation implements RoomService {
         roomRepository.deleteRoom(id); }
 
     public Room createRoom (RoomForm roomForm) {
+
+        if (roomForm.getName() == null){
+            try {
+
+                String defaultName = roomRepository.findLastDefaultName(roomForm.getApartmentId());
+
+                defaultName = defaultName.substring(0, defaultName.indexOf(".")+1)
+                        + (Integer.parseInt(defaultName.substring(defaultName.indexOf(".") + 1))+1);
+                roomForm.setName(defaultName);
+            }catch(NoResultException ex){{
+                roomForm.setName("Kambarys Nr.1");
+            }}
+        }
+
         Room room_to_save = roomMapper.convertRegisteredRoomToRoom(roomForm);
+
         return roomRepository.createRoom(room_to_save);
     }
 
-    public boolean checkIfRoomExists(Long number, Long apartmentId) {
-        return roomRepository.existsByNumberAndId(number, apartmentId);
+    public boolean checkIfRoomExists(String name, Long apartmentId) {
+        return roomRepository.existsByNameAndId(name, apartmentId);
     }
 
     public List<RoomDTO> getAllUnoccupiedAccommodations(Date startDate, Date finishDate) {

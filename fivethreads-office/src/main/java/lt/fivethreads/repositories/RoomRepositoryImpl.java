@@ -4,6 +4,7 @@ import lt.fivethreads.entities.Room;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.Date;
@@ -40,10 +41,10 @@ public class RoomRepositoryImpl implements RoomRepository {
         return room;
     }
 
-    public boolean existsByNumberAndId(Long number, Long id) {
-        return em.createNamedQuery("Room.ExistsByNumberAndApartmentId")
+    public boolean existsByNameAndId(String name, Long id) {
+        return em.createNamedQuery("Room.ExistsByNameAndApartmentId")
                 .setParameter("apartment_ID", id)
-                .setParameter("number", number)
+                .setParameter("name", name)
                 .getResultList().size() == 1;
     }
 
@@ -68,6 +69,23 @@ public class RoomRepositoryImpl implements RoomRepository {
                 .setParameter("finishDate", finishDate)
                 .setParameter("city", city)
                 .getResultList();
+    }
+
+    public String findLastDefaultName(Long apartmentId) throws NoResultException {
+    /*JPQL does not have the necessary syntax for order by cast .. statement
+    * That's why a NativeQuery is used
+    * Reason why the type is Object and no return class is specified
+    * https://stackoverflow.com/questions/19051058/hibernate-createnativequery-with-non-entity-class-result
+    * */
+        Object defaultName = em.createNativeQuery("SELECT r.NAME FROM ROOM AS r " +
+                "WHERE r.APARTMENT_ID = ?1 AND r.NAME LIKE ?2 " +
+                "ORDER BY CAST(SUBSTRING(r.Name, 13) AS INT) DESC")
+                .setParameter(1, apartmentId)
+                .setParameter(2, "Kambarys Nr.%_")
+                .setMaxResults(1)
+                .getSingleResult();
+
+        return (String) defaultName;
     }
 
 }

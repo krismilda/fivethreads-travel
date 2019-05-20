@@ -16,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -75,7 +76,7 @@ public class RoomController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        if (roomService.checkIfRoomExists(roomForm.getNumber(),
+        if (roomService.checkIfRoomExists(roomForm.getName(),
                 roomForm.getApartmentId())) {
             return new ResponseEntity<>("Fail -> Room is already created!",
                     HttpStatus.BAD_REQUEST);
@@ -102,5 +103,27 @@ public class RoomController {
 
         return new ResponseEntity<>(roomService.getAllUnoccupiedAccommodationsByApartmentId(
                 form.getStartDate(), form.getFinishDate(), id), HttpStatus.OK);
+    }
+
+    @PostMapping("/rooms/massCreate/{apartmentId}&{numberOfRooms}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
+    public ResponseEntity massCreateRooms(@PathVariable Long apartmentId, @PathVariable int numberOfRooms){
+
+        List<RoomForm> roomsToCreate = new ArrayList<>();
+
+        for (int i = 0; i < numberOfRooms; i++){
+            RoomForm form = new RoomForm();
+            form.setApartmentId(apartmentId);
+            form.setCapacity((long) 1);
+            roomsToCreate.add(form);
+        }
+
+        List<RoomDTO> createdRooms = new ArrayList<>();
+
+        for (RoomForm form:roomsToCreate) {
+            createdRooms.add(roomMapper.getRoomDTO(roomService.createRoom(form)));
+        }
+
+        return new ResponseEntity<>(createdRooms, HttpStatus.CREATED);
     }
 }

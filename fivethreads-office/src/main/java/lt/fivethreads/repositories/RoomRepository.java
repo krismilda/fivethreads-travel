@@ -14,8 +14,9 @@ public interface RoomRepository {
     void deleteRoom(long id);
     Room updateRoom(Room room);
     Room createRoom(Room room);
-    boolean existsByNumberAndId(Long number, Long id);
+    boolean existsByNameAndId(String name, Long id);
     List <Room> getUnoccupiedRooms(Date startDate, Date finishDate);
     List <Room> getUnoccupiedRoomsByApartment(Date startDate, Date finishDate, Long apartmentId);
     List<Room> getUnoccupiedRoomByCity(Date startDate, Date finishDate, String city);
+    String findLastDefaultName(Long apartmentId);
 }
