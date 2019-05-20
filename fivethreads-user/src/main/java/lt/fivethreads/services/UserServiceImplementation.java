@@ -10,10 +10,12 @@ import lt.fivethreads.exception.file.EmailNotExists;
 import lt.fivethreads.exception.file.UserIDNotExists;
 import lt.fivethreads.mapper.UserMapper;
 import lt.fivethreads.repositories.UserRepository;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +36,9 @@ public class UserServiceImplementation implements UserService {
 
     @Autowired
     UserCreationService userCreationService;
+
+    @Autowired
+    OfficeService officeService;
 
     @Override
     public User getUserByEmail(String email) throws UserIDNotExists
@@ -65,7 +70,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public ExtendedUserDTO updateUser(ExtendedUserDTO userDTO) {
+    public User updateUser(ExtendedUserDTO userDTO) {
         User user = userRepository.findById(userDTO.getId())
                 .orElseThrow(() -> new UserIDNotExists());
         if (this.checkIfEmailExists(userDTO.getEmail()) && !userDTO.getEmail().equals(user.getEmail())) {
@@ -77,14 +82,11 @@ public class UserServiceImplementation implements UserService {
         user.setId(userDTO.getId());
         user.setPhone(userDTO.getPhone());
         user.setRoles(userMapper.getRoles(userDTO.getRole()));
-
         if(!(userDTO.getOfficeId() == null)){
-            Office office = new Office();
-            office.setId(userDTO.getOfficeId());
-            user.setOffice(office);
+            user.setOffice(officeService.getOfficeById(userDTO.getOfficeId()));
         }
 
-        return userMapper.getUserDTO(userRepository.save(user));
+        return userRepository.saveAndFlush(user);
     }
 
     @Override
@@ -99,28 +101,33 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public void createUsers(List<ExtendedUserDTO> users) {
-        //List<User> userEntities = new ArrayList<>();
         for (ExtendedUserDTO user: users) {
             User userEntity = userMapper.getUser(user);
-            User user_to_create = userCreationService.createNewUser(userEntity);
-          //  userEntities.add(userEntity);
+            userCreationService.createNewUser(userEntity);
         }
-
-     //   userRepository.saveAll(userEntities);
     }
 
     @Override
-    public ExtendedUserDTO createUser(RegistrationForm user) {
+    public User createUser(RegistrationForm user) {
         User user_to_create = userMapper.convertRegistrationUserToUser(user);
         User created_user = userCreationService.createNewUser(user_to_create);
-        return userMapper.getUserDTO(created_user);
+        return created_user;
     }
 
     @Override
-    public void changePassword(ChangePasswordForm changePasswordForm) throws EmailNotExists {
-        User user = userRepository.findByEmail(changePasswordForm.getEmail())
+    public void changePassword(ChangePasswordForm changePasswordForm, String email) throws EmailNotExists {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EmailNotExists());
         user.setPassword(encoder.encode(changePasswordForm.getPassword()));
+        userRepository.save(user);
+    }
+
+    @Override
+    public Boolean checkIfModified(Long userID, String version){
+        User user = userRepository.findById(userID)
+                .orElseThrow(() -> new UserIDNotExists());
+        String current_version = user.getVersion().toString();
+        return !version.equals(current_version);
     }
 
 }

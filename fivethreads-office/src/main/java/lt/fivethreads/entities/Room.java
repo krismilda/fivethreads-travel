@@ -39,9 +39,6 @@ public class Room {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "number")
-    private Long number;
-
     @Column(name ="capacity")
     private Long capacity;
 
@@ -54,9 +51,13 @@ public class Room {
     @NotNull
     private String name;
 
+    @Version
+    private Long version;
+
+
     public Room(){}
-    public Room(Long number, Long capacity) {
-        this.number = number;
+    public Room(String name, Long capacity) {
+        this.name = name;
         this.capacity = capacity;
     }
 }

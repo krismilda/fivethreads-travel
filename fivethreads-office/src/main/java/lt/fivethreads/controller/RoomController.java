@@ -1,10 +1,12 @@
 package lt.fivethreads.controller;
 
 
+import lt.fivethreads.entities.Room;
 import lt.fivethreads.entities.request.DateForm;
 import lt.fivethreads.entities.request.RoomDTO;
 import lt.fivethreads.entities.request.RoomForm;
 
+import lt.fivethreads.mapper.RoomMapper;
 import lt.fivethreads.services.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +26,9 @@ public class RoomController {
     @Autowired
     RoomService roomService;
 
+    @Autowired
+    RoomMapper roomMapper;
+
     @GetMapping("/rooms")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
     public ResponseEntity<?> getAllRooms() {
@@ -33,7 +39,11 @@ public class RoomController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
     public ResponseEntity<?> getRoomById(@PathVariable("roomId") int roomId) {
         long id = roomId;
-        return new ResponseEntity<>(roomService.getRoomById(id), HttpStatus.OK);
+        Room room = roomService.getRoomById(id);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .eTag("\"" + room.getVersion() + "\"")
+                .body(roomMapper.getRoomDTO(room));
     }
 
     @DeleteMapping("/admin/rooms/{roomId}")
@@ -46,9 +56,16 @@ public class RoomController {
 
     @PutMapping("/rooms/room")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
-    public ResponseEntity<?> updateRoom(@Validated @RequestBody RoomDTO roomDTO) {
-        RoomDTO updatedRoom = roomService.updateRoom(roomDTO);
-        return new ResponseEntity<>(updatedRoom, HttpStatus.OK);
+    public ResponseEntity<?> updateRoom(@Validated @RequestBody RoomDTO roomDTO, WebRequest request) {
+        String version = request.getHeader("If-Match");
+        if(roomService.checkIfModified(roomDTO.getId(), version)){
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+        }
+        Room updatedRoom = roomService.updateRoom(roomDTO);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .eTag("\"" + updatedRoom.getVersion() + "\"")
+                .body(roomMapper.getRoomDTO(updatedRoom));
     }
 
     @PostMapping("/admin/rooms/create")
@@ -65,9 +82,13 @@ public class RoomController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        RoomDTO createdRoom = roomService.createRoom(roomForm);
-        return new ResponseEntity<>(createdRoom, HttpStatus.OK);
+        Room createdRoom = roomService.createRoom(roomForm);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .eTag("\"" + createdRoom.getVersion() + "\"")
+                .body(roomMapper.getRoomDTO(createdRoom));
     }
+
     @GetMapping("/rooms/unoccupied")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     public ResponseEntity getUnoccupiedAccommodations(@Validated @RequestBody DateForm form){
@@ -100,7 +121,7 @@ public class RoomController {
         List<RoomDTO> createdRooms = new ArrayList<>();
 
         for (RoomForm form:roomsToCreate) {
-            createdRooms.add(roomService.createRoom(form));
+            createdRooms.add(roomMapper.getRoomDTO(roomService.createRoom(form)));
         }
 
         return new ResponseEntity<>(createdRooms, HttpStatus.CREATED);

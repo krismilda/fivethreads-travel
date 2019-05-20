@@ -1,5 +1,6 @@
 package lt.fivethreads.services;
 
+import lt.fivethreads.entities.Room;
 import lt.fivethreads.entities.request.RoomDTO;
 import lt.fivethreads.entities.request.RoomForm;
 
@@ -8,11 +9,12 @@ import java.util.List;
 
 public interface RoomService {
     List<RoomDTO> getAllRooms();
-    RoomDTO getRoomById(Long id);
-    RoomDTO updateRoom (RoomDTO room);
+    Room getRoomById(Long id);
+    Room updateRoom (RoomDTO room);
     void deleteRoom(Long id);
-    RoomDTO createRoom (RoomForm room);
     boolean checkIfRoomExists(String name, Long apartmentId);
+    Room createRoom (RoomForm room);
     List <RoomDTO> getAllUnoccupiedAccommodations(Date startDate, Date finishDate);
     List <RoomDTO> getAllUnoccupiedAccommodationsByApartmentId (Date startDate, Date finishDate, Long apartmentId);
+    Boolean checkIfModified(Long roomID, String version);
 }

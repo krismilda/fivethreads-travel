@@ -48,7 +48,7 @@ public class TripServiceImplementation implements TripService {
     TripAccommodationValidation tripAccommodationValidation;
 
     @Transactional
-    public TripDTO createTrip(CreateTripForm form, String organizer_email) throws WrongTripData {
+    public Trip createTrip(CreateTripForm form, String organizer_email) throws WrongTripData {
         tripValidation.checkFnishStartDates(form.getStartDate(), form.getFinishDate(), "Finish date is earlier than start date.");
         tripValidation.checkStartDateToday(form.getStartDate());
         Trip trip = tripMapper.ConvertCreateTripFormToTrip(form, organizer_email);
@@ -59,7 +59,7 @@ public class TripServiceImplementation implements TripService {
         trip.setTripStatus(TripStatus.PLANNED);
         tripRepository.createTrip(trip);
         createNotificationService.createNotificationsForApproval(trip, "New trip is waiting for your approval.");
-        return tripMapper.converTripToTripDTO(trip);
+        return trip;
     }
 
     public List<TripDTO> getAllTrips() {
@@ -72,9 +72,9 @@ public class TripServiceImplementation implements TripService {
         return tripDTO;
     }
 
-    public TripDTO getById(long id) {
+    public Trip getById(long id) {
         Trip trip = tripRepository.findByID(id);
-        return (trip != null) ? tripMapper.converTripToTripDTO(trip) : null;
+        return trip;
     }
 
     public List<TripDTO> getAllTripsByOrganizerEmail(String email) {
@@ -131,7 +131,7 @@ public class TripServiceImplementation implements TripService {
     }
 
     @Transactional
-    public TripDTO editTripInformation(EditTripInformation editTripInformation, String organizer_email) throws AccessRightProblem, TripIsNotEditable {
+    public Trip editTripInformation(EditTripInformation editTripInformation, String organizer_email) throws AccessRightProblem, TripIsNotEditable {
         if (tripFilesService.checkIfDocumentsExist(editTripInformation.getId())) {
             throw new TripIsNotEditable("Trip cannot be deleted because financial documents exist.");
         }
@@ -172,7 +172,7 @@ public class TripServiceImplementation implements TripService {
         trip.setArrival(arrival);
         trip.setDeparture(departure);
         tripRepository.updateTrip(trip);
-        return tripMapper.converTripToTripDTO(trip);
+        return trip;
     }
 
     public TripDTO changeOrganizer(ChangeOrganizer changeOrganizer) {
@@ -192,5 +192,11 @@ public class TripServiceImplementation implements TripService {
             throw new AccessRightProblem("User is not the tripMember.");
         }
         return tripMemberMapper.convertTripToUserTripDTO(trip, email);
+    }
+
+    public Boolean checkIfModified(Long tripID, String version){
+        Trip trip = tripRepository.findByID(tripID);
+        String current_version = trip.getVersion().toString();
+        return !version.equals(current_version);
     }
 }

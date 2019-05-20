@@ -1,9 +1,9 @@
 package lt.fivethreads.services;
 
+import lt.fivethreads.Mapper.AddressMapper;
 import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.User;
 import lt.fivethreads.entities.request.ExtendedUserDTO;
-import lt.fivethreads.entities.request.OfficeDTO;
 import lt.fivethreads.entities.request.TripDTO;
 import lt.fivethreads.entities.rest.DateRangeDTO;
 import lt.fivethreads.entities.rest.TripCount;
@@ -39,6 +39,9 @@ public class StatisticServiceImplementation implements StatisticService{
 
     @Autowired
     OfficeMapper officeMapper;
+
+    @Autowired
+    AddressMapper addressMapper;
 
     public List<TripCount> countTripList(DateRangeDTO dateRangeDTO, String role, String email){
         List<TripDTO> tripList;
@@ -185,8 +188,13 @@ public class StatisticServiceImplementation implements StatisticService{
         return price;
     }
 
-    public List<TripCountByOfficeDTO> getTripCountByOffice(String role, String email){
-        List<Office> allOffices = officeRepository.getAll();
+    public List<TripCountByOfficeDTO> getTripCountByOffice(String role, String email, IDList offices){
+        List<Office> allOffices  = new ArrayList<>();
+        for (Long id: offices.getIdList()
+        ) {
+            Office office = officeRepository.findById(id);
+            allOffices.add(office);
+        }
         List<TripCountByOfficeDTO> tripByOffices = new ArrayList<>();
         List<TripDTO> trips = new ArrayList<>();
         if(role.equals("ROLE_ADMIN") || role.equals("ROLE_ORGANIZER") ){
@@ -199,8 +207,7 @@ public class StatisticServiceImplementation implements StatisticService{
         for (Office office:allOffices
              ) {
           long count = trips.stream()
-                  .filter(e->e.getArrival().getFullAddress()
-                          .equals(addressService.getCombinedAddress(office.getAddress())))
+                  .filter(e->addressService.compareTwoAddress(office.getAddress(), addressMapper.convertFullAddressToAddress(e.getArrival())))
                   .count();
           TripCountByOfficeDTO tripCountByOfficeDTO = new TripCountByOfficeDTO();
           tripCountByOfficeDTO.setCount(count);

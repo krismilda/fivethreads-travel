@@ -63,4 +63,7 @@ public class Trip {
 
     @OneToMany(mappedBy = "trip")
     private List<TripMember> tripMembers = new ArrayList<>();
+
+    @Version
+    private Long version;
 }

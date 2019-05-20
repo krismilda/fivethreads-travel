@@ -52,6 +52,8 @@ public class User {
     @ManyToOne(targetEntity = Office.class, fetch = FetchType.LAZY)
     private Office office;
 
+    @Version
+    private Long version;
 
     public User(){
     }

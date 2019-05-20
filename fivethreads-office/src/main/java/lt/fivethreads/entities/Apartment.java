@@ -47,6 +47,9 @@ public class Apartment {
     @OneToMany(mappedBy = "apartment")
     private Set<Room> rooms;
 
+    @Version
+    private Long version;
+
     public Apartment(){}
     public Apartment(Address address, Room... rooms) {
         this.address = address;

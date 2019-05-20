@@ -3,6 +3,7 @@ package lt.fivethreads.services;
 import lt.fivethreads.Mapper.AddressMapper;
 import lt.fivethreads.entities.Address;
 import lt.fivethreads.entities.Office;
+import lt.fivethreads.entities.Room;
 import lt.fivethreads.entities.request.OfficeDTO;
 import lt.fivethreads.entities.request.OfficeForm;
 import lt.fivethreads.mapper.OfficeMapper;
@@ -38,12 +39,12 @@ public class OfficeServiceImplementation implements OfficeService {
                 .collect(Collectors.toList());
     }
 
-    public OfficeDTO getOfficeById(Long id) {
+    public Office getOfficeById(Long id) {
         Office office = officeRepository.findById(id);
-        return officeMapper.getOfficeDTO(office);
+        return office;
     }
 
-    public OfficeDTO updateOffice(OfficeDTO officeDTO) {
+    public Office updateOffice(OfficeDTO officeDTO) {
 
         Office office = officeRepository.findById(officeDTO.getId());
 
@@ -60,16 +61,16 @@ public class OfficeServiceImplementation implements OfficeService {
 
         office.setName(officeDTO.getName());
         office.setId(officeDTO.getId());
-        return officeMapper.getOfficeDTO(officeRepository.updateOffice(office));
+        return officeRepository.updateOffice(office);
     }
 
     public void deleteOffice(Long id) {
         officeRepository.deleteOffice(id);
     }
 
-    public OfficeDTO createOffice(OfficeForm officeForm) {
+    public Office createOffice(OfficeForm officeForm) {
         Office office_to_save = officeMapper.convertRegisteredOfficeToOffice(officeForm);
-        return officeMapper.getOfficeDTO(officeRepository.createOffice(office_to_save));
+        return officeRepository.createOffice(office_to_save);
     }
 
     public boolean checkIfOfficeExists(double latitude, double longitude, String name) {
@@ -100,5 +101,11 @@ public class OfficeServiceImplementation implements OfficeService {
             officeDTOList.add(officeMapper.getOfficeDTO(office));
         }
         return officeDTOList;
+    }
+
+    public Boolean checkIfModified(Long officeID, String version){
+        Office office = officeRepository.findById(officeID);
+        String current_version = office.getVersion().toString();
+        return !version.equals(current_version);
     }
 }
