@@ -22,14 +22,13 @@ public class ScheduleTripStatusCheckerImpl {
 
 
     //@Scheduled(cron = "0 0 12 * * ?")
-    @Scheduled(cron = "* 0/40 * * * ?")
+    @Scheduled(cron = "* 0/10 * * * ?")
     @Transactional
     public void create() {
-        System.out.println("Statusu procesas");
         List<Trip> allTrips = tripRepository.getAll();
-        Boolean checked=Boolean.FALSE;
         for (Trip trip:allTrips
              ) {
+            Boolean checked=Boolean.FALSE;
             if(!trip.getTripStatus().equals(TripStatus.COMPLETED)) {
                 if (tripStatusService.checkIfCompleted(trip)) {
                     trip.setTripStatus(TripStatus.COMPLETED);
@@ -41,8 +40,8 @@ public class ScheduleTripStatusCheckerImpl {
                     tripRepository.updateTrip(trip);
                     checked=Boolean.TRUE;
                 }
-                if (tripStatusService.checkIfPlanned(trip)&& !checked) {
-                    trip.setTripStatus(TripStatus.PLANNED);
+                if (tripStatusService.checkIfPlanned(trip) && !checked) {
+                    trip.setTripStatus(TripStatus.NOTSTARTED);
                     tripRepository.updateTrip(trip);
                     checked=Boolean.TRUE;
                 }

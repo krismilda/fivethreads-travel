@@ -15,13 +15,13 @@ public class TripStatusServiceImplementation implements ITripStatusService
         Boolean status = true;
         for (TripMember tripMember: trip.getTripMembers()
              ) {
-            if(!(!(tripMember.getTripAcceptance().equals(TripAcceptance.CANCELLED)) && tripMember.getIsFlightTickedNeeded() && tripMember.getFlightTicket()!=null && tripMember.getFlightTicket().getFile()!=null)){
+            if(!tripMember.getTripAcceptance().equals(TripAcceptance.CANCELLED) && tripMember.getIsFlightTickedNeeded() && tripMember.getFlightTicket()!=null && tripMember.getFlightTicket().getFile()==null){
                 status=false;
             }
-            if(!(tripMember.getIsCarNeeded() && tripMember.getCarTicket()!=null && tripMember.getCarTicket().getFile()!=null)){
+            if(!tripMember.getTripAcceptance().equals(TripAcceptance.CANCELLED) && tripMember.getIsCarNeeded() && tripMember.getCarTicket()!=null && tripMember.getCarTicket().getFile()==null){
                 status=false;
             }
-            if(!(tripMember.getIsAccommodationNeeded() && tripMember.getTripAccommodation()!=null  && tripMember.getTripAccommodation().getFile()!=null)){
+            if(!tripMember.getTripAcceptance().equals(TripAcceptance.CANCELLED) && tripMember.getIsAccommodationNeeded() && tripMember.getTripAccommodation()!=null  && tripMember.getTripAccommodation().getFile()==null){
                 status=false;
             }
         }
@@ -29,7 +29,7 @@ public class TripStatusServiceImplementation implements ITripStatusService
     }
     public Boolean checkIfCompleted(Trip trip){
         Date today = new Date();
-        if(trip.getStartDate().compareTo(today)>=0 && trip.getFinishDate().compareTo(today)>0){
+        if(trip.getStartDate().compareTo(today)<0 && trip.getFinishDate().compareTo(today)<0){
             return true;
         }
         return false;
@@ -37,7 +37,7 @@ public class TripStatusServiceImplementation implements ITripStatusService
 
     public Boolean checkIfStarted(Trip trip){
         Date today = new Date();
-        if(trip.getStartDate().compareTo(today)>=0 && trip.getFinishDate().compareTo(today)>=0){
+        if(trip.getStartDate().compareTo(today)<=0 && trip.getFinishDate().compareTo(today)>=0){
             return true;
         }
         return false;
