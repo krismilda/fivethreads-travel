@@ -16,6 +16,7 @@ import lt.fivethreads.repositories.OfficeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +44,7 @@ public class StatisticServiceImplementation implements StatisticService{
     @Autowired
     AddressMapper addressMapper;
 
-    public List<TripCount> countTripList(DateRangeDTO dateRangeDTO, String role, String email){
+    public List<TripCount> countTripList(Date start, Date finish, String role, String email){
         List<TripDTO> tripList;
         if(role.equals("ROLE_ADMIN") || role.equals("ROLE_ORGANIZER") ){
             tripList=tripService.getAllTrips();
@@ -51,7 +52,7 @@ public class StatisticServiceImplementation implements StatisticService{
         else{
             tripList=tripService.getAllTripsByUserEmail(email);
         }
-        List<Date> allDates = this.getDatesListBetweenDates(dateRangeDTO.getStart(), dateRangeDTO.getFinish());
+        List<Date> allDates = this.getDatesListBetweenDates(start, finish);
         List<TripCount> tripCountList = new ArrayList<>();
         for (Date day: allDates
         ) {
@@ -86,9 +87,9 @@ public class StatisticServiceImplementation implements StatisticService{
         return dates;
     }
 
-    public List<UserTripCountDTO> countTripByUser(IDList IDList){
+    public List<UserTripCountDTO> countTripByUser(Long [] IDList){
         List<UserTripCountDTO> userTripCountDTOList = new ArrayList<>();
-        for (Long id: IDList.getIdList()
+        for (Long id: Arrays.asList(IDList)
         ) {
             User user = userService.getUserByID(id);
             int count = tripService.getAllTripsByUserEmail(user.getEmail()).size();
@@ -188,9 +189,9 @@ public class StatisticServiceImplementation implements StatisticService{
         return price;
     }
 
-    public List<TripCountByOfficeDTO> getTripCountByOffice(String role, String email, IDList offices){
+    public List<TripCountByOfficeDTO> getTripCountByOffice(String role, String email, Long[] offices){
         List<Office> allOffices  = new ArrayList<>();
-        for (Long id: offices.getIdList()
+        for (Long id: Arrays.asList(offices)
         ) {
             Office office = officeRepository.findById(id);
             allOffices.add(office);
