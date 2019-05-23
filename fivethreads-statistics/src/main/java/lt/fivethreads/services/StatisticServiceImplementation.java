@@ -5,7 +5,6 @@ import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.User;
 import lt.fivethreads.entities.request.ExtendedUserDTO;
 import lt.fivethreads.entities.request.TripDTO;
-import lt.fivethreads.entities.rest.DateRangeDTO;
 import lt.fivethreads.entities.rest.TripCount;
 import lt.fivethreads.entities.request.TripMemberDTO;
 import lt.fivethreads.entities.rest.*;
@@ -87,9 +86,9 @@ public class StatisticServiceImplementation implements StatisticService{
         return dates;
     }
 
-    public List<UserTripCountDTO> countTripByUser(Long [] IDList){
+    public List<UserTripCountDTO> countTripByUser(Long [] userIDS){
         List<UserTripCountDTO> userTripCountDTOList = new ArrayList<>();
-        for (Long id: Arrays.asList(IDList)
+        for (Long id: Arrays.asList(userIDS)
         ) {
             User user = userService.getUserByID(id);
             int count = tripService.getAllTripsByUserEmail(user.getEmail()).size();
