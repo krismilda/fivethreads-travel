@@ -82,6 +82,7 @@ public class UserMapper {
         userDTO.setLastname(user.getLastName());
         userDTO.setId(user.getId());
         userDTO.setPhone(user.getPhone());
+        userDTO.setVersion(user.getVersion());
         userDTO.setRole(user.getRoles()
                 .stream()
                 .map(e -> e.getName().toString())

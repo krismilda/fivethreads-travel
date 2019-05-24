@@ -10,7 +10,7 @@ import java.util.List;
 public interface RoomService {
     List<RoomDTO> getAllRooms();
     Room getRoomById(Long id);
-    Room updateRoom (RoomDTO room, Long version);
+    Room updateRoom (RoomDTO room);
     void deleteRoom(Long id);
     boolean checkIfRoomExists(String name, Long apartmentId);
     Room createRoom (RoomForm room);

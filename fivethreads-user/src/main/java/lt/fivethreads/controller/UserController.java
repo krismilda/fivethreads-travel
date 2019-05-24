@@ -38,7 +38,6 @@ public class UserController {
         User user = userService.getUserByID(id);
         return ResponseEntity
                 .ok()
-                .eTag("\"" + user.getVersion() + "\"")
                 .body(userMapper.getUserDTO(user));
     }
 
@@ -48,7 +47,6 @@ public class UserController {
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         return ResponseEntity
                 .ok()
-                .eTag("\"" + user.getVersion() + "\"")
                 .body(userMapper.getUserDTO(user));
     }
 
@@ -63,7 +61,6 @@ public class UserController {
         User updatedUserDTO = userService.updateUser(user);
         return ResponseEntity
                 .ok()
-                .eTag("\"" + updatedUserDTO.getVersion() + "\"")
                 .body(userMapper.getUserDTO(updatedUserDTO));
     }
 
@@ -78,14 +75,12 @@ public class UserController {
     @PutMapping("/admin/user")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateUser(@Validated @RequestBody ExtendedUserDTO user, WebRequest request) {
-        String version = request.getHeader("If-Match");
-        if(userService.checkIfModified(user.getId(), version)){
+        if(userService.checkIfModified(user.getId(), user.getVersion().toString())){
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
         }
         User updatedUserDTO = userService.updateUser(user);
         return ResponseEntity
                 .ok()
-                .eTag("\"" + updatedUserDTO.getVersion() + "\"")
                 .body(userMapper.getUserDTO(updatedUserDTO));
     }
 
@@ -95,7 +90,6 @@ public class UserController {
         User createdUser = userService.createUser(registrationForm);
         return ResponseEntity
                 .ok()
-                .eTag("\"" + createdUser.getVersion() + "\"")
                 .body(userMapper.getUserDTO(createdUser));
     }
 

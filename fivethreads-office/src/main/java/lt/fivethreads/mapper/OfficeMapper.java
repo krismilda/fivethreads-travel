@@ -31,7 +31,7 @@ public class OfficeMapper {
         officeDTO.setAddress(addressMapper.convertAddressToFullAddress(office.getAddress()));
         officeDTO.setName(office.getName());
         officeDTO.setId(office.getId());
-
+        officeDTO.setVersion(office.getVersion());
         return officeDTO;
     }
 

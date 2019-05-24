@@ -10,4 +10,5 @@ public class ApartmentDTO {
     private Long id;
     private FullAddressDTO address;
     private Long officeId;
+    private Long version;
 }
