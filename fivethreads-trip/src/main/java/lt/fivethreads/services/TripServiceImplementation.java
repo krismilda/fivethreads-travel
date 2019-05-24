@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -69,6 +70,7 @@ public class TripServiceImplementation implements TripService {
         ) {
             tripDTO.add(tripMapper.converTripToTripDTO(trip));
         }
+        tripDTO.sort(Comparator.comparing(TripDTO::getStartDate).reversed());
         return tripDTO;
     }
 
@@ -84,6 +86,7 @@ public class TripServiceImplementation implements TripService {
         ) {
             tripDTO.add(tripMapper.converTripToTripDTO(trip));
         }
+        tripDTO.sort(Comparator.comparing(TripDTO::getStartDate).reversed());
         return tripDTO;
     }
 
@@ -94,6 +97,7 @@ public class TripServiceImplementation implements TripService {
         ) {
             tripDTO.add(tripMapper.converTripToTripDTO(trip));
         }
+        tripDTO.sort(Comparator.comparing(TripDTO::getStartDate).reversed());
         return tripDTO;
     }
 
