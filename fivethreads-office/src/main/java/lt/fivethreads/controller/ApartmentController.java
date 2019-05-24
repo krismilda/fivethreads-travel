@@ -56,11 +56,8 @@ public class ApartmentController {
     @PutMapping("/apartments/apartment")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
     public ResponseEntity<?> updateApartment(@Validated @RequestBody ApartmentDTO apartmentDTO, WebRequest request) {
-        String version = request.getHeader("If-Match");
-        if(apartmentService.checkIfModified(apartmentDTO.getId(), version)){
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
-        }
-        Apartment updatedApartment = apartmentService.updateApartment(apartmentDTO);
+        Long version = Long.parseLong(request.getHeader("If-Match"));
+        Apartment updatedApartment = apartmentService.updateApartment(apartmentDTO, version);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .eTag("\"" + updatedApartment.getVersion() + "\"")

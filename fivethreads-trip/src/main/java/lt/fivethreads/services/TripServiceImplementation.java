@@ -131,7 +131,7 @@ public class TripServiceImplementation implements TripService {
     }
 
     @Transactional
-    public Trip editTripInformation(EditTripInformation editTripInformation, String organizer_email) throws AccessRightProblem, TripIsNotEditable {
+    public Trip editTripInformation(EditTripInformation editTripInformation, String organizer_email, Long version) throws AccessRightProblem, TripIsNotEditable {
         if (tripFilesService.checkIfDocumentsExist(editTripInformation.getId())) {
             throw new TripIsNotEditable("Trip cannot be deleted because financial documents exist.");
         }
@@ -171,6 +171,7 @@ public class TripServiceImplementation implements TripService {
         departure.setStreet(editTripInformation.getDeparture().getStreet());
         trip.setArrival(arrival);
         trip.setDeparture(departure);
+        trip.setVersion(version);
         tripRepository.updateTrip(trip);
         return trip;
     }

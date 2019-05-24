@@ -52,11 +52,8 @@ public class OfficeController {
     @PutMapping("/offices/office")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
     public ResponseEntity<?> updateOffice(@Validated @RequestBody OfficeDTO officeDTO, WebRequest request) {
-        String version = request.getHeader("If-Match");
-        if(officeService.checkIfModified(officeDTO.getId(), version)){
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
-        }
-        Office office = officeService.updateOffice(officeDTO);
+        Long version = Long.parseLong(request.getHeader("If-Match"));
+        Office office = officeService.updateOffice(officeDTO, version);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .eTag("\"" + office.getVersion() + "\"")

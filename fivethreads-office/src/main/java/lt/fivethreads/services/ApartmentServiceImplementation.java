@@ -52,7 +52,7 @@ public class ApartmentServiceImplementation implements ApartmentService {
         return apartment;
     }
 
-    public Apartment updateApartment(ApartmentDTO apartmentDTO) {
+    public Apartment updateApartment(ApartmentDTO apartmentDTO, Long version) {
         Apartment apartment = apartmentRepository.findById(apartmentDTO.getId());
         Address address = apartment.getAddress();
         address.setCity(apartmentDTO.getAddress().getCity());
@@ -62,7 +62,7 @@ public class ApartmentServiceImplementation implements ApartmentService {
         address.setLatitude(apartmentDTO.getAddress().getLatitude());
         address.setLongitude(apartmentDTO.getAddress().getLongitude());
         address.setStreet(apartmentDTO.getAddress().getStreet());
-
+        apartment.setVersion(version);
         apartment.setAddress(address);
 
         apartment.setOffice(officeRepository.findById(apartmentDTO.getOfficeId()));

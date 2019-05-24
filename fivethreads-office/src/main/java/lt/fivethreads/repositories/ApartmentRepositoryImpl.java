@@ -2,9 +2,11 @@ package lt.fivethreads.repositories;
 
 import lt.fivethreads.entities.Address;
 import lt.fivethreads.entities.Apartment;
+import lt.fivethreads.exception.OfficeDataWasModified;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.Date;
@@ -32,7 +34,13 @@ public class ApartmentRepositoryImpl implements ApartmentRepository {
     }
 
     public Apartment updateApartment(Apartment apartment) {
-        return em.merge(apartment);
+        try{
+            em.detach(apartment);
+            return em.merge(apartment);
+        }
+        catch(OptimisticLockException e){
+            throw new OfficeDataWasModified("Apartament was modified.");
+        }
     }
 
     public Apartment createApartment(Apartment apartment) {

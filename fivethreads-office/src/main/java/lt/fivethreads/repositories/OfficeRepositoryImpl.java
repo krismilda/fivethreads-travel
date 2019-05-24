@@ -1,9 +1,11 @@
 package lt.fivethreads.repositories;
 
 import lt.fivethreads.entities.Office;
+import lt.fivethreads.exception.OfficeDataWasModified;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.Date;
@@ -32,7 +34,13 @@ public class OfficeRepositoryImpl implements OfficeRepository {
     }
 
     public Office updateOffice(Office office) {
-        return em.merge(office);
+        try{
+            em.detach(office);
+            return em.merge(office);
+        }
+        catch (OptimisticLockException e){
+            throw new OfficeDataWasModified("Office was modified.");
+        }
     }
 
     public Office createOffice(Office office) {

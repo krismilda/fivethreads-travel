@@ -2,10 +2,12 @@ package lt.fivethreads.repositories;
 
 import lt.fivethreads.entities.Trip;
 import lt.fivethreads.entities.TripMember;
+import lt.fivethreads.exception.TripWasModified;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
@@ -47,7 +49,13 @@ public class TripRepositoryImplementation implements TripRepository {
     }
 
     public void updateTrip(Trip trip) {
-        em.merge(trip);
+        try{
+            em.detach(trip);
+            em.merge(trip);
+        }
+        catch (OptimisticLockException e){
+            throw new TripWasModified("Trip was modified.");
+        }
     }
 
     public List<Trip> getAllByOrganizerEmail(String email) {

@@ -147,11 +147,8 @@ public class TripController {
     @PutMapping("/editTrip")
     @PreAuthorize("hasRole('ORGANIZER')")
     public ResponseEntity<TripDTO> editTripInformation(@Validated @RequestBody EditTripInformation editTripInformation, WebRequest request) {
-        String version = request.getHeader("If-Match");
-        if(tripService.checkIfModified(editTripInformation.getId(), version)){
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
-        }
-        Trip tripDTO = tripService.editTripInformation(editTripInformation, SecurityContextHolder.getContext().getAuthentication().getName());
+        Long version = Long.parseLong(request.getHeader("If-Match"));
+        Trip tripDTO = tripService.editTripInformation(editTripInformation, SecurityContextHolder.getContext().getAuthentication().getName(), version);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .eTag("\"" + tripDTO.getVersion() + "\"")

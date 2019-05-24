@@ -10,7 +10,7 @@ import java.util.List;
 public interface OfficeService {
     List<OfficeDTO> getAllOffices();
     Office getOfficeById(Long id);
-    Office updateOffice(OfficeDTO office);
+    Office updateOffice(OfficeDTO office, Long version);
     void deleteOffice(Long id);
     Office createOffice(OfficeForm user);
     boolean checkIfOfficeExists(double latitude, double longitude, String name);

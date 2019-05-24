@@ -17,7 +17,7 @@ public interface TripService {
     List<TripDTO> getAllTripsByUserEmail(String email);
     TripMemberDTO addNewTripMember(TripMemberDTO tripMemberDTO, Long tripID, String organizer_email) throws AccessRightProblem, TripIsNotEditable;
     void deleteTrip(Long tripID, String organizer_email) throws AccessRightProblem, TripIsNotEditable;
-    Trip editTripInformation(EditTripInformation editTripInformation, String organizer_email) throws AccessRightProblem, TripIsNotEditable;
+    Trip editTripInformation(EditTripInformation editTripInformation, String organizer_email, Long version) throws AccessRightProblem, TripIsNotEditable;
     TripDTO changeOrganizer(ChangeOrganizer changeOrganizer);
     UserTripDTO getUserTripById (String email, Long tripID);
     Boolean checkIfModified(Long tripID, String version);
