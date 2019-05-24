@@ -17,9 +17,8 @@ import lt.fivethreads.validation.TripValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class NotificationServiceImpl implements NotificationService {
@@ -99,6 +98,7 @@ public class NotificationServiceImpl implements NotificationService {
         ) {
             notificationListDTOS.add(notificationMapper.convertNotificationToNotificationListDTO(notification));
         }
+        notificationListDTOS.sort(Comparator.comparing(NotificationListDTO::getCreated_date).reversed());
         return notificationListDTOS;
     }
 
@@ -111,6 +111,7 @@ public class NotificationServiceImpl implements NotificationService {
         ) {
             notificationListDTOS.add(notificationMapper.convertNotificationToNotificationListDTO(notification));
         }
+        notificationListDTOS.sort(Comparator.comparing(NotificationListDTO::getCreated_date).reversed());
         return notificationListDTOS;
     }
 
