@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,9 +53,12 @@ public class UserServiceImplementation implements UserService {
     @Override
     public List<ExtendedUserDTO> getAllUser() {
         List<User> users = userRepository.findAll();
-        return users.stream()
+        List<ExtendedUserDTO> extendedUserDTOList = users.stream()
                 .map(e -> userMapper.getUserDTO(e))
                 .collect(Collectors.toList());
+        extendedUserDTOList.sort(Comparator.comparing(ExtendedUserDTO::getLastname));
+        return extendedUserDTOList;
+
     }
 
     @Override
