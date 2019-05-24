@@ -1,13 +1,20 @@
 package lt.fivethreads.validation;
 
 import lt.fivethreads.entities.TripMember;
+import lt.fivethreads.entities.request.EventDTO;
 import lt.fivethreads.exception.WrongTripData;
+import lt.fivethreads.services.EventService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class TripValidation {
+
+    @Autowired
+    EventService eventService;
 
     public void checkFnishStartDates(Date startDate, Date finishDate, String message) {
         if (finishDate.compareTo(startDate) < 0) {
@@ -24,6 +31,12 @@ public class TripValidation {
     }
 
     public void validateTripMember(TripMember tripMember) {
+        List<EventDTO> events = eventService.getUserEvents(tripMember.getUser().getId());
+        Boolean isBusy = events.stream().anyMatch(e->((e.getStartDate().compareTo(tripMember.getTrip().getStartDate())>=0 & e.getStartDate().compareTo(tripMember.getTrip().getFinishDate())<=0) |
+                (e.getEndDate().compareTo(tripMember.getTrip().getStartDate())>=0 & e.getStartDate().compareTo(tripMember.getTrip().getFinishDate())<=0)));
+        if(isBusy){
+            throw new WrongTripData("TripMember is busy.");
+        }
         if (tripMember.getIsAccommodationNeeded() && tripMember.getTripAccommodation() != null) {
             checkFnishStartDates(tripMember.getTripAccommodation().getAccommodationStart(),
                     tripMember.getTripAccommodation().getAccommodationFinish(),
