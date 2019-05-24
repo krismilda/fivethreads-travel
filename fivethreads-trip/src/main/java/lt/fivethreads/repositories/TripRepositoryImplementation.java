@@ -36,6 +36,12 @@ public class TripRepositoryImplementation implements TripRepository {
         for (TripMember tripMember : trip.getTripMembers()
         ) {
             tripMemberRepository.saveTripMember(tripMember);
+            if(tripMember.getCarTicket()!=null){
+                em.persist(tripMember.getCarTicket());
+            }
+            if(tripMember.getTripAccommodation()!=null){
+                em.persist(tripMember.getTripAccommodation());
+            }
         }
         em.persist(trip);
     }

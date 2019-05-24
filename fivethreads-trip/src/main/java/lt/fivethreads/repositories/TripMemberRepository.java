@@ -1,5 +1,7 @@
 package lt.fivethreads.repositories;
 
+import lt.fivethreads.entities.CarTicket;
+import lt.fivethreads.entities.TripAccommodation;
 import lt.fivethreads.entities.TripCancellation;
 import lt.fivethreads.entities.TripMember;
 
@@ -17,4 +19,6 @@ public interface TripMemberRepository {
     TripMember findByAccommodationFileID(Long fileID);
     void saveAccommodationTicket(TripMember tripMember);
     void deleteTripMember(TripMember tripMember);
+    void removeCarTicket (CarTicket carTicket);
+    void removeTripAccomodation (TripAccommodation tripAccommodation);
 }

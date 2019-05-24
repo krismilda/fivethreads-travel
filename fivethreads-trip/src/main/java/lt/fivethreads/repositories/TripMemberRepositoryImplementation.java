@@ -30,6 +30,9 @@ public class TripMemberRepositoryImplementation implements TripMemberRepository 
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    FileRepository fileRepository;
+
     public void saveTripMember(TripMember tripMember) {
         if(tripMember.getCarTicket() != null){
             carTicketRepository.saveCarTicket(tripMember.getCarTicket());
@@ -96,23 +99,30 @@ public class TripMemberRepositoryImplementation implements TripMemberRepository 
         em.merge(tripMember);
     }
 
+    public void removeCarTicket (CarTicket carTicket){
+        em.remove(carTicket);
+    }
+    public void removeTripAccomodation (TripAccommodation tripAccommodation){
+        em.remove(tripAccommodation);
+    }
     public void saveFlightTicket(TripMember tripMember) {
         if (tripMember.getFlightTicket() != null) {
-            em.merge(tripMember.getFlightTicket());
+            em.persist(tripMember.getFlightTicket());
             em.merge(tripMember);
         }
     }
 
+
     public void saveCarTicket(TripMember tripMember) {
         if (tripMember.getCarTicket() != null) {
-            em.merge(tripMember.getCarTicket());
+            em.persist(tripMember.getCarTicket());
             em.merge(tripMember);
         }
     }
 
     public void saveAccommodationTicket(TripMember tripMember) {
         if (tripMember.getTripAccommodation() != null) {
-            em.merge(tripMember.getTripAccommodation());
+            em.persist(tripMember.getTripAccommodation());
             em.merge(tripMember);
         }
     }

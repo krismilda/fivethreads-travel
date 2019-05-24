@@ -30,7 +30,8 @@ public class FileController {
     /* TODO: set file travel trip relation */
     @PostMapping("")
     public FileDTO upload(@RequestParam("file") MultipartFile file) throws Exception {
-        return fileService.upload(file);
+        String filename = file.getOriginalFilename();
+        return fileService.upload(file, filename);
     }
 
     @GetMapping("/{fileId}")

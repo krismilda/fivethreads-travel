@@ -9,12 +9,18 @@ import lt.fivethreads.mapper.TripMemberMapper;
 import lt.fivethreads.repositories.FileRepository;
 import lt.fivethreads.repositories.TripMemberRepository;
 import lt.fivethreads.repositories.TripRepository;
+import org.apache.commons.io.FilenameUtils;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class TripFilesServiceImplementation implements TripFilesService {
@@ -40,13 +46,21 @@ public class TripFilesServiceImplementation implements TripFilesService {
     public FileDTO addFlightTicket(Long tripID, String memberEmail, MultipartFile file, double price) {
         Trip trip = tripRepository.findByID(tripID);
         TripMember tripMember = tripMemberRepository.getTripMemberByTripIDAndEmail(tripID, memberEmail);
+
         if (tripMember.getTripAcceptance() != TripAcceptance.ACCEPTED) {
             throw new TripIsNotEditable("The trip is not accepted. Not possible to add flight ticket.");
         }
         if (!tripMember.getIsFlightTickedNeeded()) {
             throw new TripIsNotEditable("Flight ticket is not needed.");
         }
-        FileDTO fileDTO = fileService.upload(file);
+        int size=0;
+        if(tripMember.getFlightTicket()!=null && tripMember.getFlightTicket().getFile()!=null){
+            size = tripMember.getFlightTicket().getFile().size();
+        }
+        String new_filename = FilenameUtils.getBaseName(file.getOriginalFilename())
+                .concat("_"+tripMember.getId()+size+"F") + "."
+                + FilenameUtils.getExtension(file.getOriginalFilename());
+        FileDTO fileDTO = fileService.upload(file,new_filename);
         File uploadedFile = fileRepository.findById(fileDTO.getId()).orElseThrow(
                 () -> new WrongTripData("Flight ticket does not exist.")
         );
@@ -60,9 +74,13 @@ public class TripFilesServiceImplementation implements TripFilesService {
         String newID = trip.getId().toString() + tripMember.getId().toString() + "F" + tripMember.getFlightTicket().getId().toString();
         tripMember.getFlightTicket().setUniqueID(newID);
         if(tripMember.getFlightTicket().getFile()==null){
-            tripMember.getFlightTicket().setFile(new ArrayList<>());
+            List<File> files = new ArrayList<>();
+            files.add(uploadedFile);
+            tripMember.getFlightTicket().setFile(files);
         }
-        tripMember.getFlightTicket().getFile().add(uploadedFile);
+        else {
+            tripMember.getFlightTicket().getFile().add(uploadedFile);
+        }
         tripMemberRepository.saveFlightTicket(tripMember);
         createNotificationService.createNotificationInformationChanged(tripMember, "Information was changed.");
         return fileDTO;
@@ -73,30 +91,39 @@ public class TripFilesServiceImplementation implements TripFilesService {
     public FileDTO addCarTicket(Long tripID, String memberEmail, MultipartFile file,double price) {
         Trip trip = tripRepository.findByID(tripID);
         TripMember tripMember = tripMemberRepository.getTripMemberByTripIDAndEmail(tripID, memberEmail);
-
-        if (tripMember.getTripAcceptance() != TripAcceptance.ACCEPTED) {
+       if (tripMember.getTripAcceptance() != TripAcceptance.ACCEPTED) {
             throw new TripIsNotEditable("The trip is not accepted. Not possible to add car ticket.");
         }
         if (!tripMember.getIsCarNeeded()) {
             throw new TripIsNotEditable("Car ticket is not needed.");
         }
-        FileDTO fileDTO = fileService.upload(file);
+       if(tripMember.getCarTicket().getFile()==null){
+           CarTicket carTicket = new CarTicket();
+           carTicket.setTripMember(tripMember);
+           carTicket.setCarRentStart(tripMember.getCarTicket().getCarRentStart());
+           carTicket.setCarRentFinish(tripMember.getCarTicket().getCarRentFinish());
+           CarTicket toDelete = tripMember.getCarTicket();
+           tripMember.setCarTicket(carTicket);
+           toDelete.setTripMember(null);
+           tripMemberRepository.removeCarTicket(toDelete);
+           tripMemberRepository.saveCarTicket(tripMember);
+       }
+
+        int size=0;
+        if(tripMember.getCarTicket()!=null && tripMember.getCarTicket().getFile()!=null){
+            size = tripMember.getCarTicket().getFile().size();
+        }
+        String new_filename = FilenameUtils.getBaseName(file.getOriginalFilename())
+                .concat("_"+tripMember.getId()+size+"C") + "."
+                + FilenameUtils.getExtension(file.getOriginalFilename());
+        FileDTO fileDTO = fileService.upload(file, new_filename);
         File uploadedFile = fileRepository.findById(fileDTO.getId()).orElseThrow(
                 () -> new WrongTripData("Car ticket does not exist.")
         );
-        if (tripMember.getCarTicket() == null) {
-            CarTicket carTicket = new CarTicket();
-            carTicket.setTripMember(tripMember);
-            tripMember.setCarTicket(carTicket);
-        }
-
         tripMember.getCarTicket().setPrice(price);
         tripMemberRepository.saveCarTicket(tripMember);
         String newID = trip.getId().toString() + tripMember.getId().toString() + "C" + tripMember.getCarTicket().getId().toString();
         tripMember.getCarTicket().setUniqueID(newID);
-        if(tripMember.getCarTicket().getFile()==null){
-            tripMember.getCarTicket().setFile(new ArrayList<>());
-        }
         tripMember.getCarTicket().getFile().add(uploadedFile);
         tripMemberRepository.saveCarTicket(tripMember);
         createNotificationService.createNotificationInformationChanged(tripMember, "Information was changed.");
@@ -112,25 +139,48 @@ public class TripFilesServiceImplementation implements TripFilesService {
             throw new TripIsNotEditable("The trip is not accepted. Not possible to add accommodation ticket.");
         }
         if (!tripMember.getIsAccommodationNeeded()) {
-            throw new TripIsNotEditable("Car ticket is not needed.");
+            throw new TripIsNotEditable("TripAccommodation ticket is not needed.");
         }
-        FileDTO fileDTO = fileService.upload(file);
-        File uploadedFile = fileRepository.findById(fileDTO.getId()).orElseThrow(
-                () -> new WrongTripData("Accommodation ticket does not exist.")
-        );
         if (tripMember.getTripAccommodation() == null) {
             TripAccommodation tripAccommodation = new TripAccommodation();
             tripAccommodation.setTripMember(tripMember);
             tripMember.setTripAccommodation(tripAccommodation);
         }
+        if(tripMember.getTripAccommodation().getFile()==null){
+            TripAccommodation tripAccommodation = new TripAccommodation();
+            tripAccommodation.setTripMember(tripMember);
+            tripAccommodation.setAccommodationStart(tripMember.getTripAccommodation().getAccommodationStart());
+            tripAccommodation.setAccommodationFinish(tripMember.getTripAccommodation().getAccommodationFinish());
+            tripAccommodation.setAccommodationType(tripMember.getTripAccommodation().getAccommodationType());
+            TripAccommodation toDelete = tripMember.getTripAccommodation();
+            tripMember.setTripAccommodation(tripAccommodation);
+            toDelete.setTripMember(null);
+            tripMemberRepository.removeTripAccomodation(toDelete);
+            tripMemberRepository.saveAccommodationTicket(tripMember);
+        }
+        int size=0;
+        if(tripMember.getTripAccommodation()!=null && tripMember.getTripAccommodation().getFile()!=null){
+            size = tripMember.getTripAccommodation().getFile().size();
+        }
+        String new_filename = FilenameUtils.getBaseName(file.getOriginalFilename())
+                .concat("_"+tripMember.getId()+size+"A") + "."
+                + FilenameUtils.getExtension(file.getOriginalFilename());
+        FileDTO fileDTO = fileService.upload(file, new_filename);
+        File uploadedFile = fileRepository.findById(fileDTO.getId()).orElseThrow(
+                () -> new WrongTripData("Accommodation ticket does not exist.")
+        );
         tripMember.getTripAccommodation().setPrice(price);
         tripMemberRepository.saveAccommodationTicket(tripMember);
         String newID = trip.getId().toString() + tripMember.getId().toString() + "A" + tripMember.getTripAccommodation().getId().toString();
         tripMember.getTripAccommodation().setUniqueID(newID);
         if(tripMember.getTripAccommodation().getFile()==null){
-            tripMember.getTripAccommodation().setFile(new ArrayList<>());
+            List<File> files = new ArrayList<>();
+            files.add(uploadedFile);
+            tripMember.getTripAccommodation().setFile(files);
         }
-        tripMember.getTripAccommodation().getFile().add(uploadedFile);
+        else{
+            tripMember.getTripAccommodation().getFile().add(uploadedFile);
+        }
         tripMember.getTripAccommodation().setPrice(price);
         tripMemberRepository.saveAccommodationTicket(tripMember);
         createNotificationService.createNotificationInformationChanged(tripMember, "Information was changed.");
