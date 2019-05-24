@@ -25,12 +25,12 @@ public class FileServiceImplementation implements FileService {
     @Autowired
     FileMapper fileMapper;
 
-    public FileDTO upload(MultipartFile uploadedFile) {
+    public FileDTO upload(MultipartFile uploadedFile, String filename) {
         File file = fileMapper.convertUploadFileToFileEntity(uploadedFile);
+        file.setName(filename);
         fileRepository.save(file);
-
         try {
-            storageService.store(uploadedFile);
+            storageService.store(uploadedFile, filename);
         } catch (Exception e) {
             fileRepository.delete(file);
 

@@ -17,9 +17,9 @@ public class StorageService {
 
     private final Path rootLocation = Paths.get("upload-dir");
 
-    public void store(MultipartFile file) {
+    public void store(MultipartFile file, String filename) {
         try {
-            Files.copy(file.getInputStream(), this.rootLocation.resolve(file.getOriginalFilename()));
+            Files.copy(file.getInputStream(), this.rootLocation.resolve(filename));
         } catch (Exception e) {
             throw new RuntimeException("Upload failed.");
         }
