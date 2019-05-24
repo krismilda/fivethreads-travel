@@ -40,6 +40,7 @@ public class UserServiceImplementation implements UserService {
     @Autowired
     OfficeService officeService;
 
+
     @Override
     public User getUserByEmail(String email) throws UserIDNotExists
     {
@@ -103,14 +104,16 @@ public class UserServiceImplementation implements UserService {
     public void createUsers(List<ExtendedUserDTO> users) {
         for (ExtendedUserDTO user: users) {
             User userEntity = userMapper.getUser(user);
-            userCreationService.createNewUser(userEntity);
+            if (this.checkIfEmailExists(user.getEmail())) {
+                throw new EmailAlreadyExists();
+            }
+            User created_user = userRepository.save(userEntity);
         }
     }
 
     @Override
     public User createUser(RegistrationForm user) {
-        User user_to_create = userMapper.convertRegistrationUserToUser(user);
-        User created_user = userCreationService.createNewUser(user_to_create);
+        User created_user = userCreationService.createNewUser(user);
         return created_user;
     }
 

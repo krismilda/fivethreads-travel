@@ -1,7 +1,8 @@
 package lt.fivethreads.services;
 
 import lt.fivethreads.entities.User;
+import lt.fivethreads.entities.request.RegistrationForm;
 
 public interface UserCreationService {
-    User createNewUser(User user);
+    User createNewUser(RegistrationForm user);
 }
