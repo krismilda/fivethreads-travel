@@ -48,13 +48,13 @@ public class RoomServiceImplementation implements RoomService {
         return room;
     }
 
-    public Room updateRoom (RoomDTO roomDTO, Long version) {
+    public Room updateRoom (RoomDTO roomDTO) {
 
         Room room = roomRepository.findById(roomDTO.getId());
         room.setName(roomDTO.getName());
         room.setCapacity(roomDTO.getCapacity());
         room.setApartment(apartmentRepository.findById(roomDTO.getApartmentId()));
-        room.setVersion(version);
+        room.setVersion(roomDTO.getVersion());
         return roomRepository.updateRoom(room);
     }
 

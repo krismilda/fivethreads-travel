@@ -30,7 +30,7 @@ public class RoomMapper {
         roomDTO.setCapacity(room.getCapacity());
         roomDTO.setApartmentId(room.getApartment().getId());
         roomDTO.setName(room.getName());
-
+        roomDTO.setVersion(room.getVersion());
         return roomDTO;
     }
 }

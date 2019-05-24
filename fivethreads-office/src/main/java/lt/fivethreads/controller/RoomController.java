@@ -42,7 +42,6 @@ public class RoomController {
         Room room = roomService.getRoomById(id);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .eTag("\"" + room.getVersion() + "\"")
                 .body(roomMapper.getRoomDTO(room));
     }
 
@@ -57,11 +56,9 @@ public class RoomController {
     @PutMapping("/rooms/room")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
     public ResponseEntity<?> updateRoom(@Validated @RequestBody RoomDTO roomDTO, WebRequest request) {
-        Long version = Long.parseLong(request.getHeader("If-Match"));
-        Room updatedRoom = roomService.updateRoom(roomDTO, version);
+        Room updatedRoom = roomService.updateRoom(roomDTO);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .eTag("\"" + updatedRoom.getVersion() + "\"")
                 .body(roomMapper.getRoomDTO(updatedRoom));
     }
 
@@ -82,7 +79,6 @@ public class RoomController {
         Room createdRoom = roomService.createRoom(roomForm);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .eTag("\"" + createdRoom.getVersion() + "\"")
                 .body(roomMapper.getRoomDTO(createdRoom));
     }
 

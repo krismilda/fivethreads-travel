@@ -11,7 +11,7 @@ import java.util.List;
 public interface ApartmentService {
     List<ApartmentDTO> getAllApartments();
     Apartment getApartmentById(Long id);
-    Apartment updateApartment(ApartmentDTO apartment, Long version);
+    Apartment updateApartment(ApartmentDTO apartment);
     void deleteApartment(Long id);
     Apartment createApartment(ApartmentForm apartment);
     boolean checkIfApartmentExists(double latitude, double longitude, Long officeId);

@@ -44,7 +44,7 @@ public class OfficeServiceImplementation implements OfficeService {
         return office;
     }
 
-    public Office updateOffice(OfficeDTO officeDTO, Long version) {
+    public Office updateOffice(OfficeDTO officeDTO) {
         Office office = officeRepository.findById(officeDTO.getId());
         Address address = office.getAddress();
         address.setCity(officeDTO.getAddress().getCity());
@@ -55,7 +55,7 @@ public class OfficeServiceImplementation implements OfficeService {
         address.setLongitude(officeDTO.getAddress().getLongitude());
         address.setStreet(officeDTO.getAddress().getStreet());
         office.setAddress(address);
-        office.setVersion(version);
+        office.setVersion(officeDTO.getVersion());
         office.setName(officeDTO.getName());
         office.setId(officeDTO.getId());
         return officeRepository.updateOffice(office);
