@@ -10,4 +10,5 @@ public class RoomDTO {
     private Long capacity;
     private Long apartmentId;
     private String name;
+    private Long version;
 }

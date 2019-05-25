@@ -24,4 +24,5 @@ public class UserDTO {
     private String phone;
     @NotNull(message="Role cannot be null")
     private Set<String> role;
+    private Long version;
 }

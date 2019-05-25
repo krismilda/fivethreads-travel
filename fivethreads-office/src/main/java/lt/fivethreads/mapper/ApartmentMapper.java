@@ -36,7 +36,7 @@ public class ApartmentMapper {
         apartmentDTO.setAddress(addressMapper.convertAddressToFullAddress(apartment.getAddress()));
         apartmentDTO.setId(apartment.getId());
         apartmentDTO.setOfficeId(apartment.getOffice().getId());
-
+        apartmentDTO.setVersion(apartment.getVersion());
         return apartmentDTO;
     }
 }

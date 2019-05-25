@@ -39,7 +39,6 @@ public class ApartmentController {
         Apartment apartment = apartmentService.getApartmentById(id);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .eTag("\"" + apartment.getVersion() + "\"")
                 .body(apartmentMapper.getApartmentDTO(apartment));
     }
 
@@ -47,7 +46,6 @@ public class ApartmentController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteApartment(@PathVariable("apartmentId") int apartmentId) {
         long id = apartmentId;
-
         apartmentService.deleteApartment(id);
         return new ResponseEntity<>("Apartment deleted successfully!",
                 HttpStatus.OK);
@@ -55,15 +53,10 @@ public class ApartmentController {
 
     @PutMapping("/apartments/apartment")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
-    public ResponseEntity<?> updateApartment(@Validated @RequestBody ApartmentDTO apartmentDTO, WebRequest request) {
-        String version = request.getHeader("If-Match");
-        if(apartmentService.checkIfModified(apartmentDTO.getId(), version)){
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
-        }
+    public ResponseEntity<?> updateApartment(@Validated @RequestBody ApartmentDTO apartmentDTO) {
         Apartment updatedApartment = apartmentService.updateApartment(apartmentDTO);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .eTag("\"" + updatedApartment.getVersion() + "\"")
                 .body(apartmentMapper.getApartmentDTO(updatedApartment));
     }
 
@@ -83,10 +76,8 @@ public class ApartmentController {
         }
 
         Apartment createdApartment = apartmentService.createApartment(apartmentForm);
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .eTag("\"" + createdApartment.getVersion() + "\"")
                 .body(apartmentMapper.getApartmentDTO(createdApartment));
     }
 
@@ -102,7 +93,6 @@ public class ApartmentController {
     public ResponseEntity getUnoccupiedApartmentsByOfficeId(@Validated @RequestBody DateForm form,
                                                             @PathVariable("officeId") int officeId) {
         long id = officeId;
-
         return new ResponseEntity<>(apartmentService.getAllUnoccupiedApartmentsByOfficeId(
                 form.getStartDate(), form.getFinishDate(), id), HttpStatus.OK);
     }

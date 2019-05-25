@@ -1,10 +1,13 @@
 package lt.fivethreads.services;
 
 import lt.fivethreads.entities.User;
+import lt.fivethreads.entities.request.RegistrationForm;
 import lt.fivethreads.exception.file.EmailAlreadyExists;
 import lt.fivethreads.mapper.UserMapper;
 import lt.fivethreads.repositories.UserRepository;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 
@@ -16,7 +19,11 @@ public class SimpleUserCreationServiceImplementation implements UserCreationServ
     @Autowired
     UserService userService;
 
-    public User createNewUser(User user) {
+    @Autowired
+    UserMapper userMapper;
+
+    public User createNewUser(RegistrationForm registrationForm) {
+        User user =  userMapper.convertRegistrationUserToUser(registrationForm);
         if (userService.checkIfEmailExists(user.getEmail())) {
             throw new EmailAlreadyExists();
         }

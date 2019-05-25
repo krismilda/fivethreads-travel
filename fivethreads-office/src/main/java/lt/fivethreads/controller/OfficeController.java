@@ -37,7 +37,6 @@ public class OfficeController {
         Office office = officeService.getOfficeById(id);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .eTag("\"" + office.getVersion() + "\"")
                 .body(officeMapper.getOfficeDTO(office));
     }
 
@@ -52,14 +51,9 @@ public class OfficeController {
     @PutMapping("/offices/office")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
     public ResponseEntity<?> updateOffice(@Validated @RequestBody OfficeDTO officeDTO, WebRequest request) {
-        String version = request.getHeader("If-Match");
-        if(officeService.checkIfModified(officeDTO.getId(), version)){
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
-        }
         Office office = officeService.updateOffice(officeDTO);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .eTag("\"" + office.getVersion() + "\"")
                 .body(officeMapper.getOfficeDTO(office));
     }
 
@@ -79,7 +73,6 @@ public class OfficeController {
         Office createdOffice = officeService.createOffice(registrationForm);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .eTag("\"" + createdOffice.getVersion() + "\"")
                 .body(officeMapper.getOfficeDTO(createdOffice));
     }
     @GetMapping("/offices/unoccupied")

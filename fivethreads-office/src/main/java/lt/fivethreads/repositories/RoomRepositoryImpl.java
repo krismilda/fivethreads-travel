@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.Date;
@@ -32,7 +33,13 @@ public class RoomRepositoryImpl implements RoomRepository {
     }
 
     public Room updateRoom(Room room) {
-        return em.merge(room);
+        try{
+            em.detach(room);
+            return em.merge(room);
+        }
+        catch (OptimisticLockException e){
+            throw new OptimisticLockException("Room was modified.");
+        }
     }
 
     public Room createRoom(Room room) {

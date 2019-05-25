@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +41,7 @@ public class UserServiceImplementation implements UserService {
     @Autowired
     OfficeService officeService;
 
+
     @Override
     public User getUserByEmail(String email) throws UserIDNotExists
     {
@@ -51,9 +53,12 @@ public class UserServiceImplementation implements UserService {
     @Override
     public List<ExtendedUserDTO> getAllUser() {
         List<User> users = userRepository.findAll();
-        return users.stream()
+        List<ExtendedUserDTO> extendedUserDTOList = users.stream()
                 .map(e -> userMapper.getUserDTO(e))
                 .collect(Collectors.toList());
+        extendedUserDTOList.sort(Comparator.comparing(ExtendedUserDTO::getLastname));
+        return extendedUserDTOList;
+
     }
 
     @Override
@@ -103,14 +108,16 @@ public class UserServiceImplementation implements UserService {
     public void createUsers(List<ExtendedUserDTO> users) {
         for (ExtendedUserDTO user: users) {
             User userEntity = userMapper.getUser(user);
-            userCreationService.createNewUser(userEntity);
+            if (this.checkIfEmailExists(user.getEmail())) {
+                throw new EmailAlreadyExists();
+            }
+            User created_user = userRepository.save(userEntity);
         }
     }
 
     @Override
     public User createUser(RegistrationForm user) {
-        User user_to_create = userMapper.convertRegistrationUserToUser(user);
-        User created_user = userCreationService.createNewUser(user_to_create);
+        User created_user = userCreationService.createNewUser(user);
         return created_user;
     }
 

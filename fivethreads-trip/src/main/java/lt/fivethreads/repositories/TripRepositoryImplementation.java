@@ -2,10 +2,12 @@ package lt.fivethreads.repositories;
 
 import lt.fivethreads.entities.Trip;
 import lt.fivethreads.entities.TripMember;
+import lt.fivethreads.exception.TripWasModified;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
@@ -36,12 +38,24 @@ public class TripRepositoryImplementation implements TripRepository {
         for (TripMember tripMember : trip.getTripMembers()
         ) {
             tripMemberRepository.saveTripMember(tripMember);
+            if(tripMember.getCarTicket()!=null){
+                em.persist(tripMember.getCarTicket());
+            }
+            if(tripMember.getTripAccommodation()!=null){
+                em.persist(tripMember.getTripAccommodation());
+            }
         }
         em.persist(trip);
     }
 
     public void updateTrip(Trip trip) {
-        em.merge(trip);
+        try{
+            em.detach(trip);
+            em.merge(trip);
+        }
+        catch (OptimisticLockException e){
+            throw new TripWasModified("Trip was modified.");
+        }
     }
 
     public List<Trip> getAllByOrganizerEmail(String email) {
@@ -61,12 +75,6 @@ public class TripRepositoryImplementation implements TripRepository {
         ) {
             tripMemberRepository.deleteTripMember(tripMember);
         }
-        em.remove(trip);
-    }
-
-    public  void combineTrips(Trip newTrip, Trip trip1, Trip trip2){
-        createTrip(newTrip);
-        deleteTrip(trip1);
-        deleteTrip(trip2);
+        em.remove(findByID(trip.getId()));
     }
 }
