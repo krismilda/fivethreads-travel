@@ -133,6 +133,9 @@ public class TripFilesServiceImplementation implements TripFilesService {
     @Transactional
     public FileDTO addAccommodationTicket(Long tripID, String memberEmail, MultipartFile file,double price) {
         Trip trip = tripRepository.findByID(tripID);
+        if(trip==null){
+            throw new WrongTripData("Trip does not exist.");
+        }
         TripMember tripMember = tripMemberRepository.getTripMemberByTripIDAndEmail(tripID, memberEmail);
 
         if (tripMember.getTripAcceptance() != TripAcceptance.ACCEPTED) {
@@ -231,15 +234,20 @@ public class TripFilesServiceImplementation implements TripFilesService {
         for (TripMember tripMember : trip.getTripMembers()
         ) {
             if (tripMember.getTripAccommodation() != null &&
-                    tripMember.getTripAccommodation().getFile() != null) {
+                    tripMember.getTripAccommodation().getFile() != null &&
+                    tripMember.getTripAccommodation().getFile().size()!=0
+            ) {
                 return true;
             }
             if (tripMember.getCarTicket() != null &&
-                    tripMember.getCarTicket().getFile() != null) {
+                    tripMember.getCarTicket().getFile() != null &&
+                    tripMember.getCarTicket().getFile().size()!=0
+            ) {
                 return true;
             }
             if (tripMember.getFlightTicket() != null &&
-                    tripMember.getFlightTicket().getFile() != null) {
+                    tripMember.getFlightTicket().getFile() != null &&
+                    tripMember.getFlightTicket().getFile().size()!=0) {
                 return true;
             }
         }

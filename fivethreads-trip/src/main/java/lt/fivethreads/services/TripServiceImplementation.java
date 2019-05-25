@@ -76,6 +76,9 @@ public class TripServiceImplementation implements TripService {
 
     public Trip getById(long id) {
         Trip trip = tripRepository.findByID(id);
+        if(trip==null){
+            throw new WrongTripData("Trip does not exist.");
+        }
         return trip;
     }
 
