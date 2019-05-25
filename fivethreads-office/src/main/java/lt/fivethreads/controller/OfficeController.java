@@ -25,7 +25,7 @@ public class OfficeController {
     OfficeMapper officeMapper;
 
     @GetMapping("/offices")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER') or hasRole('USER')")
     public ResponseEntity<?> getAllOffices() {
         return new ResponseEntity<>(officeService.getAllOffices(), HttpStatus.OK);
     }

@@ -18,16 +18,9 @@ import java.util.List;
 
 @Component
 public class CsvTripExport extends CsvExport {
-    @Autowired
-    TripRepository tripRepository;
-    @Autowired
-    AddressService addressService;
-
-    @Autowired
-    AddressMapper addressMapper;
     
-    public File exportEntities(String email) throws ClassNotFoundException, IOException {
-        List<Trip> trips= tripRepository.getAll();
+    public File exportEntities(String email, List<Trip> trips) throws ClassNotFoundException, IOException {
+
         List<CsvTrip> csvTrips = new ArrayList<>();
         for (Trip trip: trips){
             CsvTrip csvTrip= new CsvTrip();
