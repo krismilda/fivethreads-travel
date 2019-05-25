@@ -67,6 +67,9 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
                 tripAccommodationForm.getHotelAddress(), tripAccommodationForm.getPrice());
 
         TripMember tripMember = tripMemberRepository.findById(tripAccommodationForm.getTripMemberId());
+
+        tripAccommodationValidation.isAccommodationAccepted(tripMember);
+
         Trip trip = tripMember.getTrip();
 
         tripAccommodationValidation.checkTripAccommodationDatesAgainstTripDates(tripAccommodationForm.getAccommodationStart(),
@@ -91,6 +94,8 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
 
         TripMember tripMember = tripMemberRepository.findById(tripAccommodationDTO.getTripMemberId());
         Trip trip = tripMember.getTrip();
+
+        tripAccommodationValidation.isAccommodationAccepted(tripMember);
 
         tripAccommodationValidation.checkTripAccommodationDatesAgainstTripDates(tripAccommodationDTO.getAccommodationStart(),
                 tripAccommodationDTO.getAccommodationFinish(), trip);

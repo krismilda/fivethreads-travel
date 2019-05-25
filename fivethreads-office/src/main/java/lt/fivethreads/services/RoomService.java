@@ -1,6 +1,7 @@
 package lt.fivethreads.services;
 
 import lt.fivethreads.entities.Room;
+import lt.fivethreads.entities.request.DateForm;
 import lt.fivethreads.entities.request.RoomDTO;
 import lt.fivethreads.entities.request.RoomForm;
 
@@ -17,4 +18,5 @@ public interface RoomService {
     List <RoomDTO> getAllUnoccupiedAccommodations(Date startDate, Date finishDate);
     List <RoomDTO> getAllUnoccupiedAccommodationsByApartmentId (Date startDate, Date finishDate, Long apartmentId);
     Boolean checkIfModified(Long roomID, String version);
+    List <RoomDTO> getUnoccupiedAccommodationByTripMember(DateForm dateForm, String city);
 }

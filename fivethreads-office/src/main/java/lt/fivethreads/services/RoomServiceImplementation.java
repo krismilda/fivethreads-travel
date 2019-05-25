@@ -3,6 +3,7 @@ package lt.fivethreads.services;
 import lt.fivethreads.entities.Apartment;
 import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.Room;
+import lt.fivethreads.entities.request.DateForm;
 import lt.fivethreads.entities.request.RoomDTO;
 import lt.fivethreads.entities.request.RoomForm;
 import lt.fivethreads.mapper.RoomMapper;
@@ -113,5 +114,17 @@ public class RoomServiceImplementation implements RoomService {
         Room room = roomRepository.findById(roomID);
         String current_version = room.getVersion().toString();
         return !version.equals(current_version);
+    }
+
+    @Override
+    public List<RoomDTO> getUnoccupiedAccommodationByTripMember(DateForm dateForm, String city) {
+        List<Room> rooms = roomRepository.getUnoccupiedRoomByCity(dateForm.getStartDate(), dateForm.getFinishDate(), city);
+        List<RoomDTO> roomDTOS = new ArrayList<>();
+
+        for(Room room:rooms){
+            roomDTOS.add(roomMapper.getRoomDTO(room));
+        }
+
+        return roomDTOS;
     }
 }
