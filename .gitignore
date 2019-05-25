@@ -8,4 +8,5 @@ fivethreads-location/target/
 fivethreads-email/target/
 fivethreads-statistics/target/
 upload-dir/
+export-dir/
 logs/

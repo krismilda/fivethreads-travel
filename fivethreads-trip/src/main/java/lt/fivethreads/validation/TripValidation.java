@@ -37,6 +37,7 @@ public class TripValidation {
 
 
     public void checkStartDateToday(Date startDate) {
+
         try{
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             Date today = new Date();
@@ -77,9 +78,6 @@ public class TripValidation {
             checkFnishStartDates(tripMember.getCarTicket().getCarRentFinish(),
                     tripMember.getTrip().getFinishDate(),
                     "Car rent finish date is later than trip finish date.");
-        }
-        if(tripMember.getIsAccommodationNeeded() && tripMember.getTripAccommodation()==null){
-            throw new WrongTripData("Accommodation data cannot be empty.");
         }
         if(tripMember.getIsCarNeeded() && tripMember.getCarTicket()==null){
             throw new WrongTripData("Car rent data cannot be empty.");

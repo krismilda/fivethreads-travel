@@ -119,4 +119,15 @@ public class RoomController {
 
         return new ResponseEntity<>(createdRooms, HttpStatus.CREATED);
     }
+
+    @GetMapping("rooms/unccupiedInCity/{city}")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public ResponseEntity getUnoccupiedRoomsInCity(@Validated @RequestBody DateForm dateForm,
+                                                       @PathVariable String city){
+
+        List<RoomDTO> unoccupiedRooms = roomService.getUnoccupiedAccommodationByTripMember(dateForm, city);
+
+        return new ResponseEntity<>(unoccupiedRooms, HttpStatus.CREATED);
+    }
+
 }

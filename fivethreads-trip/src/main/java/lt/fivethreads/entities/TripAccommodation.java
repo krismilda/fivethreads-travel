@@ -44,7 +44,7 @@ public class TripAccommodation implements Serializable {
     @JoinColumn(name="ROOM_ID")
     private Room room;
 
-    @NotNull(message = "AccommodationType cannot be null.")
+
     private AccommodationType accommodationType;
 
     @Column(name = "hotelName")

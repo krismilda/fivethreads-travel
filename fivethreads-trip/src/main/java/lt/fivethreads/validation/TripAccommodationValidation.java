@@ -1,10 +1,10 @@
 package lt.fivethreads.validation;
 
-import lt.fivethreads.entities.AccommodationType;
-import lt.fivethreads.entities.Address;
-import lt.fivethreads.entities.Trip;
+import lt.fivethreads.entities.*;
 import lt.fivethreads.entities.request.FullAddressDTO;
 import lt.fivethreads.exception.WrongTripData;
+import lt.fivethreads.repositories.NotificationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -45,4 +45,11 @@ public class TripAccommodationValidation {
         if(price <=0)
             throw new WrongTripData("Price cannot be negative");
     }
+
+
+    public void isAccommodationAccepted(TripMember tripMember){
+        if(tripMember.getTripAcceptance() == TripAcceptance.ACCEPTED && tripMember.getIsAccommodationNeeded())
+            throw new WrongTripData(tripMember.getUser().getEmail()+" has not accepted accommodation");
+    }
+
 }

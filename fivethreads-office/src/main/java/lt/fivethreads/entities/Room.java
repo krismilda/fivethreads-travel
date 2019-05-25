@@ -23,10 +23,9 @@ import javax.validation.constraints.NotNull;
                         "(SELECT ta.room from TripAccommodation as ta WHERE ta.room IS NOT NULL " +
                         "AND ta.accommodationStart <=: startDate  AND ta.accommodationFinish >=: finishDate)"),
         @NamedQuery(name = "Room.FindUnoccupiedRoomsByCity", query = "SELECT " +
-                "r FROM Room as r WHERE  r.id NOT IN " +
+                "r FROM Room as r, Apartment as a WHERE a.address.city =:city AND r.apartment.id = a.id AND r.id NOT IN " +
                 "(SELECT ta.room FROM TripAccommodation AS ta WHERE ta.room IS NOT NULL " +
-                "                AND ta.accommodationStart <=: startDate  AND ta.accommodationFinish >=: finishDate " +
-                "                AND ta.hotelAddress.city =: city )")
+                "                AND ta.accommodationStart <=: startDate  AND ta.accommodationFinish >=: finishDate) ")
        /* @NamedQuery(name = "Room.FindLastDefaultName", query = " SELECT " +
                 " r.name FROM Room as r WHERE r.apartment.id =: apartment_ID AND r.name LIKE :name order by " +
                 " (SUBSTRING(r.Name, 13)) AS INT")*/

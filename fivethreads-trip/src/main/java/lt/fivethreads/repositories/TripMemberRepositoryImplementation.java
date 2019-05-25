@@ -48,6 +48,7 @@ public class TripMemberRepositoryImplementation implements TripMemberRepository 
                 tripMember.getTripAccommodation().setRoom(room.get(0));
                 tripMember.getTripAccommodation().setHotelAddress(room.get(0).getApartment().getAddress());
             }
+
                 tripAccommodationRepository.saveTripAccommodation(tripMember.getTripAccommodation());
 
         }
