@@ -54,9 +54,7 @@ public class TripValidation {
     }
 
     public void validateTripMember(TripMember tripMember) {
-        List<EventDTO> events = eventService.getUserEvents(tripMember.getUser().getId());
-        Boolean isBusy = events.stream().anyMatch(e->((e.getStartDate().compareTo(tripMember.getTrip().getStartDate())>=0 & e.getStartDate().compareTo(tripMember.getTrip().getFinishDate())<=0) |
-                (e.getEndDate().compareTo(tripMember.getTrip().getStartDate())>=0 & e.getStartDate().compareTo(tripMember.getTrip().getFinishDate())<=0)));
+        this.validateTripMemberEvents(tripMember);
         if (tripMember.getIsAccommodationNeeded() && tripMember.getTripAccommodation() != null) {
             checkFnishStartDates(tripMember.getTripAccommodation().getAccommodationStart(),
                     tripMember.getTripAccommodation().getAccommodationFinish(),
@@ -81,6 +79,15 @@ public class TripValidation {
         }
         if(tripMember.getIsCarNeeded() && tripMember.getCarTicket()==null){
             throw new WrongTripData("Car rent data cannot be empty.");
+        }
+    }
+
+    public void validateTripMemberEvents(TripMember tripMember){
+        List<EventDTO> events = eventService.getUserEvents(tripMember.getUser().getId());
+        Boolean isBusy = events.stream().anyMatch(e->((e.getStartDate().compareTo(tripMember.getTrip().getStartDate())>=0 & e.getStartDate().compareTo(tripMember.getTrip().getFinishDate())<=0) |
+                (e.getEndDate().compareTo(tripMember.getTrip().getStartDate())>=0 & e.getStartDate().compareTo(tripMember.getTrip().getFinishDate())<=0)));
+        if(isBusy){
+            throw new CannotCombineTrips("TripMember is busy.");
         }
     }
 }

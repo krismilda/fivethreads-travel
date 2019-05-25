@@ -1,6 +1,5 @@
 package lt.fivethreads.services;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lt.fivethreads.Mapper.AddressMapper;
 import lt.fivethreads.entities.Trip;
 import lt.fivethreads.entities.TripMember;
@@ -12,6 +11,7 @@ import lt.fivethreads.exception.CannotCombineTrips;
 import lt.fivethreads.mapper.TripMapper;
 import lt.fivethreads.repositories.TripMemberRepository;
 import lt.fivethreads.repositories.TripRepository;
+import lt.fivethreads.validation.TripValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -51,14 +51,15 @@ public class CombineTripsServiceImplementation implements CombineTripsService {
     @Autowired
     TripMemberRepository tripMemberRepository;
 
+    @Autowired
+    TripValidation tripValidation;
+
     @Transactional
     public TripDTO combineTwoTrips(CombineTwoTrips combineTwoTrips, String organizer_email) {
-        //TODO check users' calendars
-        //TODO check approved trips
         User organizer = userService.getUserByEmail(organizer_email);
         Trip trip1 = tripRepository.findByID(combineTwoTrips.getTripID1());
         Trip trip2 = tripRepository.findByID(combineTwoTrips.getTripID2());
-        if (!checkIfPossibleToCombine(trip1, trip2, combineTwoTrips.getStartDate(), combineTwoTrips.getFinishDate())) {
+        if (!checkIfPossibleToCombine(trip1, trip2, combineTwoTrips)) {
             throw new CannotCombineTrips("Trips cannot be combined.");
         }
         Trip newTrip = new Trip();
@@ -71,32 +72,36 @@ public class CombineTripsServiceImplementation implements CombineTripsService {
         newTrip.setArrival(addressMapper.convertFullAddressToAddress(combineTwoTrips.getArrival()));
         newTrip.setDeparture(addressMapper.convertFullAddressToAddress(combineTwoTrips.getDeparture()));
         List<TripMember> tripMembers = addTripMembersToList(trip1.getTripMembers(), trip2);
+        List<TripMember> sendNotification = new ArrayList<>();
+        for (TripMember tripMember : tripMembers
+        ) {
+            tripValidation.validateTripMemberEvents(tripMember);
+        }
         List<TripMember> tripMembersInfoChanged = new ArrayList<>();
-        if(checkIfInfoChanged(newTrip, trip1)){
-            for (TripMember tripMember:trip1.getTripMembers()
+        if (checkIfInfoChanged(newTrip, trip1)) {
+            for (TripMember tripMember : trip1.getTripMembers()
             ) {
                 tripMembersInfoChanged.add(tripMember);
             }
         }
-        if(checkIfInfoChanged(newTrip, trip2)){
-            for (TripMember tripMember:trip2.getTripMembers()
+        if (checkIfInfoChanged(newTrip, trip2)) {
+            for (TripMember tripMember : trip2.getTripMembers()
             ) {
                 tripMembersInfoChanged.add(tripMember);
             }
         }
         List<TripMember> distinctTripMembers = new ArrayList<>();
-        for (TripMember tripMember:tripMembersInfoChanged
-             ) {
-            if(!distinctTripMembers.stream().anyMatch(e->e.getUser().getEmail().equals(tripMember.getUser().getEmail())))
-            {
-//                createNotificationService.createNotificationForApprovalTripMember(tripMember, "Trips were combined. New trip's information is waiting your approval.");
+        for (TripMember tripMember : tripMembersInfoChanged
+        ) {
+            if (!distinctTripMembers.stream().anyMatch(e -> e.getUser().getEmail().equals(tripMember.getUser().getEmail()))) {
                 distinctTripMembers.add(tripMember);
                 tripMember.setTrip(newTrip);
+                sendNotification.add(tripMember);
             }
         }
-        for (TripMember tripMember2:tripMembers
-             ) {
-            if(!distinctTripMembers.stream().anyMatch(e->e.getUser().getEmail().equals(tripMember2.getUser().getEmail()))){
+        for (TripMember tripMember2 : tripMembers
+        ) {
+            if (!distinctTripMembers.stream().anyMatch(e -> e.getUser().getEmail().equals(tripMember2.getUser().getEmail()))) {
                 distinctTripMembers.add(tripMember2);
                 tripMember2.setTrip(newTrip);
             }
@@ -107,9 +112,9 @@ public class CombineTripsServiceImplementation implements CombineTripsService {
         tripRepository.createTrip(newTrip);
         List<TripMember> check = tripMemberRepository.getAll();
         List<TripMember> listTripMembersDelete = check.stream()
-                .filter(e->(e.getTrip().getId().equals(trip1.getId())|e.getTrip().getId().equals(trip2.getId())))
+                .filter(e -> (e.getTrip().getId().equals(trip1.getId()) | e.getTrip().getId().equals(trip2.getId())))
                 .collect(Collectors.toList());
-        for (TripMember tripMemberTODelete:listTripMembersDelete
+        for (TripMember tripMemberTODelete : listTripMembersDelete
         ) {
             tripMemberTODelete.getTrip().getTripMembers().remove(tripMemberTODelete);
             tripMemberTODelete.setTrip(null);
@@ -118,6 +123,11 @@ public class CombineTripsServiceImplementation implements CombineTripsService {
         }
         tripRepository.deleteTrip(trip1);
         tripRepository.deleteTrip(trip2);
+        for (TripMember tripMember : sendNotification
+        ) {
+            TripMember sendNotificationTripMember = tripMemberRepository.getTripMemberByTripIDAndEmail(newTrip.getId(), tripMember.getUser().getEmail());
+            createNotificationService.createNotificationForApprovalTripMember(sendNotificationTripMember, "Trips were combined. New trip's information is waiting your approval.");
+        }
         return tripMapper.converTripToTripDTO(newTrip);
     }
 
@@ -136,11 +146,17 @@ public class CombineTripsServiceImplementation implements CombineTripsService {
                 && addressService.compareTwoAddress(newTrip.getDeparture(), oldTrip.getDeparture()));
     }
 
-    public Boolean checkIfPossibleToCombine(Trip trip1, Trip trip2, Date start, Date finish) {
+    public Boolean checkIfPossibleToCombine(Trip trip1, Trip trip2, CombineTwoTrips combineTwoTrips) {
+        Date start = combineTwoTrips.getStartDate();
+        Date finish = combineTwoTrips.getFinishDate();
         Boolean departure_difference = trip1.getDeparture().getCountry().equals(trip2.getDeparture().getCountry()) &&
-                                trip1.getDeparture().getCity().equals(trip2.getDeparture().getCity());
+                trip1.getDeparture().getCity().equals(trip2.getDeparture().getCity());
         Boolean arrival_difference = trip1.getArrival().getCountry().equals(trip2.getArrival().getCountry()) &&
                 trip1.getDeparture().getCity().equals(trip2.getDeparture().getCity());
+        Boolean new_address = combineTwoTrips.getDeparture().getCountry().equals(trip1.getDeparture().getCountry()) &&
+                combineTwoTrips.getDeparture().getCity().equals(trip1.getDeparture().getCity()) &&
+                combineTwoTrips.getArrival().getCountry().equals(trip1.getArrival().getCountry()) &&
+                combineTwoTrips.getArrival().getCity().equals(trip1.getArrival().getCity());
         Boolean check_dates1 = ((trip1.getIsFlexible() && compareDatesOneDayDifference(trip1, start, finish))
                 || (!trip1.getIsFlexible()
                 && compareIfDatesEqual(start, trip1.getStartDate())
@@ -155,7 +171,7 @@ public class CombineTripsServiceImplementation implements CombineTripsService {
         Boolean document_exist_trip1_finish = compareIfDatesEqual(trip1.getFinishDate(), finish);
         Boolean document_exist_trip2_start = compareIfDatesEqual(trip1.getStartDate(), start);
         Boolean document_exist_trip2_finish = compareIfDatesEqual(trip1.getFinishDate(), finish);
-        return departure_difference && arrival_difference &&
+        return departure_difference && arrival_difference && new_address &&
                 ((check_dates1 && !tripFilesService.checkIfDocumentsExist(trip1.getId())) ||
                         document_exist_trip1_start && document_exist_trip1_finish &&
                                 tripFilesService.checkIfDocumentsExist(trip1.getId())) &&
@@ -165,21 +181,21 @@ public class CombineTripsServiceImplementation implements CombineTripsService {
     }
 
     public List<TripDTO> getListForCombination(Long tripID) {
-            List<Trip> tripList = tripRepository.getAll();
-            Trip trip = tripRepository.findByID(tripID);
-            List<Trip> combineTripList = tripList.stream()
-                    .filter(e -> e.getDeparture().getCountry().equals(trip.getDeparture().getCountry())
-                            && e.getArrival().getCountry().equals(trip.getArrival().getCountry())
-                            && e.getArrival().getCity().equals(trip.getArrival().getCity())
-                            && e.getDeparture().getCity().equals(trip.getDeparture().getCity())
-                            && ((e.getIsFlexible() && compareDatesOneDayDifference(e, trip.getStartDate(), trip.getFinishDate()))
-                            || (!e.getIsFlexible()
-                            && compareIfDatesEqual(trip.getStartDate(), e.getStartDate())
-                            && compareIfDatesEqual(trip.getFinishDate(), e.getFinishDate())))
-                            && e.getId() != trip.getId()
-                            && !tripFilesService.checkIfDocumentsExist(e.getId())
-                    )
-                    .collect(Collectors.toList());
+        List<Trip> tripList = tripRepository.getAll();
+        Trip trip = tripRepository.findByID(tripID);
+        List<Trip> combineTripList = tripList.stream()
+                .filter(e -> e.getDeparture().getCountry().equals(trip.getDeparture().getCountry())
+                        && e.getArrival().getCountry().equals(trip.getArrival().getCountry())
+                        && e.getArrival().getCity().equals(trip.getArrival().getCity())
+                        && e.getDeparture().getCity().equals(trip.getDeparture().getCity())
+                        && ((e.getIsFlexible() && compareDatesOneDayDifference(e, trip.getStartDate(), trip.getFinishDate()))
+                        || (!e.getIsFlexible()
+                        && compareIfDatesEqual(trip.getStartDate(), e.getStartDate())
+                        && compareIfDatesEqual(trip.getFinishDate(), e.getFinishDate())))
+                        && e.getId() != trip.getId()
+                        && !tripFilesService.checkIfDocumentsExist(e.getId())
+                )
+                .collect(Collectors.toList());
         List<Trip> combineTripListFixed = tripList.stream()
                 .filter(e -> e.getDeparture().getCountry().equals(trip.getDeparture().getCountry())
                         && e.getArrival().getCountry().equals(trip.getArrival().getCountry())
@@ -188,14 +204,14 @@ public class CombineTripsServiceImplementation implements CombineTripsService {
                         && tripFilesService.checkIfDocumentsExist(e.getId())
                         && compareIfDatesEqual(e.getStartDate(), trip.getStartDate())
                         && compareIfDatesEqual(e.getFinishDate(), trip.getFinishDate())
-                         )
+                )
                 .collect(Collectors.toList());
 
-            List<TripDTO> tripDTOList = new ArrayList<>();
-            for (Trip tripToCombine : combineTripList
-            ) {
-                tripDTOList.add(tripMapper.converTripToTripDTO(tripToCombine));
-            }
+        List<TripDTO> tripDTOList = new ArrayList<>();
+        for (Trip tripToCombine : combineTripList
+        ) {
+            tripDTOList.add(tripMapper.converTripToTripDTO(tripToCombine));
+        }
         for (Trip tripToCombine : combineTripListFixed
         ) {
             tripDTOList.add(tripMapper.converTripToTripDTO(tripToCombine));
@@ -204,33 +220,31 @@ public class CombineTripsServiceImplementation implements CombineTripsService {
         return tripDTOList;
     }
 
-    public Boolean compareDatesOneDayDifference(Trip trip, Date start, Date finish){
+    public Boolean compareDatesOneDayDifference(Trip trip, Date start, Date finish) {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        try{
+        try {
             Date trip_start = formatter.parse(formatter.format(trip.getStartDate()));
             Date trip_finish = formatter.parse(formatter.format(trip.getFinishDate()));
             Date new_start = formatter.parse(formatter.format(start));
             Date new_finish = formatter.parse(formatter.format(finish));
-            Boolean start1_check =  new_start.compareTo(new Date(trip_start.getTime() + TimeUnit.DAYS.toMillis(1))) <= 0;
+            Boolean start1_check = new_start.compareTo(new Date(trip_start.getTime() + TimeUnit.DAYS.toMillis(1))) <= 0;
             Boolean start2_check = new_start.compareTo(new Date(trip_start.getTime() + TimeUnit.DAYS.toMillis(-1))) >= 0;
             Boolean finish1_check = new_finish.compareTo(new Date(trip_finish.getTime() + TimeUnit.DAYS.toMillis(1))) <= 0;
             Boolean finish2_check = new_finish.compareTo(new Date(trip_finish.getTime() + TimeUnit.DAYS.toMillis(-1))) >= 0;
-            return  start1_check && start2_check && finish1_check && finish2_check;
-        }
-        catch (ParseException e){
+            return start1_check && start2_check && finish1_check && finish2_check;
+        } catch (ParseException e) {
             System.out.println(e);
             throw new CannotCombineTrips("Wrong trip dates.");
         }
     }
 
-    public Boolean compareIfDatesEqual(Date date1, Date date2){
+    public Boolean compareIfDatesEqual(Date date1, Date date2) {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        try{
+        try {
             Date date1_new = formatter.parse(formatter.format(date1));
             Date date2_new = formatter.parse(formatter.format(date2));
-            return  date1_new.compareTo(date2_new) == 0;
-        }
-        catch (ParseException e){
+            return date1_new.compareTo(date2_new) == 0;
+        } catch (ParseException e) {
             System.out.println(e);
             throw new CannotCombineTrips("Wrong trip dates.");
         }

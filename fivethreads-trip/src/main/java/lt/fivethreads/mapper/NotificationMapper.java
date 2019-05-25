@@ -35,6 +35,7 @@ public class NotificationMapper {
         notificationForApprovalDTO.setIsActive(notification.getIsActive());
         notificationForApprovalDTO.setNotificationType(notification.getNotificationType().toString());
         notificationForApprovalDTO.setName(notification.getName());
+        notificationForApprovalDTO.setPurpose(notification.getTripHistory().getPurpose());
         notificationForApprovalDTO.setCreated_date(notification.getCreated_date());
         notificationForApprovalDTO.setTrip_id(notification.getTripHistory().getTripID());
         notificationForApprovalDTO.setStartDate(notification.getTripHistory().getStartDate());
@@ -89,6 +90,7 @@ public class NotificationMapper {
         notificationInformationChanged.setTrip_id(notification.getTripHistory().getTripID());
         notificationInformationChanged.setStartDate(notification.getTripHistory().getStartDate());
         notificationInformationChanged.setFinishDate(notification.getTripHistory().getFinishDate());
+        notificationInformationChanged.setPurpose(notification.getTripHistory().getPurpose());
         String arrival = addressService.getCombinedAddress(notification.getTripHistory().getArrival());
         String departure = addressService.getCombinedAddress(notification.getTripHistory().getDeparture());
         notificationInformationChanged.setArrival(arrival);
@@ -169,6 +171,7 @@ public class NotificationMapper {
         notificationApproved.setCreated_date(notification.getCreated_date());
         notificationApproved.setTrip_id(notification.getTripHistory().getTripID());
         notificationApproved.setStartDate(notification.getTripHistory().getStartDate());
+        notificationApproved.setPurpose(notification.getTripHistory().getPurpose());
         notificationApproved.setFinishDate(notification.getTripHistory().getFinishDate());
         String arrival = addressService.getCombinedAddress(notification.getTripHistory().getArrival());
         String departure = addressService.getCombinedAddress(notification.getTripHistory().getDeparture());
@@ -206,6 +209,7 @@ public class NotificationMapper {
         notificationCancelled.setIsActive(notification.getIsActive());
         notificationCancelled.setName(notification.getName());
         notificationCancelled.setReason(notification.getReason());
+        notificationCancelled.setPurpose(notification.getTripHistory().getPurpose());
         UserInformationDTO userInformationDTO = new UserInformationDTO();
         userInformationDTO.setEmail(notification.getUser().getEmail());
         userInformationDTO.setFirstName(notification.getUser().getFirstname());
@@ -228,6 +232,7 @@ public class NotificationMapper {
         notificationTripDeleted.setNotificationType(notification.getNotificationType().toString());
         notificationTripDeleted.setIsActive(notification.getIsActive());
         notificationTripDeleted.setName(notification.getName());
+        notificationTripDeleted.setPurpose(notification.getTripHistory().getPurpose());
         UserInformationDTO userInformationDTO = new UserInformationDTO();
         userInformationDTO.setEmail(notification.getTripHistory().getOrganizer().getEmail());
         userInformationDTO.setFirstName(notification.getTripHistory().getOrganizer().getFirstname());
