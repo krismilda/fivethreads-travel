@@ -70,7 +70,7 @@ public class TripServiceImplementation implements TripService {
         ) {
             tripDTO.add(tripMapper.converTripToTripDTO(trip));
         }
-        tripDTO.sort(Comparator.comparing(TripDTO::getStartDate).reversed());
+        tripDTO.sort(Comparator.comparing(TripDTO::getId).reversed());
         return tripDTO;
     }
 
@@ -86,7 +86,7 @@ public class TripServiceImplementation implements TripService {
         ) {
             tripDTO.add(tripMapper.converTripToTripDTO(trip));
         }
-        tripDTO.sort(Comparator.comparing(TripDTO::getStartDate).reversed());
+        tripDTO.sort(Comparator.comparing(TripDTO::getId).reversed());
         return tripDTO;
     }
 
@@ -97,7 +97,7 @@ public class TripServiceImplementation implements TripService {
         ) {
             tripDTO.add(tripMapper.converTripToTripDTO(trip));
         }
-        tripDTO.sort(Comparator.comparing(TripDTO::getStartDate).reversed());
+        tripDTO.sort(Comparator.comparing(TripDTO::getId).reversed());
         return tripDTO;
     }
 

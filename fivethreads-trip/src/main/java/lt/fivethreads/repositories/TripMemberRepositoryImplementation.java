@@ -175,4 +175,8 @@ public class TripMemberRepositoryImplementation implements TripMemberRepository 
         }
         em.remove(tripMember);
     }
+
+    public List<TripMember> getAll(){
+        return em.createNamedQuery("TripMember.findAll", TripMember.class).getResultList();
+    }
 }

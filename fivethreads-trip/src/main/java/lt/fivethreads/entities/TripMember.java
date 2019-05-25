@@ -26,7 +26,8 @@ import java.util.List;
         @NamedQuery(name = "TripMember.findByCarFileID", query = "SELECT e FROM TripMember e " +
                 "JOIN FETCH e.carTicket f " +
                 "JOIN FETCH f.file h " +
-                "WHERE h.id LIKE :fileID")
+                "WHERE h.id LIKE :fileID"),
+        @NamedQuery(name = "TripMember.findAll", query = "select t from TripMember as t")
 
 })
 public class TripMember {
