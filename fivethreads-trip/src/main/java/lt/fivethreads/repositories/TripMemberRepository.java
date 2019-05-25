@@ -5,6 +5,8 @@ import lt.fivethreads.entities.TripAccommodation;
 import lt.fivethreads.entities.TripCancellation;
 import lt.fivethreads.entities.TripMember;
 
+import java.util.List;
+
 public interface TripMemberRepository {
     void saveTripMember(TripMember tripMember);
     void updateTripMember(TripMember tripMember);
@@ -21,4 +23,5 @@ public interface TripMemberRepository {
     void deleteTripMember(TripMember tripMember);
     void removeCarTicket (CarTicket carTicket);
     void removeTripAccomodation (TripAccommodation tripAccommodation);
+    List<TripMember> getAll();
 }

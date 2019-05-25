@@ -75,12 +75,6 @@ public class TripRepositoryImplementation implements TripRepository {
         ) {
             tripMemberRepository.deleteTripMember(tripMember);
         }
-        em.remove(trip);
-    }
-
-    public  void combineTrips(Trip newTrip, Trip trip1, Trip trip2){
-        createTrip(newTrip);
-        deleteTrip(trip1);
-        deleteTrip(trip2);
+        em.remove(findByID(trip.getId()));
     }
 }
