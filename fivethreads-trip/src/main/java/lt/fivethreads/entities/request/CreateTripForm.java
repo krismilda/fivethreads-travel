@@ -27,4 +27,5 @@ public class CreateTripForm {
     private List<TripMemberDTO> tripMembers;
     @NotNull(message = "Is flexible cannot be null.")
     private Boolean isFlexible;
+    private String purpose;
 }

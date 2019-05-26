@@ -39,4 +39,5 @@ public class UserTripDTO {
     private Boolean isCombined;
     private TripMemberDTO tripMemberDTO;
     private List<UserInformationDTO> otherTripMembers = new ArrayList<>();
+    private String purpose;
 }

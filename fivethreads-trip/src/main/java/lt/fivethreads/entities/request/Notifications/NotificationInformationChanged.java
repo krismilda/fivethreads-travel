@@ -50,4 +50,5 @@ public class NotificationInformationChanged {
     private Boolean isCarNeeded;
     private CarTicketDTO carTicketDTO;
     private List<UserInformationDTO> otherTripMembers;
+    private String purpose;
 }

@@ -146,6 +146,7 @@ public class TripMemberMapper {
         userTripDTO.setIsCombined(trip.getIsCombined());
         userTripDTO.setIsFlexible(trip.getIsFlexible());
         userTripDTO.setOrganizer_email(trip.getOrganizer().getEmail());
+        userTripDTO.setPurpose(trip.getPurpose());
         TripMember tripMember = trip.getTripMembers()
                 .stream()
                 .filter(e -> e.getUser().getEmail().equals(email))

@@ -46,4 +46,5 @@ public class NotificationApproved {
     @NotNull (message = "IsCarNeeded cannot be null.")
     private Boolean isCarNeeded;
     private CarTicketDTOWithoutFiles carTicketDTO;
+    private String purpose;
 }

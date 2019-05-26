@@ -36,4 +36,5 @@ public class NotificationCancelled {
     private String arrival;
     @NotNull (message = "Trip departure cannot be null.")
     private String departure;
+    private String purpose;
 }

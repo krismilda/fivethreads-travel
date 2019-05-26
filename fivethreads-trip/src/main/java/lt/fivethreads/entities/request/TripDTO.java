@@ -30,4 +30,5 @@ public class TripDTO {
     @NotNull(message = "IsCombined cannot be null")
     private Boolean isCombined;
     private String tripStatus;
+    private String purpose;
 }

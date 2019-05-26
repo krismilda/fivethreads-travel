@@ -70,4 +70,6 @@ public class TripHistory {
 
     @DateTimeFormat
     private Date carRentFinish;
+
+    private String purpose;
 }
