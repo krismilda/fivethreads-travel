@@ -15,4 +15,5 @@ public interface TripAccommodationRepository {
     List<TripAccommodation> getAllByUser(long userId);
     List<TripAccommodation> getAllByApartment(long apartmentId);
     void deleteTripAccommodation(Long id);
+    List<TripAccommodation> getAllReservations(Long roomID);
 }
