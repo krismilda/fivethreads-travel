@@ -22,7 +22,10 @@ import java.util.List;
                 "WHERE ta.tripMember =:user_ID"),
         @NamedQuery(name = "TripAccommodation.FindByApartment", query = "select ta from TripAccommodation as ta " +
                 "JOIN FETCH ta.room as r " +
-                "WHERE r.apartment =: apartment_ID")
+                "WHERE r.apartment =: apartment_ID"),
+        @NamedQuery(name = "TripMember.getAllReservations", query = "SELECT e FROM TripAccommodation e " +
+                "JOIN FETCH e.room r " +
+                "WHERE r.id=:roomID"),
 })
 public class TripAccommodation implements Serializable {
     @Id

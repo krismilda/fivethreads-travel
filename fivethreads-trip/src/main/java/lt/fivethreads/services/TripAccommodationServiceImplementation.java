@@ -2,7 +2,9 @@ package lt.fivethreads.services;
 
 import lt.fivethreads.Mapper.AddressMapper;
 import lt.fivethreads.entities.*;
-import lt.fivethreads.entities.request.*;
+import lt.fivethreads.entities.request.RoomReservations;
+import lt.fivethreads.entities.request.TripAccommodationDTO;
+import lt.fivethreads.entities.request.TripAccommodationForm;
 import lt.fivethreads.exception.WrongTripData;
 import lt.fivethreads.mapper.ApartmentMapper;
 import lt.fivethreads.mapper.OfficeMapper;
@@ -16,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Component
@@ -49,10 +50,10 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
     @Autowired
     AddressMapper addressMapper;
 
-    public TripAccommodationDTO getTripAccommodation(long tripAccommodationId){
+    public TripAccommodationDTO getTripAccommodation(long tripAccommodationId) {
         TripAccommodation tripAccommodation = tripAccommodationRepository.findByID(tripAccommodationId);
         TripAccommodationDTO tripAccommodationDTO = tripAccommodationMapper.getTripAccommodationDTO(tripAccommodation);
-        return  tripAccommodationDTO;
+        return tripAccommodationDTO;
     }
 
     public TripAccommodationDTO createTripAccommodation(TripAccommodationForm tripAccommodationForm) throws WrongTripData {
@@ -62,9 +63,9 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
         tripAccommodationValidation.checkStartDateToday(tripAccommodationForm.getAccommodationStart());
 
 
-        if(tripAccommodationForm.getAccommodationType() == AccommodationType.HOTEL)
-        tripAccommodationValidation.hotelRequiredFields(tripAccommodationForm.getHotelName(),
-                tripAccommodationForm.getHotelAddress(), tripAccommodationForm.getPrice());
+        if (tripAccommodationForm.getAccommodationType() == AccommodationType.HOTEL)
+            tripAccommodationValidation.hotelRequiredFields(tripAccommodationForm.getHotelName(),
+                    tripAccommodationForm.getHotelAddress(), tripAccommodationForm.getPrice());
 
         TripMember tripMember = tripMemberRepository.findById(tripAccommodationForm.getTripMemberId());
 
@@ -101,17 +102,18 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
                 tripAccommodationDTO.getAccommodationFinish(), trip);
 
         TripAccommodation accommodation_to_update = tripAccommodationRepository.findByID(tripAccommodationDTO.getId());
-       if(tripAccommodationDTO.getAccommodationType() == AccommodationType.HOTEL) {
+        if (tripAccommodationDTO.getAccommodationType() == AccommodationType.HOTEL) {
 
             tripAccommodationValidation.hotelRequiredFields(tripAccommodationDTO.getHotelName(),
                     tripAccommodationDTO.getHotelAddress(), tripAccommodationDTO.getPrice());
             Address address = addressMapper.convertFullAddressToAddress(tripAccommodationDTO.getHotelAddress());
             if (accommodation_to_update.getHotelAddress() != null
-            && accommodation_to_update.getAccommodationType() == AccommodationType.HOTEL) address.setId(accommodation_to_update.getHotelAddress().getId());
+                    && accommodation_to_update.getAccommodationType() == AccommodationType.HOTEL)
+                address.setId(accommodation_to_update.getHotelAddress().getId());
             accommodation_to_update.setHotelAddress(address);
             accommodation_to_update.setHotelName(tripAccommodationDTO.getHotelName());
             accommodation_to_update.setPrice(tripAccommodationDTO.getPrice());
-        }else{
+        } else {
 
             Room room = roomRepository.findById(tripAccommodationDTO.getRoomId());
             accommodation_to_update.setRoom(room);
@@ -131,7 +133,7 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
     public List<TripAccommodationDTO> getAllTripAccommodations() {
         List<TripAccommodation> tripAccommodationList = tripAccommodationRepository.getAll();
         List<TripAccommodationDTO> tripAccommodationDTOList = new ArrayList<>();
-        for (TripAccommodation tripAccommodation : tripAccommodationList){
+        for (TripAccommodation tripAccommodation : tripAccommodationList) {
             tripAccommodationDTOList.add(tripAccommodationMapper.getTripAccommodationDTO(tripAccommodation));
         }
         return tripAccommodationDTOList;
@@ -140,7 +142,7 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
     public List<TripAccommodationDTO> getAllTripAccommodationsByUser(long userId) {
         List<TripAccommodation> tripAccommodationList = tripAccommodationRepository.getAllByUser(userId);
         List<TripAccommodationDTO> tripAccommodationDTOList = new ArrayList<>();
-        for (TripAccommodation tripAccommodation : tripAccommodationList){
+        for (TripAccommodation tripAccommodation : tripAccommodationList) {
             tripAccommodationDTOList.add(tripAccommodationMapper.getTripAccommodationDTO(tripAccommodation));
         }
         return tripAccommodationDTOList;
@@ -149,7 +151,7 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
     public List<TripAccommodationDTO> getAllTripAccommodationsByTrip(long tripId) {
         List<TripAccommodation> tripAccommodationList = tripAccommodationRepository.getAllByTrip(tripId);
         List<TripAccommodationDTO> tripAccommodationDTOList = new ArrayList<>();
-        for (TripAccommodation tripAccommodation : tripAccommodationList){
+        for (TripAccommodation tripAccommodation : tripAccommodationList) {
             tripAccommodationDTOList.add(tripAccommodationMapper.getTripAccommodationDTO(tripAccommodation));
         }
         return tripAccommodationDTOList;
@@ -159,13 +161,28 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
     public List<TripAccommodationDTO> getAllTripAccommodationsByApartment(long apartmentId) {
         List<TripAccommodation> tripAccommodationList = tripAccommodationRepository.getAllByApartment(apartmentId);
         List<TripAccommodationDTO> tripAccommodationDTOList = new ArrayList<>();
-        for (TripAccommodation tripAccommodation : tripAccommodationList){
+        for (TripAccommodation tripAccommodation : tripAccommodationList) {
             tripAccommodationDTOList.add(tripAccommodationMapper.getTripAccommodationDTO(tripAccommodation));
         }
         return tripAccommodationDTOList;
     }
 
     public void deleteTripAccommodation(Long id) {
-        tripAccommodationRepository.deleteTripAccommodation(id); }
+        tripAccommodationRepository.deleteTripAccommodation(id);
+    }
 
+
+    public List<RoomReservations> getAllReservations(Long roomID) {
+        List<TripAccommodation> tripAccommodationList = tripAccommodationRepository.getAllReservations(roomID);
+        List<RoomReservations> roomReservations = new ArrayList<>();
+        for (TripAccommodation tripAccommodation : tripAccommodationList
+        ) {
+            RoomReservations roomReservations1 = new RoomReservations();
+            roomReservations1.setRoomID(tripAccommodation.getRoom().getId());
+            roomReservations1.setStart(tripAccommodation.getAccommodationStart());
+            roomReservations1.setFinish(tripAccommodation.getAccommodationFinish());
+            roomReservations.add(roomReservations1);
+        }
+        return roomReservations;
+    }
 }

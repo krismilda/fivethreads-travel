@@ -48,7 +48,7 @@ public class TripAccommodationValidation {
 
 
     public void isAccommodationAccepted(TripMember tripMember){
-        if(tripMember.getTripAcceptance() == TripAcceptance.ACCEPTED && tripMember.getIsAccommodationNeeded())
+        if(!(tripMember.getTripAcceptance() == TripAcceptance.ACCEPTED && tripMember.getIsAccommodationNeeded()))
             throw new WrongTripData(tripMember.getUser().getEmail()+" has not accepted accommodation");
     }
 

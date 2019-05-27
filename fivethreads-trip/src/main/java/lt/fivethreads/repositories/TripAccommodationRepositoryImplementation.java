@@ -60,5 +60,10 @@ public class TripAccommodationRepositoryImplementation implements TripAccommodat
         em.remove(accommodation_to_delete );
     }
 
+    public List<TripAccommodation> getAllReservations(Long roomID){
+        return em.createNamedQuery("TripMember.getAllReservations", TripAccommodation.class)
+                .setParameter("roomID", roomID)
+                .getResultList();
+    }
 
 }
