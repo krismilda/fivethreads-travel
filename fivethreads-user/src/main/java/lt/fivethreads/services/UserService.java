@@ -19,8 +19,6 @@ public interface UserService {
 
     void deleteUser(Long id) throws UserIDNotExists;
 
-    User createUser(RegistrationForm user) throws EmailAlreadyExists;
-
     boolean checkIfEmailExists(String email);
 
     User getUserByEmail(String email) throws UserIDNotExists;

@@ -36,11 +36,10 @@ public class UserServiceImplementation implements UserService {
     MailService mailService;
 
     @Autowired
-    UserCreationService userCreationService;
-
-    @Autowired
     OfficeService officeService;
 
+    @Autowired
+    UserService userService;
 
     @Override
     public User getUserByEmail(String email) throws UserIDNotExists
@@ -116,12 +115,6 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public User createUser(RegistrationForm user) {
-        User created_user = userCreationService.createNewUser(user);
-        return created_user;
-    }
-
-    @Override
     public void changePassword(ChangePasswordForm changePasswordForm, String email) throws EmailNotExists {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EmailNotExists());
@@ -136,5 +129,4 @@ public class UserServiceImplementation implements UserService {
         String current_version = user.getVersion().toString();
         return !version.equals(current_version);
     }
-
 }
