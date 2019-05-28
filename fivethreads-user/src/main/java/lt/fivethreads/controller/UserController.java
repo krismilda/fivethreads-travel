@@ -5,6 +5,7 @@ import lt.fivethreads.entities.request.ChangePasswordForm;
 import lt.fivethreads.entities.request.RegistrationForm;
 import lt.fivethreads.entities.request.ExtendedUserDTO;
 import lt.fivethreads.mapper.UserMapper;
+import lt.fivethreads.services.UserCreationService;
 import lt.fivethreads.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,9 @@ public class UserController {
 
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    UserCreationService userCreationService;
 
     @GetMapping("/admin/user")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
@@ -87,7 +91,7 @@ public class UserController {
     @PostMapping("/admin/user/create")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerUser(@Validated @RequestBody RegistrationForm registrationForm) {
-        User createdUser = userService.createUser(registrationForm);
+        User createdUser = userCreationService.createNewUser(registrationForm);
         return ResponseEntity
                 .ok()
                 .body(userMapper.getUserDTO(createdUser));
