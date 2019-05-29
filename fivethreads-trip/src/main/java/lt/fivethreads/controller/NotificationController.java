@@ -47,7 +47,7 @@ public class NotificationController {
     public NotificationCancelled getNotificationByIDCancelled(@PathVariable("notification_id") Long notification_id){
         return notificationService.getNotificationByIDForCancelled(notification_id,SecurityContextHolder.getContext().getAuthentication().getName() );
     }
-    @GetMapping("/notifications/InfoChanged/{notification_id}")
+    @GetMapping("/notifications/InformationChanged/{notification_id}")
     @PreAuthorize("hasRole('USER') or hasRole('ORGANIZER') or hasRole('ADMIN')")
     public NotificationInformationChanged getNotificationByIDInfoChanged(@PathVariable("notification_id") Long notification_id){
         return notificationService.getNotificationByIDForInformationChanged(notification_id,SecurityContextHolder.getContext().getAuthentication().getName() );

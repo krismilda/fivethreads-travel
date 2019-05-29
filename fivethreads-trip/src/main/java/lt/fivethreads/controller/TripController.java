@@ -168,5 +168,11 @@ public class TripController {
         return tripService.getUserTripById(SecurityContextHolder.getContext().getAuthentication().getName(), tripID);
     }
 
-
+    @DeleteMapping("/admin/user/{userID}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteUser(@PathVariable("userID") int userId) {
+        long id = userId;
+        tripService.deleteUser(id);
+        return new ResponseEntity<>("User deleted successfully!", HttpStatus.OK);
+    }
 }

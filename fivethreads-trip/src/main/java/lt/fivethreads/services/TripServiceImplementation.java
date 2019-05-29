@@ -5,8 +5,10 @@ import lt.fivethreads.entities.request.*;
 import lt.fivethreads.exception.AccessRightProblem;
 import lt.fivethreads.exception.TripIsNotEditable;
 import lt.fivethreads.exception.WrongTripData;
+import lt.fivethreads.exception.user.UserCannotBeDeleted;
 import lt.fivethreads.mapper.TripMapper;
 import lt.fivethreads.mapper.TripMemberMapper;
+import lt.fivethreads.repositories.NotificationRepository;
 import lt.fivethreads.repositories.TripMemberRepository;
 import lt.fivethreads.repositories.TripRepository;
 import lt.fivethreads.validation.TripAccommodationValidation;
@@ -47,6 +49,9 @@ public class TripServiceImplementation implements TripService {
 
     @Autowired
     TripAccommodationValidation tripAccommodationValidation;
+
+    @Autowired
+    NotificationRepository notificationRepository;
 
     @Transactional
     public Trip createTrip(CreateTripForm form, String organizer_email) throws WrongTripData {
@@ -206,5 +211,20 @@ public class TripServiceImplementation implements TripService {
         Trip trip = tripRepository.findByID(tripID);
         String current_version = trip.getVersion().toString();
         return !version.equals(current_version);
+    }
+
+    public void deleteUser(Long id){
+        User user = userService.getUserByID(id);
+        List<Trip> tripRepositoryAll=tripRepository.getAll();
+        Boolean b= !tripRepository.getAll().get(0).getTripMembers().stream().anyMatch(t->t.getUser().getId().equals(id));
+        Boolean canDelete = tripRepository.getAll()
+                .stream()
+                .anyMatch(e->(!e.getTripMembers().stream().anyMatch(t->t.getUser().getId().equals(id))));
+        if(canDelete && !tripRepository.getAll().stream().anyMatch(e->e.getOrganizer().getId().equals(id))){
+            notificationRepository.deleteUser(user);
+        }
+        else{
+            throw new UserCannotBeDeleted();
+        }
     }
 }

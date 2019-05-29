@@ -21,4 +21,5 @@ public interface TripService {
     TripDTO changeOrganizer(ChangeOrganizer changeOrganizer);
     UserTripDTO getUserTripById (String email, Long tripID);
     Boolean checkIfModified(Long tripID, String version);
+    void deleteUser(Long id);
 }

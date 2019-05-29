@@ -1,6 +1,7 @@
 package lt.fivethreads.repositories;
 
 import lt.fivethreads.entities.Notification;
+import lt.fivethreads.entities.User;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -11,4 +12,5 @@ public interface NotificationRepository {
     List<Notification> getAllOrganizerNotificationByEmail(String email);
     Notification getNotificationByID(Long id);
     void updateNotification(Notification notification);
+    void deleteUser(User user);
 }
