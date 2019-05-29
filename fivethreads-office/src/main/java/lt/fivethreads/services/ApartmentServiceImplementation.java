@@ -98,7 +98,7 @@ public class ApartmentServiceImplementation implements ApartmentService {
             roomForm.setCapacity((long) 1);
            roomService.createRoom(roomForm);
         }
-        return saved_apartment;
+        return apartmentRepository.findById(saved_apartment.getId());
     }
 
     public boolean checkIfApartmentExists(double latitude, double longitude, Long officeId) {
