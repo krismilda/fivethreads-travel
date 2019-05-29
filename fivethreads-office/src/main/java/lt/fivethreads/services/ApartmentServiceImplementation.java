@@ -6,9 +6,12 @@ import lt.fivethreads.entities.Apartment;
 import lt.fivethreads.entities.Office;
 import lt.fivethreads.entities.request.ApartmentDTO;
 import lt.fivethreads.entities.request.ApartmentForm;
+import lt.fivethreads.entities.request.RoomForm;
 import lt.fivethreads.mapper.ApartmentMapper;
+import lt.fivethreads.mapper.RoomMapper;
 import lt.fivethreads.repositories.ApartmentRepository;
 import lt.fivethreads.repositories.OfficeRepository;
+import lt.fivethreads.repositories.RoomRepository;
 import lt.fivethreads.repository.AddressRepository;
 import lt.fivethreads.validation.DateValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +42,12 @@ public class ApartmentServiceImplementation implements ApartmentService {
 
     @Autowired
     OfficeRepository officeRepository;
+
+    @Autowired
+    RoomService roomService;
+
+    @Autowired
+    RoomMapper roomMapper;
 
     public List<ApartmentDTO> getAllApartments() {
         List<Apartment> apartments = apartmentRepository.getAll();
@@ -78,6 +87,18 @@ public class ApartmentServiceImplementation implements ApartmentService {
     public Apartment createApartment(ApartmentForm apartmentForm) {
         Apartment apartment_to_save = apartmentMapper.convertRegisteredOfficeToOffice(apartmentForm);
         return apartmentRepository.createApartment(apartment_to_save);
+    }
+
+    public Apartment createApartment(ApartmentForm apartmentForm, int roomNr){
+        Apartment apartment_to_save = apartmentMapper.convertRegisteredOfficeToOffice(apartmentForm);
+        Apartment saved_apartment = apartmentRepository.createApartment(apartment_to_save);
+        for (int i = 0; i<roomNr; i++){
+            RoomForm roomForm = new RoomForm();
+            roomForm.setApartmentId(apartmentMapper.getApartmentDTO(saved_apartment).getId());
+            roomForm.setCapacity((long) 1);
+           roomService.createRoom(roomForm);
+        }
+        return apartmentRepository.findById(saved_apartment.getId());
     }
 
     public boolean checkIfApartmentExists(double latitude, double longitude, Long officeId) {

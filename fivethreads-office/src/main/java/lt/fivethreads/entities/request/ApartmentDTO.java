@@ -11,4 +11,5 @@ public class ApartmentDTO {
     private FullAddressDTO address;
     private Long officeId;
     private Long version;
+    private int nrOfRooms;
 }
