@@ -86,9 +86,9 @@ public class RoomRepositoryImpl implements RoomRepository {
     * */
         Object defaultName = em.createNativeQuery("SELECT r.NAME FROM ROOM AS r " +
                 "WHERE r.APARTMENT_ID = ?1 AND r.NAME LIKE ?2 " +
-                "ORDER BY CAST(SUBSTRING(r.Name, 13) AS INT) DESC")
+                "ORDER BY CAST(SUBSTRING(r.Name, 9) AS INT) DESC")
                 .setParameter(1, apartmentId)
-                .setParameter(2, "Kambarys Nr.%_")
+                .setParameter(2, "Room No.%_")
                 .setMaxResults(1)
                 .getSingleResult();
 
