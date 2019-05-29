@@ -136,7 +136,7 @@ public class TripController {
         return new ResponseEntity<TripMemberDTO>(tripMemberDTO1, HttpStatus.OK);
     }
 
-    @DeleteMapping("{tripID}")
+    @DeleteMapping("/trips/{tripID}")
     @PreAuthorize("hasRole('ORGANIZER')")
     public ResponseEntity<?> deleteTrip(@PathVariable("tripID") Long tripID) {
         tripService.deleteTrip(tripID, SecurityContextHolder.getContext().getAuthentication().getName());

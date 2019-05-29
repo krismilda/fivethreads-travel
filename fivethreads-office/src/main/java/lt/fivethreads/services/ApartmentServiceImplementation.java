@@ -71,10 +71,9 @@ public class ApartmentServiceImplementation implements ApartmentService {
         address.setLatitude(apartmentDTO.getAddress().getLatitude());
         address.setLongitude(apartmentDTO.getAddress().getLongitude());
         address.setStreet(apartmentDTO.getAddress().getStreet());
-        apartment.setVersion(apartmentDTO.getVersion());
         apartment.setAddress(address);
-
         apartment.setOffice(officeRepository.findById(apartmentDTO.getOfficeId()));
+        apartment.setVersion(apartmentDTO.getVersion());
         return apartmentRepository.updateApartment(apartment);
     }
 

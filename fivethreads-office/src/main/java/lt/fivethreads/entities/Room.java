@@ -29,8 +29,6 @@ import javax.validation.constraints.NotNull;
        /* @NamedQuery(name = "Room.FindLastDefaultName", query = " SELECT " +
                 " r.name FROM Room as r WHERE r.apartment.id =: apartment_ID AND r.name LIKE :name order by " +
                 " (SUBSTRING(r.Name, 13)) AS INT")*/
-
-
 })
 public class Room {
     @Id
