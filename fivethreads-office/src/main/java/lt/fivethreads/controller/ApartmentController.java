@@ -26,14 +26,14 @@ public class ApartmentController {
     ApartmentMapper apartmentMapper;
 
     @GetMapping("/apartments")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     public ResponseEntity<?> getAllApartments() {
         return new ResponseEntity<>(apartmentService.getAllApartments(),
                 HttpStatus.OK);
     }
 
     @GetMapping("/apartments/{apartmentId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     public ResponseEntity<?> getApartmentById(@PathVariable("apartmentId") int apartmentId) {
         long id = apartmentId;
         Apartment apartment = apartmentService.getApartmentById(id);
@@ -52,7 +52,7 @@ public class ApartmentController {
     }
 
     @PutMapping("/apartments/apartment")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     public ResponseEntity<?> updateApartment(@Validated @RequestBody ApartmentDTO apartmentDTO) {
         Apartment updatedApartment = apartmentService.updateApartment(apartmentDTO);
         return ResponseEntity

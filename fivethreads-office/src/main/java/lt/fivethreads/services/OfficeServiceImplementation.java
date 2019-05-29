@@ -55,9 +55,9 @@ public class OfficeServiceImplementation implements OfficeService {
         address.setLongitude(officeDTO.getAddress().getLongitude());
         address.setStreet(officeDTO.getAddress().getStreet());
         office.setAddress(address);
-        office.setVersion(officeDTO.getVersion());
         office.setName(officeDTO.getName());
         office.setId(officeDTO.getId());
+        office.setVersion(officeDTO.getVersion());
         return officeRepository.updateOffice(office);
     }
 

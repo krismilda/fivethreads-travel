@@ -71,7 +71,9 @@ public class CreateNotificationServiceImplementation implements CreateNotificati
     public void createNotificationsForApproval(Trip trip, String name) {
         for (TripMember tripMember : trip.getTripMembers()
         ) {
-            this.createNotificationForApprovalTripMember(tripMember, name);
+            if(!trip.getOrganizer().getId().equals(tripMember.getUser().getId())){
+                this.createNotificationForApprovalTripMember(tripMember, name);
+            }
         }
     }
 
