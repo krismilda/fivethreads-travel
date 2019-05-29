@@ -37,6 +37,10 @@ public class ApartmentMapper {
         apartmentDTO.setId(apartment.getId());
         apartmentDTO.setOfficeId(apartment.getOffice().getId());
         apartmentDTO.setVersion(apartment.getVersion());
+        if(apartment.getRooms()==null){
+            apartmentDTO.setNrOfRooms(0);
+        }else apartmentDTO.setNrOfRooms(apartment.getRooms().size());
+
         return apartmentDTO;
     }
 }

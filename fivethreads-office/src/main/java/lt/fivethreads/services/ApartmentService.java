@@ -14,6 +14,7 @@ public interface ApartmentService {
     Apartment updateApartment(ApartmentDTO apartment);
     void deleteApartment(Long id);
     Apartment createApartment(ApartmentForm apartment);
+    Apartment createApartment(ApartmentForm apartmentForm, int roomNr);
     boolean checkIfApartmentExists(double latitude, double longitude, Long officeId);
     List <ApartmentDTO> getAllUnoccupiedAccommodationApartments(Date startDate, Date finishDate);
     List <ApartmentDTO> getAllUnoccupiedApartmentsByOfficeId (Date startDate, Date finishDate, Long officeId);

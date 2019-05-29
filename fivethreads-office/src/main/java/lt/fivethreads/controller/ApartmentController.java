@@ -81,6 +81,24 @@ public class ApartmentController {
                 .body(apartmentMapper.getApartmentDTO(createdApartment));
     }
 
+    @PostMapping("/admin/apartments/create/{roomNr}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> registerApartmentWithRooms(@Validated @RequestBody ApartmentForm apartmentForm,
+                                                        @PathVariable int roomNr){
+
+        if (apartmentService.checkIfApartmentExists(apartmentForm.getAddress().getLatitude(),
+                apartmentForm.getAddress().getLongitude(),
+                apartmentForm.getOfficeId())) {
+            return new ResponseEntity<>("Fail -> Apartment is already created!",
+                    HttpStatus.BAD_REQUEST);
+        }
+        Apartment createdApartment = apartmentService.createApartment(apartmentForm, roomNr);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(apartmentMapper.getApartmentDTO(createdApartment));
+
+    }
+
     @GetMapping("/apartments/unoccupied")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     public ResponseEntity getUnoccupiedAccommodationApartments(@Validated @RequestBody DateForm form) {
