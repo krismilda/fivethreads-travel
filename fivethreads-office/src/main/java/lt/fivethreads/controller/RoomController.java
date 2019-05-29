@@ -9,6 +9,7 @@ import lt.fivethreads.entities.request.RoomForm;
 import lt.fivethreads.mapper.RoomMapper;
 import lt.fivethreads.services.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -122,12 +124,15 @@ public class RoomController {
 
     @GetMapping("rooms/unccupiedInCity/{city}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public ResponseEntity getUnoccupiedRoomsInCity(@Validated @RequestBody DateForm dateForm,
-                                                       @PathVariable String city){
+    public ResponseEntity getUnoccupiedRoomsInCity(@RequestParam @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) Date start,
+                                                   @RequestParam @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) Date finish,
+                                                   @PathVariable String city){
+        DateForm df = new DateForm();
+        df.setStartDate(start);
+        df.setFinishDate(finish);
+        List<RoomDTO> unoccupiedRooms = roomService.getUnoccupiedAccommodationByTripMember(df, city);
 
-        List<RoomDTO> unoccupiedRooms = roomService.getUnoccupiedAccommodationByTripMember(dateForm, city);
-
-        return new ResponseEntity<>(unoccupiedRooms, HttpStatus.CREATED);
+        return new ResponseEntity<>(unoccupiedRooms, HttpStatus.OK);
     }
 
 }
