@@ -68,14 +68,6 @@ public class UserController {
                 .body(userMapper.getUserDTO(updatedUserDTO));
     }
 
-    @DeleteMapping("/admin/user/{userID}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> deleteUser(@PathVariable("userID") int userId) {
-        long id = userId;
-        userService.deleteUser(id);
-        return new ResponseEntity<>("User deleted successfully!", HttpStatus.OK);
-    }
-
     @PutMapping("/admin/user")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateUser(@Validated @RequestBody ExtendedUserDTO user, WebRequest request) {

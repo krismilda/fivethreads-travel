@@ -2,6 +2,7 @@ package lt.fivethreads.repositories;
 
 import lt.fivethreads.entities.Notification;
 import lt.fivethreads.entities.TripMemberHistory;
+import lt.fivethreads.entities.User;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -45,5 +46,14 @@ public class NotificationRepositoryImplementation implements NotificationReposit
     }
     public void updateNotification(Notification notification) {
         em.merge(notification);
+    }
+
+    public void deleteUser(User user){
+        List<Notification> notificationList = this.getAllUserNotificationByEmail(user.getEmail());
+        for ( Notification notification:notificationList
+             ) {
+            em.remove(notification);
+        }
+        em.remove(user);
     }
 }
