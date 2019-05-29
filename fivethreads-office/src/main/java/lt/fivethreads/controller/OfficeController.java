@@ -31,7 +31,7 @@ public class OfficeController {
     }
 
     @GetMapping("/offices/{officeId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     public ResponseEntity<?> getOfficeById(@PathVariable("officeId") int officeId) {
         long id = officeId;
         Office office = officeService.getOfficeById(id);
@@ -49,7 +49,7 @@ public class OfficeController {
     }
 
     @PutMapping("/offices/office")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     public ResponseEntity<?> updateOffice(@Validated @RequestBody OfficeDTO officeDTO, WebRequest request) {
         Office office = officeService.updateOffice(officeDTO);
         return ResponseEntity

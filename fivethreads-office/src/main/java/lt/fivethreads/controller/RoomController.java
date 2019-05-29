@@ -30,13 +30,13 @@ public class RoomController {
     RoomMapper roomMapper;
 
     @GetMapping("/rooms")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     public ResponseEntity<?> getAllRooms() {
         return new ResponseEntity<>(roomService.getAllRooms(), HttpStatus.OK);
     }
 
     @GetMapping("/rooms/{roomId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     public ResponseEntity<?> getRoomById(@PathVariable("roomId") int roomId) {
         long id = roomId;
         Room room = roomService.getRoomById(id);
@@ -54,7 +54,7 @@ public class RoomController {
     }
 
     @PutMapping("/rooms/room")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANISER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     public ResponseEntity<?> updateRoom(@Validated @RequestBody RoomDTO roomDTO, WebRequest request) {
         Room updatedRoom = roomService.updateRoom(roomDTO);
         return ResponseEntity
