@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -27,10 +30,36 @@ public class NotificationRepositoryImplementation implements NotificationReposit
         }
     }
 
-    public List<Notification> getAllUserNotificationByEmail(String email) {
-        return em.createNamedQuery("Notification.FindAllUserByEmail", Notification.class)
-                .setParameter("email", email)
+    public List<Notification> getAllUserNotificationByEmailPage(String email, int from, int amount) {
+        Query query = em.createNamedQuery("Notification.FindAllUserByEmail", Notification.class);
+        query.setMaxResults(amount);
+        query.setFirstResult(from);
+        List<Notification> notificationList= query.setParameter("email", email)
                 .getResultList();
+        return notificationList;
+    }
+
+    public List<Notification> getAllOrganizerNotificationByEmailPage(String email, int from, int amount) {
+        Query query = em.createNamedQuery("Notification.FindAllOrganizerByEmail", Notification.class);
+        query.setMaxResults(amount);
+        query.setFirstResult(from);
+        List<Notification> notificationList= query.setParameter("email", email)
+                .getResultList();
+        return notificationList;
+    }
+
+    public long getCountNotificationByEmailUser(String email) {
+        Query query = em.createNamedQuery("Notification.CountUser");
+        long count = (long) query.setParameter("email", email)
+               .getSingleResult();
+        return count;
+    }
+
+    public long getCountNotificationByEmailOrganizer(String email) {
+        Query query = em.createNamedQuery("Notification.CountOrganizer");
+        long count = (long) query.setParameter("email", email)
+                .getSingleResult();
+        return count;
     }
 
     public Notification getNotificationByID(Long id) {
@@ -39,11 +68,6 @@ public class NotificationRepositoryImplementation implements NotificationReposit
                 .getSingleResult();
     }
 
-    public List<Notification> getAllOrganizerNotificationByEmail(String email){
-        return em.createNamedQuery("Notification.FindAllOrganizerByEmail", Notification.class)
-                .setParameter("email", email)
-                .getResultList();
-    }
     public void updateNotification(Notification notification) {
         em.merge(notification);
     }
@@ -55,5 +79,16 @@ public class NotificationRepositoryImplementation implements NotificationReposit
             em.remove(notification);
         }
         em.remove(user);
+    }
+    public List<Notification> getAllUserNotificationByEmail(String email) {
+        return em.createNamedQuery("Notification.FindAllUserByEmail", Notification.class)
+                .setParameter("email", email)
+                .getResultList();
+    }
+
+    public List<Notification> getAllOrganizerNotificationByEmail(String email){
+        return em.createNamedQuery("Notification.FindAllOrganizerByEmail", Notification.class)
+                .setParameter("email", email)
+                .getResultList();
     }
 }

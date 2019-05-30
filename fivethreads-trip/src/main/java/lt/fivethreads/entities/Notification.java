@@ -16,12 +16,22 @@ import java.util.Date;
                 "JOIN FETCH tr.user as m " +
                 "WHERE m.email=:email AND tr.notificationType in ('ForApproval', 'InformationChanged', 'Deleted')"),
         @NamedQuery(name = "Notification.FindAllOrganizerByEmail", query = "select tr from Notification as tr " +
-                "JOIN FETCH tr.tripHistory as m " +
-                "JOIN FETCH m.organizer as u " +
-                "WHERE u.email=:email AND tr.notificationType in ('Approved', 'Cancelled')"),
+                "JOIN FETCH tr.tripHistory as h " +
+                "JOIN FETCH tr.user as m " +
+                "JOIN FETCH h.organizer as u " +
+                "WHERE (u.email=:email AND tr.notificationType in ('Approved', 'Cancelled')) " +
+                "OR m.email=:email AND tr.notificationType in ('ForApproval', 'InformationChanged', 'Deleted')"),
+        @NamedQuery(name = "Notification.CountUser", query = "select count(tr.id) from Notification as tr " +
+                "JOIN tr.user as m " +
+                "WHERE m.email=:email AND tr.notificationType in ('ForApproval', 'InformationChanged', 'Deleted')"),
+        @NamedQuery(name = "Notification.CountOrganizer", query = "select count(tr.id) from Notification as tr " +
+                "JOIN tr.tripHistory as h " +
+                "JOIN tr.user as m " +
+                "JOIN h.organizer as u " +
+                "WHERE (u.email=:email AND tr.notificationType in ('Approved', 'Cancelled')) " +
+                "OR m.email=:email AND tr.notificationType in ('ForApproval', 'InformationChanged', 'Deleted')"),
         @NamedQuery(name = "Notification.FindByID", query = "select tr from Notification as tr " +
                 "WHERE tr.id=:id")
-
 })
 public class Notification {
     @Id

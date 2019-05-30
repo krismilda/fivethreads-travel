@@ -12,8 +12,8 @@ import java.util.List;
 public interface NotificationService {
     TripMemberDTO tripAccepted(AcceptedTrip acceptedTrip, String email);
     TripMemberDTO tripCancelled(CancelledTrip cancelledTrip, String email);
-    List<NotificationListDTO> getUserNotification(String email);
-    List<NotificationListDTO> getOrganizerNotification(String email);
+    NotificationListFullDTO getUserNotification(String email, int page, int amount);
+    NotificationListFullDTO getOrganizerNotification(String email, int page, int amount);
     NotificationListDTO deactivateNotification(Long id);
     NotificationInformationChanged getNotificationByIDForInformationChanged(Long notification_id, String email);
     NotificationCancelled getNotificationByIDForCancelled(Long notification_id, String email);
