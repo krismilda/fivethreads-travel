@@ -8,6 +8,7 @@ import lt.fivethreads.services.NotificationService;
 import lt.fivethreads.services.TripFilesService;
 import lt.fivethreads.services.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,10 +19,11 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.xml.ws.Response;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600, allowedHeaders = "*" )
 @RestController
 public class TripController {
     @Autowired
@@ -40,8 +42,11 @@ public class TripController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     public ResponseEntity<TripDTO> createTrip(@Validated @RequestBody CreateTripForm form) {
         Trip trip = tripService.createTrip(form, SecurityContextHolder.getContext().getAuthentication().getName());
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "eTag");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
+                .headers(responseHeaders)
                 .eTag("\"" + trip.getVersion() + "\"")
                 .body(tripMapper.converTripToTripDTO(trip));
     }
@@ -72,8 +77,11 @@ public class TripController {
         Trip trip =  tripService.getById(tripID);
         TripDTO tripDTO =  (trip != null) ? tripMapper.converTripToTripDTO(trip) : null;
         String version = trip.getVersion().toString();
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "eTag");
         return ResponseEntity
                 .ok()
+                .headers(responseHeaders)
                 .eTag(version)
                 .body(tripDTO);
     }
@@ -149,8 +157,11 @@ public class TripController {
     public ResponseEntity<TripDTO> editTripInformation(@Validated @RequestBody EditTripInformation editTripInformation, WebRequest request) {
         Long version = Long.parseLong(request.getHeader("If-Match"));
         Trip tripDTO = tripService.editTripInformation(editTripInformation, SecurityContextHolder.getContext().getAuthentication().getName(), version);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "eTag");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
+                .headers(responseHeaders)
                 .eTag("\"" + tripDTO.getVersion() + "\"")
                 .body(tripMapper.converTripToTripDTO(tripDTO));
     }

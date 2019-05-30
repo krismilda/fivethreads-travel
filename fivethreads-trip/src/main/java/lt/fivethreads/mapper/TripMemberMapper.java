@@ -34,6 +34,7 @@ public class TripMemberMapper {
 
     public TripMemberDTO convertTripMemberToTripMemberDTO(TripMember tripMember) {
         TripMemberDTO tripMemberDTO = new TripMemberDTO();
+        tripMemberDTO.setId(tripMember.getId());
         tripMemberDTO.setEmail(tripMember.getUser().getEmail());
         tripMemberDTO.setIsAccommodationNeeded(tripMember.getIsAccommodationNeeded());
         tripMemberDTO.setIsCarNeeded(tripMember.getIsCarNeeded());
