@@ -39,7 +39,7 @@ public class OfficeRepositoryImpl implements OfficeRepository {
             return em.merge(office);
         }
         catch (OptimisticLockException e){
-            throw new OfficeDataWasModified("Office was modified.");
+            throw new OfficeDataWasModified("Office was modified by other user.");
         }
     }
 

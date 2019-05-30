@@ -1,6 +1,8 @@
 package lt.fivethreads.repositories;
 
 import lt.fivethreads.entities.Room;
+import lt.fivethreads.exception.OfficeDataWasModified;
+import lt.fivethreads.exception.OfficeDoesNotExist;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -38,7 +40,7 @@ public class RoomRepositoryImpl implements RoomRepository {
             return em.merge(room);
         }
         catch (OptimisticLockException e){
-            throw new OptimisticLockException("Room was modified.");
+            throw new OfficeDataWasModified("Room was modified by other user.");
         }
     }
 

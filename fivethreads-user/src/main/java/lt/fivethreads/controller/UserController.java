@@ -4,6 +4,7 @@ import lt.fivethreads.entities.User;
 import lt.fivethreads.entities.request.ChangePasswordForm;
 import lt.fivethreads.entities.request.RegistrationForm;
 import lt.fivethreads.entities.request.ExtendedUserDTO;
+import lt.fivethreads.exception.user.UserWasModified;
 import lt.fivethreads.mapper.UserMapper;
 import lt.fivethreads.services.UserCreationService;
 import lt.fivethreads.services.UserService;
@@ -60,7 +61,7 @@ public class UserController {
         String version = request.getHeader("If-Match");
         user.setEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         if(userService.checkIfModified(user.getId(), version)){
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+            throw new UserWasModified();
         }
         User updatedUserDTO = userService.updateUser(user);
         return ResponseEntity
@@ -72,7 +73,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateUser(@Validated @RequestBody ExtendedUserDTO user, WebRequest request) {
         if(userService.checkIfModified(user.getId(), user.getVersion().toString())){
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+            throw new UserWasModified();
         }
         User updatedUserDTO = userService.updateUser(user);
         return ResponseEntity
@@ -95,7 +96,7 @@ public class UserController {
         String version = request.getHeader("If-Match");
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         if(userService.checkIfModified(user.getId(), version)){
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+            throw new UserWasModified();
         }
         userService.changePassword(changePasswordForm, SecurityContextHolder.getContext().getAuthentication().getName());
         return new ResponseEntity<>("Password changed successfully!", HttpStatus.OK);

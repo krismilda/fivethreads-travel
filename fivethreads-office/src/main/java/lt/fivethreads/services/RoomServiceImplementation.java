@@ -55,7 +55,7 @@ public class RoomServiceImplementation implements RoomService {
         room.setName(roomDTO.getName());
         room.setCapacity(roomDTO.getCapacity());
         room.setApartment(apartmentRepository.findById(roomDTO.getApartmentId()));
-        room.setVersion(roomDTO.getVersion());
+        room.setVersion(roomDTO.getVersion()+1);
         return roomRepository.updateRoom(room);
     }
 

@@ -39,7 +39,7 @@ public class ApartmentRepositoryImpl implements ApartmentRepository {
             return em.merge(apartment);
         }
         catch(OptimisticLockException e){
-            throw new OfficeDataWasModified("Apartament was modified.");
+            throw new OfficeDataWasModified("Apartament was modified by other user.");
         }
     }
 
