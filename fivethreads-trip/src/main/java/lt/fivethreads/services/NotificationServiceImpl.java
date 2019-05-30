@@ -90,36 +90,29 @@ public class NotificationServiceImpl implements NotificationService {
         return tripMemberMapper.convertTripMemberToTripMemberDTO(tripCancellation.getTripMember());
     }
 
-    public NotificationListFullDTO getUserNotification(String email, int page, int amount) {
-        List<Notification> notificationList = notificationRepository.getAllUserNotificationByEmailPage(email, (page-1), amount);
+    public List<NotificationListDTO> getUserNotification(String email) {
+        List<Notification> notificationList = notificationRepository.getAllUserNotificationByEmail(email);
         List<NotificationListDTO> notificationListDTOS = new ArrayList<>();
         for (Notification notification :
                 notificationList
         ) {
             notificationListDTOS.add(notificationMapper.convertNotificationToNotificationListDTO(notification));
         }
-        NotificationListFullDTO notificationListFullDTO = new NotificationListFullDTO();
-        long count = notificationRepository.getCountNotificationByEmailUser(email);
-        notificationListFullDTO.setCount(count);
-        notificationListFullDTO.setPage(page);
-        notificationListFullDTO.setNotificationList(notificationListDTOS);
-        return notificationListFullDTO;
+        notificationListDTOS.sort(Comparator.comparing(NotificationListDTO::getCreated_date).reversed());
+        return notificationListDTOS;
     }
 
-    public NotificationListFullDTO getOrganizerNotification(String email, int page, int amount) {
-        List<Notification> notificationList = notificationRepository.getAllOrganizerNotificationByEmailPage(email, (page-1), amount);
-        List<NotificationListDTO> notificationListDTOS = new ArrayList<>();
+    public List<NotificationListDTO> getOrganizerNotification(String email) {
+        List<Notification> notificationList = notificationRepository.getAllOrganizerNotificationByEmail(email);
+
+        List<NotificationListDTO> notificationListDTOS = getUserNotification(email);
         for (Notification notification :
                 notificationList
         ) {
             notificationListDTOS.add(notificationMapper.convertNotificationToNotificationListDTO(notification));
         }
-        NotificationListFullDTO notificationListFullDTO = new NotificationListFullDTO();
-        long count = notificationRepository.getCountNotificationByEmailOrganizer(email);
-        notificationListFullDTO.setCount(count);
-        notificationListFullDTO.setPage(page);
-        notificationListFullDTO.setNotificationList(notificationListDTOS);
-        return notificationListFullDTO;
+        notificationListDTOS.sort(Comparator.comparing(NotificationListDTO::getCreated_date).reversed());
+        return notificationListDTOS;
     }
 
     public NotificationListDTO deactivateNotification(Long id) {
