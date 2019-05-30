@@ -132,4 +132,24 @@ public class UserServiceImplementation implements UserService {
         String current_version = user.getVersion().toString();
         return !version.equals(current_version);
     }
+
+    public User updateLoggedInUser(ExtendedUserDTO user, String email){
+        User userLoggedIn = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EmailNotExists());
+        if (this.checkIfEmailExists(user.getEmail()) && !user.getEmail().equals(email)){
+            throw new EmailAlreadyExists("Email already exists.");
+        }
+        userLoggedIn.setEmail(user.getEmail());
+        userLoggedIn.setFirstname(user.getFirstname());
+        userLoggedIn.setLastName(user.getLastname());
+        userLoggedIn.setId(user.getId());
+        userLoggedIn.setPhone(user.getPhone());
+        if(user.getPassword()!=null){
+            user.setPassword(encoder.encode(user.getPassword()));
+        }
+        if(!(user.getOfficeId() == null)){
+            userLoggedIn.setOffice(officeService.getOfficeById(user.getOfficeId()));
+        }
+        return userRepository.saveAndFlush(userLoggedIn);
+    }
 }

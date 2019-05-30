@@ -17,6 +17,8 @@ public interface UserService {
 
     User updateUser(ExtendedUserDTO user) throws UserIDNotExists;
 
+    User updateLoggedInUser(ExtendedUserDTO user, String email);
+
     void deleteUser(Long id) throws UserIDNotExists;
 
     boolean checkIfEmailExists(String email);

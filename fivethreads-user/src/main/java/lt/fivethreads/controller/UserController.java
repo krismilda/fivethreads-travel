@@ -62,7 +62,7 @@ public class UserController {
         if(userService.checkIfModified(user.getId(), user.getVersion().toString())){
             throw new UserWasModified();
         }
-        User updatedUserDTO = userService.updateUser(user);
+        User updatedUserDTO = userService.updateLoggedInUser(user,SecurityContextHolder.getContext().getAuthentication().getName() );
         return ResponseEntity
                 .ok()
                 .body(userMapper.getUserDTO(updatedUserDTO));
