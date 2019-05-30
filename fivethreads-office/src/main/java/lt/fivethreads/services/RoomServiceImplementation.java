@@ -73,7 +73,7 @@ public class RoomServiceImplementation implements RoomService {
                         + (Integer.parseInt(defaultName.substring(defaultName.indexOf(".") + 1))+1);
                 roomForm.setName(defaultName);
             }catch(NoResultException ex){{
-                roomForm.setName("Kambarys Nr.1");
+                roomForm.setName("Room No.1");
             }}
         }
 
