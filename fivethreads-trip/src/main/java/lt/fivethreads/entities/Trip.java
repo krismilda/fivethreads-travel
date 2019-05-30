@@ -47,7 +47,7 @@ public class Trip {
     private TripStatus tripStatus;
 
     @NotNull(message = "Arrival cannot be null.")
-    @OneToOne(cascade=CascadeType.ALL)
+    @OneToOne(cascade=CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name="ARRIVAL")
     private Address arrival;
 
@@ -57,8 +57,8 @@ public class Trip {
     private User organizer;
 
     @NotNull(message = "Departure cannot be null.")
-    @OneToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name="DEPARTURE")
+    @OneToOne(cascade=CascadeType.ALL, orphanRemoval=true)
+    @JoinColumn(name="DEPARTURE ")
     private Address departure;
 
     @OneToMany(mappedBy = "trip")

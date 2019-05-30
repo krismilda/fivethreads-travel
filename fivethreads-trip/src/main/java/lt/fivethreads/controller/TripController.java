@@ -145,7 +145,7 @@ public class TripController {
     }
 
     @DeleteMapping("/trips/{tripID}")
-    @PreAuthorize("hasRole('ORGANIZER')")
+    @PreAuthorize("hasRole('ORGANIZER') or hasRole('ADMIN')")
     public ResponseEntity<?> deleteTrip(@PathVariable("tripID") Long tripID) {
         tripService.deleteTrip(tripID, SecurityContextHolder.getContext().getAuthentication().getName());
         return new ResponseEntity<>("Trip deleted successfully!", HttpStatus.OK);
