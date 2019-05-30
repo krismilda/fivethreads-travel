@@ -185,7 +185,7 @@ public class TripServiceImplementation implements TripService {
         trip.setDeparture(departure);
         trip.setVersion(version);
         tripRepository.updateTrip(trip);
-        return trip;
+        return tripRepository.findByID(trip.getId());
     }
 
     public TripDTO changeOrganizer(ChangeOrganizer changeOrganizer) {

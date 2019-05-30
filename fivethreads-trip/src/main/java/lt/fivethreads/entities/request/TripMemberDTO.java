@@ -14,6 +14,8 @@ public class TripMemberDTO {
     @Email(message="Wrong email format.")
     private String email;
 
+    private Long id;
+
     @NotNull
     private Boolean isFlightTickedNeeded;
 
