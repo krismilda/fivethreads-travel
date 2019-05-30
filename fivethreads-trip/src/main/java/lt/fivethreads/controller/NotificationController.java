@@ -18,15 +18,15 @@ public class NotificationController {
     @Autowired
     NotificationService notificationService;
 
-    @GetMapping("/notifications/page={page}/amount={amount}")
+    @GetMapping("/notifications")
     @PreAuthorize("hasRole('ORGANIZER') or hasRole('USER') or hasRole('ADMIN') ")
-    public NotificationListFullDTO getAllNotifications(@PathVariable("page") int page, @PathVariable("amount") int amount){
+    public List<NotificationListDTO> getAllNotifications(){
         Collection authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
         if (authorities.stream().anyMatch(r -> r.toString().equals("ROLE_ORGANIZER"))) {
-            return notificationService.getOrganizerNotification(SecurityContextHolder.getContext().getAuthentication().getName(), page, amount);
+            return notificationService.getOrganizerNotification(SecurityContextHolder.getContext().getAuthentication().getName());
         }
         if (authorities.stream().anyMatch(r -> r.toString().equals("ROLE_USER")||r.toString().equals("ROLE_ADMIN"))) {
-            return notificationService.getUserNotification(SecurityContextHolder.getContext().getAuthentication().getName(), page, amount);
+            return notificationService.getUserNotification(SecurityContextHolder.getContext().getAuthentication().getName());
         }
         return null;
     }

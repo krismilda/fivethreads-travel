@@ -12,14 +12,12 @@ import java.util.List;
 public interface NotificationService {
     TripMemberDTO tripAccepted(AcceptedTrip acceptedTrip, String email);
     TripMemberDTO tripCancelled(CancelledTrip cancelledTrip, String email);
-    NotificationListFullDTO getUserNotification(String email, int page, int amount);
-    NotificationListFullDTO getOrganizerNotification(String email, int page, int amount);
+    List<NotificationListDTO> getUserNotification(String email);
+    List<NotificationListDTO> getOrganizerNotification(String email);
     NotificationListDTO deactivateNotification(Long id);
     NotificationInformationChanged getNotificationByIDForInformationChanged(Long notification_id, String email);
     NotificationCancelled getNotificationByIDForCancelled(Long notification_id, String email);
     NotificationApproved getNotificationByIDForApproved(Long notification_id, String email);
     NotificationForApprovalDTO getNotificationByIDForApproval(Long notification_id, String email);
     NotificationTripDeleted getNotificationByIDDeleted(Long notification_id, String email);
-
 }
-
