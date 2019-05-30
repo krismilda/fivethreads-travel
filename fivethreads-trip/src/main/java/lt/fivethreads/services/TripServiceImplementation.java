@@ -132,9 +132,6 @@ public class TripServiceImplementation implements TripService {
             throw new TripIsNotEditable("Trip cannot be deleted because financial documents exist.");
         }
         Trip trip = tripRepository.findByID(tripID);
-        if (!trip.getOrganizer().getEmail().equals(organizer_email)) {
-            throw new AccessRightProblem("Only organizer can edit or delete the trip");
-        }
         for (TripMember tripMember : trip.getTripMembers()
         ) {
             createNotificationService.createNotificationDeleted(tripMember, "Trip was deleted.");
