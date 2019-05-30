@@ -48,7 +48,6 @@ public class TripAccommodationMapper {
         tripAccommodation.setAccommodationFinish(form.getAccommodationFinish());
         tripAccommodation.setAccommodationType(form.getAccommodationType());
         tripAccommodation.setTripMember(member);
-
         return tripAccommodation;
     }
 
@@ -65,7 +64,7 @@ public class TripAccommodationMapper {
         if (tripAccommodation.getHotelAddress() != null) tripAccommodationDTO.setHotelAddress(addressMapper.convertAddressToFullAddress(tripAccommodation.getHotelAddress()));
         tripAccommodationDTO.setHotelName(tripAccommodation.getHotelName());
         tripAccommodationDTO.setPrice(tripAccommodation.getPrice());
-
+        tripAccommodationDTO.setId(tripAccommodation.getId());
         return tripAccommodationDTO;
     }
 }
