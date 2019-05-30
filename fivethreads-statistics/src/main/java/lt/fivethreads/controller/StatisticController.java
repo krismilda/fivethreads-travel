@@ -71,6 +71,9 @@ public class StatisticController {
         if (authorities.stream().anyMatch(r -> r.toString().equals("ROLE_ADMIN"))) {
             role="ROLE_ADMIN";
         }
+        if (authorities.stream().anyMatch(r -> r.toString().equals("ROLE_ORGANIZER"))) {
+            role="ROLE_ORGANIZER";
+        }
         return role;
     }
 }
