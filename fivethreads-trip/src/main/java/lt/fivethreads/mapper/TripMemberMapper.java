@@ -120,6 +120,7 @@ public class TripMemberMapper {
         }
         if(tripAccommodation.getAccommodationType() != null)
             accommodationDTO.setAccommodationType(tripAccommodation.getAccommodationType());
+        accommodationDTO.setAccommodationID(tripAccommodation.getId());
         return accommodationDTO;
     }
 
