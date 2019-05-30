@@ -87,10 +87,12 @@ public class UserServiceImplementation implements UserService {
         user.setId(userDTO.getId());
         user.setPhone(userDTO.getPhone());
         user.setRoles(userMapper.getRoles(userDTO.getRole()));
+        if(userDTO.getPassword()!=null){
+            user.setPassword(encoder.encode(userDTO.getPassword()));
+        }
         if(!(userDTO.getOfficeId() == null)){
             user.setOffice(officeService.getOfficeById(userDTO.getOfficeId()));
         }
-
         return userRepository.saveAndFlush(user);
     }
 

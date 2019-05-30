@@ -4,6 +4,7 @@ import lt.fivethreads.entities.User;
 import lt.fivethreads.entities.request.ChangePasswordForm;
 import lt.fivethreads.entities.request.RegistrationForm;
 import lt.fivethreads.entities.request.ExtendedUserDTO;
+import lt.fivethreads.exception.user.UserNotFoundException;
 import lt.fivethreads.exception.user.UserWasModified;
 import lt.fivethreads.mapper.UserMapper;
 import lt.fivethreads.services.UserCreationService;
@@ -57,10 +58,8 @@ public class UserController {
 
     @PutMapping("/loggedUser/")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER') or hasRole('USER')")
-    public ResponseEntity<ExtendedUserDTO> updateloggedUser(@Validated @RequestBody ExtendedUserDTO user,  WebRequest request) {
-        String version = request.getHeader("If-Match");
-        user.setEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        if(userService.checkIfModified(user.getId(), version)){
+    public ResponseEntity<ExtendedUserDTO> updateloggedUser(@Validated @RequestBody ExtendedUserDTO user) {
+        if(userService.checkIfModified(user.getId(), user.getVersion().toString())){
             throw new UserWasModified();
         }
         User updatedUserDTO = userService.updateUser(user);
@@ -71,7 +70,7 @@ public class UserController {
 
     @PutMapping("/admin/user")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateUser(@Validated @RequestBody ExtendedUserDTO user, WebRequest request) {
+    public ResponseEntity<?> updateUser(@Validated @RequestBody ExtendedUserDTO user){
         if(userService.checkIfModified(user.getId(), user.getVersion().toString())){
             throw new UserWasModified();
         }
@@ -92,12 +91,8 @@ public class UserController {
 
     @PutMapping("/loggedUser/changePassword")
     @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER') or hasRole('USER')")
-    public ResponseEntity<?> changePassword(@RequestBody @Validated ChangePasswordForm changePasswordForm, WebRequest request) {
-        String version = request.getHeader("If-Match");
+    public ResponseEntity<?> changePassword(@RequestBody @Validated ChangePasswordForm changePasswordForm) {
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        if(userService.checkIfModified(user.getId(), version)){
-            throw new UserWasModified();
-        }
         userService.changePassword(changePasswordForm, SecurityContextHolder.getContext().getAuthentication().getName());
         return new ResponseEntity<>("Password changed successfully!", HttpStatus.OK);
     }
