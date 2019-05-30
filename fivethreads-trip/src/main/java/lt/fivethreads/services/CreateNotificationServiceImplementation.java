@@ -3,6 +3,7 @@ package lt.fivethreads.services;
 import lt.fivethreads.Mapper.AddressMapper;
 import lt.fivethreads.entities.*;
 import lt.fivethreads.repositories.NotificationRepository;
+import lt.fivethreads.repositories.TripMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,9 @@ public class CreateNotificationServiceImplementation implements CreateNotificati
 
     @Autowired
     AddressMapper addressMapper;
+
+    @Autowired
+    TripMemberRepository tripMemberRepository;
 
     public Notification createNotificationFullInfo(TripMember tripMember, String name) {
         Notification notification = new Notification();
@@ -73,6 +77,10 @@ public class CreateNotificationServiceImplementation implements CreateNotificati
         ) {
             if(!trip.getOrganizer().getId().equals(tripMember.getUser().getId())){
                 this.createNotificationForApprovalTripMember(tripMember, name);
+            }
+            else{
+                tripMember.setTripAcceptance(TripAcceptance.ACCEPTED);
+                tripMemberRepository.updateTripMember(tripMember);
             }
         }
     }
