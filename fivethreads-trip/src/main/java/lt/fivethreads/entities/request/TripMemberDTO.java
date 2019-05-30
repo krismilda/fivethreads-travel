@@ -32,4 +32,6 @@ public class TripMemberDTO {
     private AccommodationDTO accommodationDTO;
 
     private TripAcceptance status;
+
+    private String cancellation;
 }
