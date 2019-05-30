@@ -5,6 +5,7 @@ import lt.fivethreads.entities.User;
 import lt.fivethreads.entities.request.ChangePasswordForm;
 import lt.fivethreads.entities.request.RegistrationForm;
 import lt.fivethreads.entities.request.ExtendedUserDTO;
+import lt.fivethreads.exception.OfficeDoesNotExist;
 import lt.fivethreads.exception.file.EmailAlreadyExists;
 import lt.fivethreads.exception.file.EmailNotExists;
 import lt.fivethreads.exception.file.UserIDNotExists;
@@ -45,7 +46,7 @@ public class UserServiceImplementation implements UserService {
     public User getUserByEmail(String email) throws UserIDNotExists
     {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserIDNotExists());
+                .orElseThrow(() -> new UserIDNotExists("User does not exists."));
         return user;
     }
 
@@ -63,22 +64,22 @@ public class UserServiceImplementation implements UserService {
     @Override
     public User getUserByID(Long id) throws UserIDNotExists {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserIDNotExists());
+                .orElseThrow(() -> new UserIDNotExists("User does not exists."));
         return user;
     }
 
     public ExtendedUserDTO getUserDTOByID(Long id) throws UserIDNotExists {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserIDNotExists());
+                .orElseThrow(() -> new UserIDNotExists("User does not exists."));
         return userMapper.getUserDTO(user);
     }
 
     @Override
     public User updateUser(ExtendedUserDTO userDTO) {
         User user = userRepository.findById(userDTO.getId())
-                .orElseThrow(() -> new UserIDNotExists());
+                .orElseThrow(() -> new UserIDNotExists("User does not exists."));
         if (this.checkIfEmailExists(userDTO.getEmail()) && !userDTO.getEmail().equals(user.getEmail())) {
-            throw new EmailAlreadyExists();
+            throw new EmailAlreadyExists("Email already exists.");
         }
         user.setEmail(userDTO.getEmail());
         user.setFirstname(userDTO.getFirstname());
@@ -108,7 +109,7 @@ public class UserServiceImplementation implements UserService {
         for (ExtendedUserDTO user: users) {
             User userEntity = userMapper.getUser(user);
             if (this.checkIfEmailExists(user.getEmail())) {
-                throw new EmailAlreadyExists();
+                throw new EmailAlreadyExists("Email already exists.");
             }
             User created_user = userRepository.save(userEntity);
         }
@@ -125,7 +126,7 @@ public class UserServiceImplementation implements UserService {
     @Override
     public Boolean checkIfModified(Long userID, String version){
         User user = userRepository.findById(userID)
-                .orElseThrow(() -> new UserIDNotExists());
+                .orElseThrow(() -> new UserIDNotExists("User does not exists."));
         String current_version = user.getVersion().toString();
         return !version.equals(current_version);
     }

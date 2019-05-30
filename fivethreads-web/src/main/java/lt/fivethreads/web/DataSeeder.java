@@ -7,6 +7,7 @@ import lt.fivethreads.repositories.TripRepository;
 import lt.fivethreads.repositories.UserRepository;
 import lt.fivethreads.services.OfficeService;
 import lt.fivethreads.services.TripService;
+import lt.fivethreads.services.UserCreationService;
 import lt.fivethreads.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,9 +41,12 @@ public class DataSeeder {
     @Autowired
     TripService tripService;
 
+    @Autowired
+    UserCreationService userCreationService;
+
     @PostConstruct
     public void loadData() {
-       /* Role admin_role = new Role();
+        /*Role admin_role = new Role();
         admin_role.setName(RoleName.ROLE_ADMIN);
         roleRepository.save(admin_role);
 
@@ -86,7 +90,7 @@ public class DataSeeder {
         Set<String> roles = new HashSet<String>();
         roles.add("ROLE_ADMIN");
         registrationForm.setRole(roles);
-        userService.createUser(registrationForm);
+        userCreationService.createNewUser(registrationForm);
 
         RegistrationForm registrationForm2 = new RegistrationForm();
         registrationForm2.setEmail("organizer@gmail.com");
@@ -98,7 +102,7 @@ public class DataSeeder {
         Set<String> roles2 = new HashSet<String>();
         roles2.add("ROLE_ORGANIZER");
         registrationForm2.setRole(roles2);
-        userService.createUser(registrationForm2);
+        userCreationService.createNewUser(registrationForm2);
 
         RegistrationForm registrationForm3= new RegistrationForm();
         registrationForm3.setEmail("user@gmail.com");
@@ -110,7 +114,7 @@ public class DataSeeder {
         Set<String> roles3 = new HashSet<String>();
         roles3.add("ROLE_USER");
         registrationForm3.setRole(roles3);
-        userService.createUser(registrationForm3);
+        userCreationService.createNewUser(registrationForm3);
 
         CreateTripForm createTripForm = new CreateTripForm();
         createTripForm.setArrival(fullAddressDTO2);

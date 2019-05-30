@@ -26,6 +26,9 @@ public class UserCreationServiceImplementation implements UserCreationService {
 
     public User createNewUser(RegistrationForm registrationForm) {
         User user =  userMapper.convertRegistrationUserToUser(registrationForm);
+        if(userRepository.existsByEmail(user.getEmail())){
+            throw new EmailAlreadyExists("Email already exists.");
+        }
         User created_user = userRepository.save(user);
         return created_user;
     }
