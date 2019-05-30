@@ -49,6 +49,9 @@ public class TripMemberMapper {
         if (tripMember.getFlightTicket() != null && tripMember.getIsFlightTickedNeeded() == true) {
             tripMemberDTO.setFlightTicketDTO(convertFlightTicketToFlightTicketDAO(tripMember.getFlightTicket()));
         }
+        if(tripMember.getTripAcceptance().equals(TripAcceptance.CANCELLED)){
+            tripMemberDTO.setCancellation(tripMember.getTripCancellation().getReason());
+        }
         return tripMemberDTO;
     }
 
