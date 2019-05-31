@@ -69,6 +69,7 @@ public class CombineTripsServiceImplementation implements CombineTripsService {
         newTrip.setFinishDate(combineTwoTrips.getFinishDate());
         newTrip.setStartDate(combineTwoTrips.getStartDate());
         newTrip.setTripStatus(TripStatus.NOTSTARTED);
+        newTrip.setPurpose(trip1.getPurpose()+ " " + trip2.getPurpose());
         newTrip.setArrival(addressMapper.convertFullAddressToAddress(combineTwoTrips.getArrival()));
         newTrip.setDeparture(addressMapper.convertFullAddressToAddress(combineTwoTrips.getDeparture()));
         List<TripMember> tripMembers = addTripMembersToList(trip1.getTripMembers(), trip2);

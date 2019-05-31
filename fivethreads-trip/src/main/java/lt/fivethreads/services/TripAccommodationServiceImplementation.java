@@ -95,7 +95,6 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
 
         TripMember tripMember = tripMemberRepository.findById(tripAccommodationDTO.getTripMemberId());
         Trip trip = tripMember.getTrip();
-
         tripAccommodationValidation.isAccommodationAccepted(tripMember);
 
         tripAccommodationValidation.checkTripAccommodationDatesAgainstTripDates(tripAccommodationDTO.getAccommodationStart(),
@@ -114,7 +113,11 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
             accommodation_to_update.setHotelName(tripAccommodationDTO.getHotelName());
             accommodation_to_update.setPrice(tripAccommodationDTO.getPrice());
         } else {
-
+            if(!roomRepository.getUnoccupiedRoomByCity(tripAccommodationDTO.getAccommodationStart(),
+                    tripAccommodationDTO.getAccommodationFinish(), trip.getArrival().getCity()).stream()
+                    .anyMatch(e->e.getId().equals(tripAccommodationDTO.getId()))){
+                throw new WrongTripData("Room is already reserved.");
+            }
             Room room = roomRepository.findById(tripAccommodationDTO.getRoomId());
             accommodation_to_update.setRoom(room);
             accommodation_to_update.setHotelName(room.getApartment().getOffice().getName());
