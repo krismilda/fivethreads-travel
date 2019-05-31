@@ -123,7 +123,7 @@ public class RoomController {
     }
 
     @GetMapping("rooms/unccupiedInCity/{city}")
-    @PreAuthorize("hasRole('ORGANIZER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
     public ResponseEntity getUnoccupiedRoomsInCity(@RequestParam @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) Date start,
                                                    @RequestParam @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) Date finish,
                                                    @PathVariable String city){
