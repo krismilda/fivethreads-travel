@@ -142,6 +142,11 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
         return tripAccommodationDTOList;
     }
 
+    public TripAccommodationDTO getTripAccommodationsByTrioMember(long tripMemberID) {
+        TripAccommodation tripAccommodation = tripMemberRepository.findById(tripMemberID).getTripAccommodation();
+        return tripAccommodationMapper.getTripAccommodationDTO(tripAccommodation);
+    }
+
     public List<TripAccommodationDTO> getAllTripAccommodationsByUser(long userId) {
         List<TripAccommodation> tripAccommodationList = tripAccommodationRepository.getAllByUser(userId);
         List<TripAccommodationDTO> tripAccommodationDTOList = new ArrayList<>();

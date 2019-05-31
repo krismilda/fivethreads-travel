@@ -21,8 +21,7 @@ public class TripAccommodationRepositoryImplementation implements TripAccommodat
 
     public TripAccommodation findByID(long id) { return em.find(TripAccommodation.class, id); }
 
-    public List<TripAccommodation> getAll() { return em.createNamedQuery("TripAccommodation.FindAll",
-            TripAccommodation.class).getResultList(); }
+    public List<TripAccommodation> getAll() { return em.createNamedQuery("TripAccommodation.FindAll").getResultList(); }
 
     public TripAccommodation saveTripAccommodation(TripAccommodation tripAccommodation) {
         //TO DO check if user already belongs to that trip?

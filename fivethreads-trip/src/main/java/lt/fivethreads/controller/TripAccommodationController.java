@@ -54,4 +54,9 @@ public class TripAccommodationController {
         //Long roomid = Long.parseLong(id);
         return new ResponseEntity<>(tripAccommodationService.getAllReservations(id), HttpStatus.OK);
     }
+    @GetMapping("/trip/accommodations/tripMember={id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
+    public ResponseEntity<?> getTripAccommodationsByTripMemberID(@PathVariable("id") long id){
+        return new ResponseEntity<>(tripAccommodationService.getTripAccommodationsByTrioMember(id), HttpStatus.OK);
+    }
 }

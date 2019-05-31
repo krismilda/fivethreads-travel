@@ -14,4 +14,5 @@ public interface TripAccommodationService {
     List<TripAccommodationDTO> getAllTripAccommodationsByApartment(long apartmentId);
     void deleteTripAccommodation(Long id);
     List<RoomReservations> getAllReservations(Long roomID);
+    TripAccommodationDTO getTripAccommodationsByTrioMember(long tripMemberID);
 }
