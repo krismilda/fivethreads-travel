@@ -19,7 +19,10 @@ public class AddressServiceImplementation implements AddressService
                 && address1.getCity().equals(address2.getCity())
                 && address1.getStreet().equals(address2.getStreet())
                 && address1.getHouseNumber().equals(address2.getHouseNumber())
-                && address1.getFlatNumber().equals(address2.getFlatNumber());
+                && (address1.getFlatNumber() == address2.getFlatNumber() ||
+                (address1.getFlatNumber() != null &&
+                        address1.getFlatNumber().equals(address2.getFlatNumber()))
+        );
     }
 
 }
