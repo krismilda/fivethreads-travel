@@ -115,7 +115,7 @@ public class TripAccommodationServiceImplementation implements TripAccommodation
         } else {
             if(!roomRepository.getUnoccupiedRoomByCity(tripAccommodationDTO.getAccommodationStart(),
                     tripAccommodationDTO.getAccommodationFinish(), trip.getArrival().getCity()).stream()
-                    .anyMatch(e->e.getId().equals(tripAccommodationDTO.getId()))){
+                    .anyMatch(e->e.getId().equals(tripAccommodationDTO.getRoomId()))){
                 throw new WrongTripData("Room is already reserved.");
             }
             Room room = roomRepository.findById(tripAccommodationDTO.getRoomId());

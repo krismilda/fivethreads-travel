@@ -64,7 +64,7 @@ public class RoomServiceImplementation implements RoomService {
 
     public Room createRoom (RoomForm roomForm) {
 
-        if (roomForm.getName() == null){
+        if (roomForm.getName() == null || roomForm.getName().equals("")){
             try {
 
                 String defaultName = roomRepository.findLastDefaultName(roomForm.getApartmentId());

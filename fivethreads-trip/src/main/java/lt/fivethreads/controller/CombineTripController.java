@@ -21,7 +21,7 @@ public class CombineTripController {
 
     @GetMapping("/tripsToCombine/{tripID}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public List<TripDTO> getNotificationByIDApproved(@PathVariable("tripID") Long tripID){
+    public List<TripDTO> getListForCombination(@PathVariable("tripID") Long tripID){
         return combineTripsService.getListForCombination(tripID);
     }
 
