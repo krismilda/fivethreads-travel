@@ -9,4 +9,5 @@ public interface FileService {
     FileDTO upload(MultipartFile file, String filename);
     FileDTO getFileById(long fileId);
     File getFileDownload(long fileId);
+    void deleteFile(String filename);
 }

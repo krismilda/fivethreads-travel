@@ -198,6 +198,7 @@ public class TripFilesServiceImplementation implements TripFilesService {
                         () -> new WrongTripData("Flight ticket does not exist.")
                 );
         tripMember.getFlightTicket().getFile().remove(file);
+        fileService.deleteFile(file.getName());
         fileRepository.delete(file);
         tripMemberRepository.updateTripMember(tripMember);
         return tripMemberMapper.convertTripMemberToTripMemberDTO(tripMember);
@@ -211,6 +212,7 @@ public class TripFilesServiceImplementation implements TripFilesService {
                         () -> new WrongTripData("Car ticket does not exist.")
                 );
         tripMember.getCarTicket().getFile().remove(file);
+        fileService.deleteFile(file.getName());
         fileRepository.delete(file);
         tripMemberRepository.updateTripMember(tripMember);
         return tripMemberMapper.convertTripMemberToTripMemberDTO(tripMember);
@@ -224,6 +226,7 @@ public class TripFilesServiceImplementation implements TripFilesService {
                         () -> new WrongTripData("Accommodation ticket does not exist.")
                 );
         tripMember.getTripAccommodation().getFile().remove(file);
+        fileService.deleteFile(file.getName());
         fileRepository.delete(file);
         tripMemberRepository.updateTripMember(tripMember);
         return tripMemberMapper.convertTripMemberToTripMemberDTO(tripMember);

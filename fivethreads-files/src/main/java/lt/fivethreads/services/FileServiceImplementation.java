@@ -57,4 +57,8 @@ public class FileServiceImplementation implements FileService {
             throw new FileDownloadFailedException();
         }
     }
+
+    public void deleteFile(String filename){
+        storageService.deleteOneFile(filename);
+    }
 }
