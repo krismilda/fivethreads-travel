@@ -14,6 +14,10 @@ import lt.fivethreads.mapper.UserMapper;
 import lt.fivethreads.repositories.OfficeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -66,12 +70,21 @@ public class StatisticServiceImplementation implements StatisticService{
 
     public int countTripInDay(List<TripDTO> trips, Date day){
         int count = 0;
-        for (TripDTO trip: trips
-        ) {
-            if((trip.getStartDate().compareTo(day)<=0 && trip.getFinishDate().compareTo(day)>=0)){
-                count++;
+        try{
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Date day_formmated = formatter.parse(formatter.format(day));
+            for (TripDTO trip: trips
+            ) {
+                if((formatter.parse(formatter.format(trip.getStartDate())).compareTo(day_formmated)<=0 &&
+                        formatter.parse(formatter.format(trip.getFinishDate())).compareTo(day_formmated)>=0)){
+                    count++;
+                }
             }
         }
+        catch (ParseException e){
+            System.out.println("Cannot parse the dates.");
+        }
+
         return count;
     }
 
